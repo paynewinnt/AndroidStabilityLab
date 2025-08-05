@@ -1,9 +1,26 @@
 {
   "monitoring": {
+    "backend": "adb_collector",
+    "fallback_backend": "adb_collector",
     "sample_interval": 2,
     "duration_minutes": 20,
     "max_apps": 6,
-    "auto_start": false
+    "auto_start": false,
+    "solox": {
+      "surfaceview": true,
+      "network_wifi": true,
+      "no_log": true,
+      "record": false,
+      "enabled_metrics": [
+        "cpu",
+        "memory",
+        "memory_detail",
+        "network",
+        "fps",
+        "battery",
+        "gpu"
+      ]
+    }
   },
   "thresholds": {
     "cpu_max": 90,
@@ -40,6 +57,44 @@
       "mem_info": "shell dumpsys meminfo",
       "battery_stats": "shell dumpsys batterystats",
       "network_stats": "shell cat /proc/net/xt_qtaguid/stats"
+    }
+  },
+  "integration_backends": {
+    "default_profile": "adb",
+    "profiles": {
+      "adb": {
+        "metrics_backend": "adb_collector",
+        "trace_backend": "",
+        "metadata": {}
+      },
+      "perfetto": {
+        "metrics_backend": "adb_collector",
+        "trace_backend": "perfetto",
+        "metadata": {
+          "perfetto_buffer_size_kb": 32768,
+          "perfetto_remote_path_template": "/data/local/tmp/{session_name}.perfetto-trace",
+          "perfetto_enable_network_packets": false
+        }
+      },
+      "solox": {
+        "metrics_backend": "solox",
+        "trace_backend": "",
+        "metadata": {
+          "solox_surfaceview": true,
+          "solox_wifi": true
+        }
+      },
+      "solox_perfetto": {
+        "metrics_backend": "solox",
+        "trace_backend": "perfetto",
+        "metadata": {
+          "solox_surfaceview": true,
+          "solox_wifi": true,
+          "perfetto_buffer_size_kb": 32768,
+          "perfetto_remote_path_template": "/data/local/tmp/{session_name}.perfetto-trace",
+          "perfetto_enable_network_packets": false
+        }
+      }
     }
   }
 }

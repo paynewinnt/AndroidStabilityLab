@@ -1,0 +1,14 @@
+{
+  "version": "v1",
+  "allowed_report_decisions": [
+    "pass",
+    "conditional_pass"
+  ],
+  "max_changed_family_count_total_delta": 0,
+  "max_finding_count_total_delta": 0,
+  "max_high_risk_family_count_delta": 0,
+  "allowed_family_delta_statuses": [
+    "unchanged",
+    "removed"
+  ]
+}

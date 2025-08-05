@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
 """
 数据存储服务
-负责性能监控数据的存储和管理
+负责性能监控数据的存储和管理。
+
+接口说明：
+- 当前仅允许通过 `stability/infrastructure/monitoring_adapter.py` 复用
+- 不再作为新监控、查询、报告能力的默认落点
+- 后续若继续保留，需继续向适配层收口，而不是被 Web/CLI 或新业务直接引用
 """
 
 import logging
@@ -27,6 +32,8 @@ from .exceptions import (
 
 # 配置日志
 logger = logging.getLogger(__name__)
+
+STABLE_API_SHIM = True
 
 class OptimizedDataStorageService:
     """优化的数据存储服务"""
@@ -261,6 +268,9 @@ class OptimizedDataStorageService:
         """刷新所有缓冲区"""
         for table_name in self.batch_buffers:
             self._flush_buffer(table_name)
+
+        if hasattr(self.db_manager, 'flush_pending_batch_queue'):
+            self.db_manager.flush_pending_batch_queue()
     
     @handle_database_errors("存储系统性能数据")
     @validate_session_id
@@ -973,27 +983,28 @@ class OptimizedDataStorageService:
     def store_monitoring_data(self, session_id: int, data: Dict[str, Any]) -> bool:
         """存储监控数据（对store_batch_data的封装）"""
         try:
+            timestamp = data.get('timestamp', datetime.utcnow())
+
             # 将数据转换为批量存储格式
             batch_data = {}
             
             # 处理系统数据
-            if 'system' in data:
-                batch_data['system'] = data['system']
+            if 'system' in data and data['system']:
+                batch_data['system'] = self._normalize_system_storage_data(
+                    data['system'],
+                    timestamp
+                )
             
             # 处理应用数据
             if 'apps' in data and isinstance(data['apps'], list):
                 batch_data['apps'] = []
                 for app_data in data['apps']:
-                    if 'app_info' in app_data:
-                        # 提取包名并添加到应用数据中
-                        package_name = app_data['app_info']['package_name']
-                        app_data_copy = app_data.copy()
-                        app_data_copy['package_name'] = package_name
+                    app_data_copy = self._normalize_app_storage_data(app_data, timestamp)
+                    if app_data_copy.get('package_name'):
                         batch_data['apps'].append(app_data_copy)
             
             # 添加时间戳
-            if 'timestamp' in data:
-                batch_data['timestamp'] = data['timestamp']
+            batch_data['timestamp'] = timestamp
             
             # 调用批量存储方法
             results = self.store_batch_data(session_id, batch_data)
@@ -1004,6 +1015,49 @@ class OptimizedDataStorageService:
         except Exception as e:
             logger.error(f"存储监控数据失败: {e}")
             return False
+
+    def _normalize_system_storage_data(self, system_data: Dict[str, Any], timestamp: datetime) -> Dict[str, Any]:
+        """将系统采集结果规范化为数据库字段"""
+        normalized = system_data.copy()
+        normalized['timestamp'] = normalized.get('timestamp', timestamp)
+
+        if 'memory_system_total' in normalized and 'memory_total' not in normalized:
+            normalized['memory_total'] = normalized['memory_system_total']
+
+        if 'network_rx_total' in normalized and 'network_rx_bytes' not in normalized:
+            normalized['network_rx_bytes'] = round(normalized['network_rx_total'] * 1024, 2)
+        elif 'network_rx_kb' in normalized and 'network_rx_bytes' not in normalized:
+            normalized['network_rx_bytes'] = round(normalized['network_rx_kb'] * 1024, 2)
+
+        if 'network_tx_total' in normalized and 'network_tx_bytes' not in normalized:
+            normalized['network_tx_bytes'] = round(normalized['network_tx_total'] * 1024, 2)
+        elif 'network_tx_kb' in normalized and 'network_tx_bytes' not in normalized:
+            normalized['network_tx_bytes'] = round(normalized['network_tx_kb'] * 1024, 2)
+
+        return normalized
+
+    def _normalize_app_storage_data(self, app_data: Dict[str, Any], timestamp: datetime) -> Dict[str, Any]:
+        """将应用采集结果规范化为数据库字段"""
+        normalized = app_data.copy()
+        normalized['timestamp'] = normalized.get('timestamp', timestamp)
+
+        if 'package_name' not in normalized and 'app_info' in normalized:
+            normalized['package_name'] = normalized['app_info'].get('package_name')
+
+        if 'power_consumption' in normalized and 'power_usage' not in normalized:
+            normalized['power_usage'] = normalized['power_consumption']
+
+        if 'network_rx_total' in normalized and 'rx_bytes' not in normalized:
+            normalized['rx_bytes'] = round(normalized['network_rx_total'] * 1024, 2)
+        elif 'network_rx_kb' in normalized and 'rx_bytes' not in normalized:
+            normalized['rx_bytes'] = round(normalized['network_rx_kb'] * 1024, 2)
+
+        if 'network_tx_total' in normalized and 'tx_bytes' not in normalized:
+            normalized['tx_bytes'] = round(normalized['network_tx_total'] * 1024, 2)
+        elif 'network_tx_kb' in normalized and 'tx_bytes' not in normalized:
+            normalized['tx_bytes'] = round(normalized['network_tx_kb'] * 1024, 2)
+
+        return normalized
 
 
 # 为了向后兼容，保留原类名

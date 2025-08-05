@@ -1,0 +1,76 @@
+{
+  "version": "v1",
+  "minimum_family_count": 1,
+  "global_change_limits": {
+    "regrouped": {
+      "warning": 1,
+      "fail": 3
+    },
+    "fingerprint_changed": {
+      "warning": 3,
+      "fail": 10
+    },
+    "added": {
+      "warning": 1,
+      "fail": 3
+    },
+    "removed": {
+      "warning": 1,
+      "fail": 3
+    },
+    "count_changed": {
+      "warning": 5,
+      "fail": 15
+    }
+  },
+  "issue_type_limits": {
+    "crash": {
+      "regrouped": {
+        "warning": 0,
+        "fail": 1
+      },
+      "added": {
+        "warning": 0,
+        "fail": 1
+      },
+      "removed": {
+        "warning": 0,
+        "fail": 1
+      }
+    },
+    "anr": {
+      "regrouped": {
+        "warning": 0,
+        "fail": 1
+      },
+      "added": {
+        "warning": 0,
+        "fail": 1
+      },
+      "removed": {
+        "warning": 0,
+        "fail": 1
+      }
+    },
+    "reboot": {
+      "added": {
+        "warning": 0,
+        "fail": 1
+      },
+      "regrouped": {
+        "warning": 0,
+        "fail": 1
+      }
+    },
+    "process_exit": {
+      "added": {
+        "warning": 0,
+        "fail": 1
+      },
+      "regrouped": {
+        "warning": 0,
+        "fail": 1
+      }
+    }
+  }
+}

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 数据库模型定义
-定义了AndroidMetrics监控系统的所有数据表结构
+定义了 Android Performance Lab 监控系统的所有数据表结构
 """
 
 from sqlalchemy import create_engine, Column, Integer, String, Float, DateTime, Text, Boolean, ForeignKey, Index

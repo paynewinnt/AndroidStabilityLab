@@ -1,0 +1,27 @@
+{
+  "version": "v1",
+  "description": "Local performance risk thresholds. Keep defaults conservative; add scoped overrides after real sample calibration.",
+  "defaults": {
+    "oom_memory_pss_peak_mb": 1536,
+    "oom_memory_pss_p95_mb": 1024,
+    "memory_growth_min_delta_mb": 128,
+    "memory_growth_min_ratio": 0.2,
+    "frame_time_p95_delta_ratio": 0.2,
+    "frame_time_p95_delta_ms": 8,
+    "fps_drop_ratio": 0.15
+  },
+  "overrides": [
+    {
+      "source": "performance_thresholds.cold_start_loop.default",
+      "template_type": "cold_start_loop",
+      "frame_time_p95_delta_ms": 6,
+      "fps_drop_ratio": 0.12
+    },
+    {
+      "source": "performance_thresholds.foreground_background_loop.default",
+      "template_type": "foreground_background_loop",
+      "memory_growth_min_delta_mb": 96,
+      "memory_growth_min_ratio": 0.15
+    }
+  ]
+}

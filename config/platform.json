@@ -1,0 +1,44 @@
+{
+  "runtime": {
+    "root": "runtime",
+    "analysis_snapshots": "runtime/analysis_snapshots",
+    "analysis_review_reports": "runtime/analysis_review_reports",
+    "admission_cases": "runtime/admission_cases",
+    "collaboration": "runtime/collaboration",
+    "integration_outbox": "runtime/integration_outbox",
+    "quality_gates": "runtime/quality_gates",
+    "release_submissions": "runtime/release_submissions",
+    "unattended_runner": "runtime/unattended_runner",
+    "apks": "runtime/apks"
+  },
+  "web": {
+    "host": "127.0.0.1",
+    "port": 8030,
+    "allow_remote_access": false,
+    "portal_mode": "local_ops_console",
+    "public_base_url": "",
+    "deployment_label": "",
+    "sync_devices_on_start": false
+  },
+  "outbox": {
+    "root_dir": "runtime/integration_outbox",
+    "retry_delay_seconds": 300,
+    "delivery_interval_seconds": null,
+    "max_retry_delay_seconds": 3600,
+    "dead_letter_threshold": 5,
+    "retry_alert_threshold": 3
+  },
+  "device": {
+    "adb_timeout_seconds": 10,
+    "adb_retry_count": 3,
+    "max_parallel_commands": 6,
+    "sync_on_web_start": false
+  },
+  "thresholds": {
+    "performance_risk_config_path": "config/performance_risk_thresholds.json"
+  },
+  "monitoring": {
+    "config_path": "config/monitoring.json"
+  }
+}
+

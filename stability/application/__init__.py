@@ -1,0 +1,75 @@
+"""Use-case layer shared by CLI and Web entrypoints."""
+
+from .task_lifecycle import (
+    CreateRunCommand,
+    CreateTaskCommand,
+    ExecuteRunCommand,
+    create_run,
+    create_task,
+    execute_run,
+    resolve_monitoring_backend_override,
+)
+from .device_management import (
+    ConnectDeviceCommand,
+    DevicePoolQuery,
+    PairConnectDeviceCommand,
+    RefreshDevicesCommand,
+    UpdateDeviceProfileCommand,
+    connect_device,
+    list_device_pools,
+    refresh_devices,
+    update_device_profile,
+    pair_connect_device,
+)
+from .integration_outbox import (
+    CiAdmissionSyncCommand,
+    DeliverOutboxCommand,
+    ReplayDeadLettersCommand,
+    RunOutboxWorkerCommand,
+    deliver_integration_outbox,
+    replay_integration_dead_letters,
+    run_integration_outbox_worker,
+    sync_ci_admission_decisions,
+)
+from .integration_reporting import build_im_acceptance_summary
+from .integration_worker_channels import (
+    ChannelWorkerCommand,
+    run_defect_sync_worker,
+    run_feishu_notify_worker,
+    run_im_notification_worker,
+    run_release_sync_worker,
+)
+
+__all__ = [
+    "CreateRunCommand",
+    "CreateTaskCommand",
+    "ExecuteRunCommand",
+    "create_run",
+    "create_task",
+    "execute_run",
+    "resolve_monitoring_backend_override",
+    "ConnectDeviceCommand",
+    "DevicePoolQuery",
+    "PairConnectDeviceCommand",
+    "RefreshDevicesCommand",
+    "UpdateDeviceProfileCommand",
+    "connect_device",
+    "list_device_pools",
+    "refresh_devices",
+    "update_device_profile",
+    "pair_connect_device",
+    "CiAdmissionSyncCommand",
+    "DeliverOutboxCommand",
+    "ReplayDeadLettersCommand",
+    "RunOutboxWorkerCommand",
+    "deliver_integration_outbox",
+    "replay_integration_dead_letters",
+    "run_integration_outbox_worker",
+    "sync_ci_admission_decisions",
+    "build_im_acceptance_summary",
+    "ChannelWorkerCommand",
+    "run_defect_sync_worker",
+    "run_feishu_notify_worker",
+    "run_im_notification_worker",
+    "run_release_sync_worker",
+]

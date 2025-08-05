@@ -1,0 +1,238 @@
+{
+  "fingerprint": {
+    "version": "v1",
+    "ignore_raw_key_issue_types": [
+      "device_offline",
+      "startup_timeout",
+      "startup_failure",
+      "reboot",
+      "execution_timeout"
+    ]
+  },
+  "regression": {
+    "version": "v1",
+    "min_side_issue_groups": 1,
+    "significant_occurrence_delta": 1,
+    "significant_affected_run_delta": 1,
+    "significant_affected_device_delta": 1,
+    "significant_affected_scenario_delta": 1,
+    "min_side_metric_sessions": 1,
+    "min_side_metric_samples": 1,
+    "significant_metric_delta_ratio": 0.1
+  },
+  "attribution": {
+    "version": "v1",
+    "fallback_direction": "unknown",
+    "medium_confidence_score": 3,
+    "high_confidence_score": 5,
+    "rules": [
+      {
+        "rule_id": "app_target_process_crash",
+        "name": "Target app process failure",
+        "direction": "app_logic",
+        "issue_types": [
+          "crash",
+          "anr",
+          "java_exception",
+          "java_crash",
+          "startup_failure",
+          "process_exit"
+        ],
+        "summary_keywords": [
+          "fatal exception",
+          "process crashed",
+          "not responding",
+          "startup failed"
+        ],
+        "package_process_match": true
+      },
+      {
+        "rule_id": "framework_system_service",
+        "name": "Framework or system service signal",
+        "direction": "framework_system_service",
+        "issue_types": [
+          "crash",
+          "anr",
+          "java_exception",
+          "java_crash",
+          "system_server_crash",
+          "watchdog",
+          "reboot",
+          "process_exit"
+        ],
+        "scored_issue_types": [
+          "system_server_crash",
+          "watchdog"
+        ],
+        "issue_type_score": 3,
+        "process_keywords": [
+          "system_server",
+          "zygote",
+          "systemui"
+        ],
+        "summary_keywords": [
+          "watchdog",
+          "system_server",
+          "system ui",
+          "framework"
+        ],
+        "metadata_keywords": [
+          "system_server",
+          "watchdog",
+          "framework"
+        ],
+        "evidence_signal_keywords": [
+          "system_server",
+          "watchdog",
+          "system process"
+        ],
+        "evidence_source_keywords": [
+          "dropbox",
+          "system_server",
+          "text"
+        ],
+        "matched_fragment_keywords": [
+          "system_server",
+          "watchdog"
+        ],
+        "confirmation_level_scores": {
+          "weak": 1,
+          "medium": 2,
+          "strong": 3,
+          "confirmed": 3,
+          "high": 3
+        },
+        "recommended_next_steps": [
+          "优先查看 dropbox/system_server/tombstone 与 reboot 前后的 logcat。",
+          "确认 Watchdog 阻塞线程、system_server 崩溃栈和 Framework 服务调用链。"
+        ],
+        "review_notes": [
+          "该结论仅表示 Framework/SystemService 方向的初步归因，不等同于最终根因。"
+        ]
+      },
+      {
+        "rule_id": "driver_hardware_native",
+        "name": "Driver or hardware signal",
+        "direction": "driver_hardware",
+        "issue_types": [
+          "native_crash",
+          "reboot",
+          "process_exit",
+          "crash"
+        ],
+        "process_keywords": [
+          "vendor.",
+          "android.hardware",
+          "composer",
+          "gralloc"
+        ],
+        "summary_keywords": [
+          "kernel panic",
+          "segmentation fault",
+          "signal 11",
+          "vendor"
+        ]
+      },
+      {
+        "rule_id": "resource_pressure",
+        "name": "Resource pressure signal",
+        "direction": "resource_pressure",
+        "issue_types": [
+          "anr",
+          "startup_timeout",
+          "execution_timeout",
+          "process_exit",
+          "crash"
+        ],
+        "summary_keywords": [
+          "oom",
+          "outofmemory",
+          "low memory",
+          "memory pressure",
+          "timeout"
+        ],
+        "artifact_keywords": [
+          "meminfo",
+          "bugreport"
+        ]
+      },
+      {
+        "rule_id": "graphics_display",
+        "name": "Graphics or display pipeline signal",
+        "direction": "graphics_display",
+        "issue_types": [
+          "anr",
+          "native_crash",
+          "execution_timeout",
+          "crash",
+          "freeze",
+          "black_screen"
+        ],
+        "scored_issue_types": [
+          "freeze",
+          "black_screen"
+        ],
+        "issue_type_score": 3,
+        "process_keywords": [
+          "surfaceflinger",
+          "renderthread",
+          "hwui"
+        ],
+        "summary_keywords": [
+          "jank",
+          "black screen",
+          "freeze",
+          "render",
+          "surface"
+        ],
+        "artifact_keywords": [
+          "surfaceflinger",
+          "perfetto"
+        ],
+        "metadata_keywords": [
+          "black screen",
+          "freeze",
+          "surfaceflinger",
+          "frame_refresh",
+          "screenshot"
+        ],
+        "evidence_signal_keywords": [
+          "black screen",
+          "freeze",
+          "frozen",
+          "frame",
+          "render",
+          "surface",
+          "display"
+        ],
+        "evidence_source_keywords": [
+          "screenshot",
+          "surfaceflinger",
+          "frame_refresh",
+          "input"
+        ],
+        "matched_fragment_keywords": [
+          "black screen",
+          "freeze",
+          "surface",
+          "display",
+          "frame"
+        ],
+        "confirmation_level_scores": {
+          "weak": 1,
+          "medium": 2,
+          "strong": 3,
+          "confirmed": 3,
+          "high": 3
+        },
+        "recommended_next_steps": [
+          "优先检查截图/录屏、SurfaceFlinger、Perfetto 与输入事件时间线。",
+          "确认是否存在无帧刷新、黑屏持续、渲染线程阻塞或显示合成异常。"
+        ],
+        "review_notes": [
+          "Freeze/Black Screen 归因依赖多源 evidence 更可靠，单一日志命中应人工复核。"
+        ]
+      }
+    ]
+  }
+}

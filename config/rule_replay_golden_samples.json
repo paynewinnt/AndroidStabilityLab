@@ -1,0 +1,739 @@
+{
+  "suite_version": "v2",
+  "cases": [
+    {
+      "case_id": "crash_regroup_ignore_raw_key",
+      "description": "Crash families with different raw keys should merge when candidate ignores raw_key for crash.",
+      "layer": "merge_semantics",
+      "expectation": "regrouped",
+      "issue_type": "crash",
+      "baseline_rules": {
+        "fingerprint": {
+          "version": "golden-baseline-crash-v1",
+          "ignore_raw_key_issue_types": []
+        }
+      },
+      "candidate_rules": {
+        "fingerprint": {
+          "version": "golden-candidate-crash-v2",
+          "ignore_raw_key_issue_types": ["crash"]
+        }
+      },
+      "filters": {
+        "package_name": "com.example.app",
+        "issue_type": "crash"
+      },
+      "dataset": {
+        "task": {
+          "task_id": "task-crash",
+          "task_name": "Golden Crash Replay",
+          "template_type": "monkey",
+          "target_app": {
+            "package_name": "com.example.app"
+          }
+        },
+        "run": {
+          "run_id": "run-crash",
+          "status": "failed",
+          "created_at": "2025-07-21T09:00:00"
+        },
+        "instances": [
+          {
+            "instance_id": "instance-crash-a",
+            "device_id": "device-crash-a",
+            "template_type": "monkey",
+            "status": "failed",
+            "exit_reason": "execution_error",
+            "result_level": "failed",
+            "metadata": {
+              "report_path": "runtime/golden/crash-a/report.md",
+              "execution_log_path": "runtime/golden/crash-a/execution.log"
+            },
+            "issues": [
+              {
+                "issue_id": "issue-crash-a",
+                "issue_type": "crash",
+                "issue_title": "检测到 Crash",
+                "severity": "critical",
+                "detected_at": "2025-07-21T09:01:00",
+                "process_name": "com.example.app",
+                "package_name": "com.example.app",
+                "raw_key": "crash:stack-a",
+                "summary": "Crash stack A"
+              }
+            ]
+          },
+          {
+            "instance_id": "instance-crash-b",
+            "device_id": "device-crash-b",
+            "template_type": "monkey",
+            "status": "failed",
+            "exit_reason": "execution_error",
+            "result_level": "failed",
+            "metadata": {
+              "report_path": "runtime/golden/crash-b/report.md",
+              "execution_log_path": "runtime/golden/crash-b/execution.log"
+            },
+            "issues": [
+              {
+                "issue_id": "issue-crash-b",
+                "issue_type": "crash",
+                "issue_title": "检测到 Crash",
+                "severity": "critical",
+                "detected_at": "2025-07-21T09:02:00",
+                "process_name": "com.example.app",
+                "package_name": "com.example.app",
+                "raw_key": "crash:stack-b",
+                "summary": "Crash stack B"
+              }
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "family_count": 1,
+        "changed_family_count": 1,
+        "baseline_rule_version": "golden-baseline-crash-v1",
+        "candidate_rule_version": "golden-candidate-crash-v2",
+        "change_summary": {
+          "regrouped": 1
+        },
+        "families": [
+          {
+            "change_type": "regrouped",
+            "issue_type": "crash",
+            "left_group_count": 2,
+            "right_group_count": 1,
+            "left_occurrence_count": 2,
+            "right_occurrence_count": 2
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "anr_regroup_ignore_raw_key",
+      "description": "ANR families with different raw keys should merge when candidate ignores raw_key for anr.",
+      "layer": "merge_semantics",
+      "expectation": "regrouped",
+      "issue_type": "anr",
+      "baseline_rules": {
+        "fingerprint": {
+          "version": "golden-baseline-anr-v1",
+          "ignore_raw_key_issue_types": []
+        }
+      },
+      "candidate_rules": {
+        "fingerprint": {
+          "version": "golden-candidate-anr-v2",
+          "ignore_raw_key_issue_types": ["anr"]
+        }
+      },
+      "filters": {
+        "package_name": "com.example.app",
+        "issue_type": "anr"
+      },
+      "dataset": {
+        "task": {
+          "task_id": "task-anr",
+          "task_name": "Golden ANR Replay",
+          "template_type": "cold_start_loop",
+          "target_app": {
+            "package_name": "com.example.app"
+          }
+        },
+        "run": {
+          "run_id": "run-anr",
+          "status": "failed",
+          "created_at": "2025-07-21T10:00:00"
+        },
+        "instances": [
+          {
+            "instance_id": "instance-anr-a",
+            "device_id": "device-anr-a",
+            "template_type": "cold_start_loop",
+            "status": "failed",
+            "exit_reason": "execution_error",
+            "result_level": "failed",
+            "issues": [
+              {
+                "issue_id": "issue-anr-a",
+                "issue_type": "anr",
+                "issue_title": "检测到 ANR",
+                "severity": "critical",
+                "detected_at": "2025-07-21T10:01:00",
+                "process_name": "com.example.app",
+                "package_name": "com.example.app",
+                "raw_key": "anr:trace-a",
+                "summary": "ANR trace A"
+              }
+            ]
+          },
+          {
+            "instance_id": "instance-anr-b",
+            "device_id": "device-anr-b",
+            "template_type": "cold_start_loop",
+            "status": "failed",
+            "exit_reason": "execution_error",
+            "result_level": "failed",
+            "issues": [
+              {
+                "issue_id": "issue-anr-b",
+                "issue_type": "anr",
+                "issue_title": "检测到 ANR",
+                "severity": "critical",
+                "detected_at": "2025-07-21T10:02:00",
+                "process_name": "com.example.app",
+                "package_name": "com.example.app",
+                "raw_key": "anr:trace-b",
+                "summary": "ANR trace B"
+              }
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "family_count": 1,
+        "changed_family_count": 1,
+        "baseline_rule_version": "golden-baseline-anr-v1",
+        "candidate_rule_version": "golden-candidate-anr-v2",
+        "change_summary": {
+          "regrouped": 1
+        },
+        "families": [
+          {
+            "change_type": "regrouped",
+            "issue_type": "anr",
+            "left_group_count": 2,
+            "right_group_count": 1,
+            "left_occurrence_count": 2,
+            "right_occurrence_count": 2
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "startup_timeout_regroup_matches_default_ignore",
+      "description": "Startup timeout families should merge when candidate follows the default ignore_raw_key behavior.",
+      "layer": "merge_semantics",
+      "expectation": "regrouped",
+      "issue_type": "startup_timeout",
+      "baseline_rules": {
+        "fingerprint": {
+          "version": "golden-baseline-startup-v0",
+          "ignore_raw_key_issue_types": []
+        }
+      },
+      "candidate_rules": {
+        "fingerprint": {
+          "version": "golden-candidate-startup-v1",
+          "ignore_raw_key_issue_types": ["startup_timeout"]
+        }
+      },
+      "filters": {
+        "package_name": "com.example.app",
+        "issue_type": "startup_timeout"
+      },
+      "dataset": {
+        "task": {
+          "task_id": "task-startup",
+          "task_name": "Golden Startup Timeout Replay",
+          "template_type": "cold_start_loop",
+          "target_app": {
+            "package_name": "com.example.app"
+          }
+        },
+        "run": {
+          "run_id": "run-startup",
+          "status": "failed",
+          "created_at": "2025-07-21T11:00:00"
+        },
+        "instances": [
+          {
+            "instance_id": "instance-startup-a",
+            "device_id": "device-startup-a",
+            "template_type": "cold_start_loop",
+            "status": "failed",
+            "exit_reason": "timeout",
+            "result_level": "failed",
+            "issues": [
+              {
+                "issue_id": "issue-startup-a",
+                "issue_type": "startup_timeout",
+                "issue_title": "启动超时",
+                "severity": "high",
+                "detected_at": "2025-07-21T11:01:00",
+                "process_name": "com.example.app",
+                "package_name": "com.example.app",
+                "raw_key": "startup:wait-a",
+                "summary": "Startup wait A"
+              }
+            ]
+          },
+          {
+            "instance_id": "instance-startup-b",
+            "device_id": "device-startup-b",
+            "template_type": "cold_start_loop",
+            "status": "failed",
+            "exit_reason": "timeout",
+            "result_level": "failed",
+            "issues": [
+              {
+                "issue_id": "issue-startup-b",
+                "issue_type": "startup_timeout",
+                "issue_title": "启动超时",
+                "severity": "high",
+                "detected_at": "2025-07-21T11:02:00",
+                "process_name": "com.example.app",
+                "package_name": "com.example.app",
+                "raw_key": "startup:wait-b",
+                "summary": "Startup wait B"
+              }
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "family_count": 1,
+        "changed_family_count": 1,
+        "baseline_rule_version": "golden-baseline-startup-v0",
+        "candidate_rule_version": "golden-candidate-startup-v1",
+        "change_summary": {
+          "regrouped": 1
+        },
+        "families": [
+          {
+            "change_type": "regrouped",
+            "issue_type": "startup_timeout",
+            "left_group_count": 2,
+            "right_group_count": 1,
+            "left_occurrence_count": 2,
+            "right_occurrence_count": 2
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "process_exit_regroup_ignore_raw_key",
+      "description": "Process-exit families with different raw keys should merge when candidate ignores raw_key for process_exit.",
+      "layer": "merge_semantics",
+      "expectation": "regrouped",
+      "issue_type": "process_exit",
+      "baseline_rules": {
+        "fingerprint": {
+          "version": "golden-baseline-process-exit-v1",
+          "ignore_raw_key_issue_types": []
+        }
+      },
+      "candidate_rules": {
+        "fingerprint": {
+          "version": "golden-candidate-process-exit-v2",
+          "ignore_raw_key_issue_types": ["process_exit"]
+        }
+      },
+      "filters": {
+        "package_name": "com.example.app",
+        "issue_type": "process_exit"
+      },
+      "dataset": {
+        "task": {
+          "task_id": "task-process-exit",
+          "task_name": "Golden Process Exit Replay",
+          "template_type": "monkey",
+          "target_app": {
+            "package_name": "com.example.app"
+          }
+        },
+        "run": {
+          "run_id": "run-process-exit",
+          "status": "failed",
+          "created_at": "2025-07-21T11:30:00"
+        },
+        "instances": [
+          {
+            "instance_id": "instance-process-exit-a",
+            "device_id": "device-process-exit-a",
+            "template_type": "monkey",
+            "status": "failed",
+            "exit_reason": "execution_error",
+            "result_level": "failed",
+            "issues": [
+              {
+                "issue_id": "issue-process-exit-a",
+                "issue_type": "process_exit",
+                "issue_title": "进程异常退出",
+                "severity": "high",
+                "detected_at": "2025-07-21T11:31:00",
+                "process_name": "com.example.app",
+                "package_name": "com.example.app",
+                "raw_key": "exit:signal-9",
+                "summary": "Process exit signal 9"
+              }
+            ]
+          },
+          {
+            "instance_id": "instance-process-exit-b",
+            "device_id": "device-process-exit-b",
+            "template_type": "monkey",
+            "status": "failed",
+            "exit_reason": "execution_error",
+            "result_level": "failed",
+            "issues": [
+              {
+                "issue_id": "issue-process-exit-b",
+                "issue_type": "process_exit",
+                "issue_title": "进程异常退出",
+                "severity": "high",
+                "detected_at": "2025-07-21T11:32:00",
+                "process_name": "com.example.app",
+                "package_name": "com.example.app",
+                "raw_key": "exit:signal-11",
+                "summary": "Process exit signal 11"
+              }
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "family_count": 1,
+        "changed_family_count": 1,
+        "baseline_rule_version": "golden-baseline-process-exit-v1",
+        "candidate_rule_version": "golden-candidate-process-exit-v2",
+        "change_summary": {
+          "regrouped": 1
+        },
+        "families": [
+          {
+            "change_type": "regrouped",
+            "issue_type": "process_exit",
+            "left_group_count": 2,
+            "right_group_count": 1,
+            "left_occurrence_count": 2,
+            "right_occurrence_count": 2
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "device_offline_fingerprint_changed_without_regroup",
+      "description": "Device-offline fingerprint should change even when the family count stays grouped 1-to-1.",
+      "layer": "identity_semantics",
+      "expectation": "fingerprint_changed",
+      "issue_type": "device_offline",
+      "baseline_rules": {
+        "fingerprint": {
+          "version": "golden-baseline-offline-v1",
+          "ignore_raw_key_issue_types": []
+        }
+      },
+      "candidate_rules": {
+        "fingerprint": {
+          "version": "golden-candidate-offline-v2",
+          "ignore_raw_key_issue_types": ["device_offline"]
+        }
+      },
+      "filters": {
+        "package_name": "com.example.app",
+        "issue_type": "device_offline"
+      },
+      "dataset": {
+        "task": {
+          "task_id": "task-offline",
+          "task_name": "Golden Device Offline Replay",
+          "template_type": "cold_start_loop",
+          "target_app": {
+            "package_name": "com.example.app"
+          }
+        },
+        "run": {
+          "run_id": "run-offline",
+          "status": "failed",
+          "created_at": "2025-07-21T12:00:00"
+        },
+        "instances": [
+          {
+            "instance_id": "instance-offline-a",
+            "device_id": "device-offline-a",
+            "template_type": "cold_start_loop",
+            "status": "failed",
+            "exit_reason": "device_offline",
+            "result_level": "failed",
+            "issues": [
+              {
+                "issue_id": "issue-offline-a",
+                "issue_type": "device_offline",
+                "issue_title": "设备离线",
+                "severity": "high",
+                "detected_at": "2025-07-21T12:01:00",
+                "process_name": "com.example.app",
+                "package_name": "com.example.app",
+                "raw_key": "transport:offline",
+                "summary": "Device offline"
+              }
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "family_count": 1,
+        "changed_family_count": 1,
+        "baseline_rule_version": "golden-baseline-offline-v1",
+        "candidate_rule_version": "golden-candidate-offline-v2",
+        "change_summary": {
+          "fingerprint_changed": 1
+        },
+        "families": [
+          {
+            "change_type": "fingerprint_changed",
+            "issue_type": "device_offline",
+            "left_group_count": 1,
+            "right_group_count": 1,
+            "left_occurrence_count": 1,
+            "right_occurrence_count": 1
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "reboot_fingerprint_changed_without_regroup",
+      "description": "Reboot fingerprint should change while the family remains grouped 1-to-1.",
+      "layer": "identity_semantics",
+      "expectation": "fingerprint_changed",
+      "issue_type": "reboot",
+      "baseline_rules": {
+        "fingerprint": {
+          "version": "golden-baseline-reboot-v1",
+          "ignore_raw_key_issue_types": []
+        }
+      },
+      "candidate_rules": {
+        "fingerprint": {
+          "version": "golden-candidate-reboot-v2",
+          "ignore_raw_key_issue_types": ["reboot"]
+        }
+      },
+      "filters": {
+        "package_name": "com.example.app",
+        "issue_type": "reboot"
+      },
+      "dataset": {
+        "task": {
+          "task_id": "task-reboot",
+          "task_name": "Golden Reboot Replay",
+          "template_type": "monkey",
+          "target_app": {
+            "package_name": "com.example.app"
+          }
+        },
+        "run": {
+          "run_id": "run-reboot",
+          "status": "failed",
+          "created_at": "2025-07-21T12:30:00"
+        },
+        "instances": [
+          {
+            "instance_id": "instance-reboot-a",
+            "device_id": "device-reboot-a",
+            "template_type": "monkey",
+            "status": "failed",
+            "exit_reason": "execution_error",
+            "result_level": "failed",
+            "issues": [
+              {
+                "issue_id": "issue-reboot-a",
+                "issue_type": "reboot",
+                "issue_title": "设备重启",
+                "severity": "critical",
+                "detected_at": "2025-07-21T12:31:00",
+                "process_name": "system_server",
+                "package_name": "com.example.app",
+                "raw_key": "reboot:kernel-panic",
+                "summary": "Kernel panic reboot"
+              }
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "family_count": 1,
+        "changed_family_count": 1,
+        "baseline_rule_version": "golden-baseline-reboot-v1",
+        "candidate_rule_version": "golden-candidate-reboot-v2",
+        "change_summary": {
+          "fingerprint_changed": 1
+        },
+        "families": [
+          {
+            "change_type": "fingerprint_changed",
+            "issue_type": "reboot",
+            "left_group_count": 1,
+            "right_group_count": 1,
+            "left_occurrence_count": 1,
+            "right_occurrence_count": 1
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "crash_guard_stays_unchanged_when_rules_match",
+      "description": "Crash family should stay unchanged when baseline and candidate rules are identical.",
+      "layer": "stability_guard",
+      "expectation": "unchanged",
+      "issue_type": "crash",
+      "baseline_rules": {
+        "fingerprint": {
+          "version": "golden-baseline-crash-guard-v1",
+          "ignore_raw_key_issue_types": []
+        }
+      },
+      "candidate_rules": {
+        "fingerprint": {
+          "version": "golden-baseline-crash-guard-v1",
+          "ignore_raw_key_issue_types": []
+        }
+      },
+      "filters": {
+        "package_name": "com.example.app",
+        "issue_type": "crash"
+      },
+      "dataset": {
+        "task": {
+          "task_id": "task-crash-guard",
+          "task_name": "Golden Crash Guard Replay",
+          "template_type": "monkey",
+          "target_app": {
+            "package_name": "com.example.app"
+          }
+        },
+        "run": {
+          "run_id": "run-crash-guard",
+          "status": "failed",
+          "created_at": "2025-07-21T13:00:00"
+        },
+        "instances": [
+          {
+            "instance_id": "instance-crash-guard-a",
+            "device_id": "device-crash-guard-a",
+            "template_type": "monkey",
+            "status": "failed",
+            "exit_reason": "execution_error",
+            "result_level": "failed",
+            "issues": [
+              {
+                "issue_id": "issue-crash-guard-a",
+                "issue_type": "crash",
+                "issue_title": "检测到 Crash",
+                "severity": "critical",
+                "detected_at": "2025-07-21T13:01:00",
+                "process_name": "com.example.app",
+                "package_name": "com.example.app",
+                "raw_key": "crash:guard-a",
+                "summary": "Crash guard A"
+              }
+            ]
+          }
+        ]
+      },
+      "include_unchanged": true,
+      "expected": {
+        "family_count": 1,
+        "changed_family_count": 0,
+        "baseline_rule_version": "golden-baseline-crash-guard-v1",
+        "candidate_rule_version": "golden-baseline-crash-guard-v1",
+        "change_summary": {
+          "unchanged": 1
+        },
+        "families": [
+          {
+            "change_type": "unchanged",
+            "issue_type": "crash",
+            "left_group_count": 1,
+            "right_group_count": 1,
+            "left_occurrence_count": 1,
+            "right_occurrence_count": 1
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "startup_timeout_guard_stays_unchanged_when_rules_match",
+      "description": "Startup-timeout family should stay unchanged when baseline and candidate ignore_raw_key configuration matches.",
+      "layer": "stability_guard",
+      "expectation": "unchanged",
+      "issue_type": "startup_timeout",
+      "baseline_rules": {
+        "fingerprint": {
+          "version": "golden-baseline-startup-guard-v1",
+          "ignore_raw_key_issue_types": ["startup_timeout"]
+        }
+      },
+      "candidate_rules": {
+        "fingerprint": {
+          "version": "golden-baseline-startup-guard-v1",
+          "ignore_raw_key_issue_types": ["startup_timeout"]
+        }
+      },
+      "filters": {
+        "package_name": "com.example.app",
+        "issue_type": "startup_timeout"
+      },
+      "dataset": {
+        "task": {
+          "task_id": "task-startup-guard",
+          "task_name": "Golden Startup Guard Replay",
+          "template_type": "cold_start_loop",
+          "target_app": {
+            "package_name": "com.example.app"
+          }
+        },
+        "run": {
+          "run_id": "run-startup-guard",
+          "status": "failed",
+          "created_at": "2025-07-21T13:30:00"
+        },
+        "instances": [
+          {
+            "instance_id": "instance-startup-guard-a",
+            "device_id": "device-startup-guard-a",
+            "template_type": "cold_start_loop",
+            "status": "failed",
+            "exit_reason": "timeout",
+            "result_level": "failed",
+            "issues": [
+              {
+                "issue_id": "issue-startup-guard-a",
+                "issue_type": "startup_timeout",
+                "issue_title": "启动超时",
+                "severity": "high",
+                "detected_at": "2025-07-21T13:31:00",
+                "process_name": "com.example.app",
+                "package_name": "com.example.app",
+                "raw_key": "startup:guard-a",
+                "summary": "Startup guard A"
+              }
+            ]
+          }
+        ]
+      },
+      "include_unchanged": true,
+      "expected": {
+        "family_count": 1,
+        "changed_family_count": 0,
+        "baseline_rule_version": "golden-baseline-startup-guard-v1",
+        "candidate_rule_version": "golden-baseline-startup-guard-v1",
+        "change_summary": {
+          "unchanged": 1
+        },
+        "families": [
+          {
+            "change_type": "unchanged",
+            "issue_type": "startup_timeout",
+            "left_group_count": 1,
+            "right_group_count": 1,
+            "left_occurrence_count": 1,
+            "right_occurrence_count": 1
+          }
+        ]
+      }
+    }
+  ]
+}

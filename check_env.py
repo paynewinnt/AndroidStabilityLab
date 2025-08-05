@@ -21,9 +21,6 @@ def check_python_version() -> Tuple[bool, str]:
 def check_required_packages() -> List[Tuple[str, bool, str]]:
     """检查必需的包"""
     required_packages = [
-        ('PyQt5', 'PyQt5'),
-        ('pyqtgraph', 'pyqtgraph'),
-        ('matplotlib', 'matplotlib'),
         ('sqlalchemy', 'SQLAlchemy'),
         ('pymysql', 'PyMySQL'),
         ('pandas', 'pandas'),
@@ -78,7 +75,7 @@ def check_python_environment() -> Tuple[bool, str]:
 def main():
     """主检查函数"""
     print("=" * 60)
-    print("🔍 AndroidMetrics 环境检查")
+    print("🔍 Android Stability Lab 环境检查")
     print("=" * 60)
     
     # 检查Python版本
@@ -117,8 +114,9 @@ def main():
     
     if python_ok and python_env_ok and all_packages_ok and all_db_ok:
         print("🎉 所有检查通过！环境配置正确。")
-        print("\n🚀 可以运行以下命令启动程序:")
-        print("   /usr/bin/python main.py")
+        print("\n🚀 当前推荐入口:")
+        print("   /usr/bin/python -m stability.cli --help")
+        print("   /usr/bin/python -m stability.cli serve-web --host 127.0.0.1 --port 8030")
         return 0
     else:
         print("⚠️  发现问题，请修复后重新检查。")
