@@ -1,0 +1,133 @@
+{
+  "audit_id": "baseline_audit_latest_device_offline_audit_retention_smoke",
+  "name": "Baseline Audit Latest | device_offline_audit_retention_smoke",
+  "created_at": "2025-07-20T10:04:33.911790",
+  "created_by": "smoke_retention",
+  "baseline_key": "device_offline_audit_retention_smoke",
+  "current_report_id": "review_report_4f2154c3b46a4fbdbaa2c56f52c2953e",
+  "current_report_name": "Rule Review Report Smoke",
+  "summary": {
+    "baseline_key": "device_offline_audit_retention_smoke",
+    "history_count": 6,
+    "action_counts": {
+      "set": 5,
+      "promote": 1
+    },
+    "actor_counts": {
+      "smoke_retention": 6
+    },
+    "distinct_report_count": 2,
+    "comparison_linked_event_count": 1,
+    "first_changed_at": "2025-07-20T10:04:32.505385",
+    "last_changed_at": "2025-07-20T10:04:33.911484",
+    "current_report_id": "review_report_4f2154c3b46a4fbdbaa2c56f52c2953e",
+    "current_report_name": "Rule Review Report Smoke"
+  },
+  "events": [
+    {
+      "revision_id": "baseline_rev_94c054965fca4dd68b594ba0bda19e79",
+      "action": "set",
+      "changed_at": "2025-07-20T10:04:32.505385",
+      "changed_by": "smoke_retention",
+      "from_report_id": "",
+      "from_report_name": "",
+      "to_report_id": "review_report_f0576b472d83419cb6bfb685a6c6ee7e",
+      "to_report_name": "Rule Review Summary Smoke",
+      "reason_summary": "Baseline pointer was updated manually.",
+      "reasons": [
+        "Baseline pointer was updated manually."
+      ],
+      "comparison_id": "",
+      "comparison_detail_path": "",
+      "policy_version": ""
+    },
+    {
+      "revision_id": "baseline_rev_238faab5ce9d4fda87ec86f080826eb3",
+      "action": "promote",
+      "changed_at": "2025-07-20T10:04:32.808507",
+      "changed_by": "smoke_retention",
+      "from_report_id": "review_report_f0576b472d83419cb6bfb685a6c6ee7e",
+      "from_report_name": "Rule Review Summary Smoke",
+      "to_report_id": "review_report_4f2154c3b46a4fbdbaa2c56f52c2953e",
+      "to_report_name": "Rule Review Report Smoke",
+      "reason_summary": "Promotion policy checks passed.",
+      "reasons": [
+        "Promotion policy checks passed."
+      ],
+      "comparison_id": "review_report_compare_4923ddce80cb411c9010c4ac52a7667c",
+      "comparison_detail_path": "runtime/analysis_review_report_comparisons/review_report_compare_4923ddce80cb411c9010c4ac52a7667c/report.json",
+      "policy_version": "v1"
+    },
+    {
+      "revision_id": "baseline_rev_e23c48c7ca9743c3be53c08dd8add20d",
+      "action": "set",
+      "changed_at": "2025-07-20T10:04:33.087884",
+      "changed_by": "smoke_retention",
+      "from_report_id": "review_report_4f2154c3b46a4fbdbaa2c56f52c2953e",
+      "from_report_name": "Rule Review Report Smoke",
+      "to_report_id": "review_report_f0576b472d83419cb6bfb685a6c6ee7e",
+      "to_report_name": "Rule Review Summary Smoke",
+      "reason_summary": "Baseline pointer was updated manually.",
+      "reasons": [
+        "Baseline pointer was updated manually."
+      ],
+      "comparison_id": "",
+      "comparison_detail_path": "",
+      "policy_version": ""
+    },
+    {
+      "revision_id": "baseline_rev_d19c93b6d035405b832ca2415a66c97b",
+      "action": "set",
+      "changed_at": "2025-07-20T10:04:33.363819",
+      "changed_by": "smoke_retention",
+      "from_report_id": "review_report_f0576b472d83419cb6bfb685a6c6ee7e",
+      "from_report_name": "Rule Review Summary Smoke",
+      "to_report_id": "review_report_4f2154c3b46a4fbdbaa2c56f52c2953e",
+      "to_report_name": "Rule Review Report Smoke",
+      "reason_summary": "Baseline pointer was updated manually.",
+      "reasons": [
+        "Baseline pointer was updated manually."
+      ],
+      "comparison_id": "",
+      "comparison_detail_path": "",
+      "policy_version": ""
+    },
+    {
+      "revision_id": "baseline_rev_b876ff47bfa14d29a4dea4438d63bdf5",
+      "action": "set",
+      "changed_at": "2025-07-20T10:04:33.641279",
+      "changed_by": "smoke_retention",
+      "from_report_id": "review_report_4f2154c3b46a4fbdbaa2c56f52c2953e",
+      "from_report_name": "Rule Review Report Smoke",
+      "to_report_id": "review_report_f0576b472d83419cb6bfb685a6c6ee7e",
+      "to_report_name": "Rule Review Summary Smoke",
+      "reason_summary": "Baseline pointer was updated manually.",
+      "reasons": [
+        "Baseline pointer was updated manually."
+      ],
+      "comparison_id": "",
+      "comparison_detail_path": "",
+      "policy_version": ""
+    },
+    {
+      "revision_id": "baseline_rev_c008df4dd6b943579f738ad48421256f",
+      "action": "set",
+      "changed_at": "2025-07-20T10:04:33.911484",
+      "changed_by": "smoke_retention",
+      "from_report_id": "review_report_f0576b472d83419cb6bfb685a6c6ee7e",
+      "from_report_name": "Rule Review Summary Smoke",
+      "to_report_id": "review_report_4f2154c3b46a4fbdbaa2c56f52c2953e",
+      "to_report_name": "Rule Review Report Smoke",
+      "reason_summary": "Baseline pointer was updated manually.",
+      "reasons": [
+        "Baseline pointer was updated manually."
+      ],
+      "comparison_id": "",
+      "comparison_detail_path": "",
+      "policy_version": ""
+    }
+  ],
+  "detail_path": "runtime/analysis_review_report_baseline_audits/latest/device_offline_audit_retention_smoke/versions/baseline_rev_c008df4dd6b943579f738ad48421256f/report.json",
+  "markdown_path": "runtime/analysis_review_report_baseline_audits/latest/device_offline_audit_retention_smoke/versions/baseline_rev_c008df4dd6b943579f738ad48421256f/summary.md",
+  "html_path": "runtime/analysis_review_report_baseline_audits/latest/device_offline_audit_retention_smoke/versions/baseline_rev_c008df4dd6b943579f738ad48421256f/report.html"
+}

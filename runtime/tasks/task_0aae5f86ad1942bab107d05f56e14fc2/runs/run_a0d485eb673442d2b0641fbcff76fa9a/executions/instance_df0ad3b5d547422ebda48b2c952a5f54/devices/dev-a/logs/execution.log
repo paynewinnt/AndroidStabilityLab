@@ -1,0 +1,4 @@
+[2026-04-19T11:03:46.725197] preparing instance instance_df0ad3b5d547422ebda48b2c952a5f54
+device=dev-a
+[2026-04-19T11:03:46.740473] instance entered running state
+[2026-04-19T11:03:46.780244] execution finished with status failed

@@ -1,0 +1,744 @@
+{
+  "device_offline_default": {
+    "baseline_key": "device_offline_default",
+    "report_id": "review_report_4f2154c3b46a4fbdbaa2c56f52c2953e",
+    "report_name": "Rule Review Report Smoke",
+    "policy_versions": [
+      "v1"
+    ],
+    "candidate_paths": [
+      "/tmp/asl_replay_rules.json"
+    ],
+    "baseline_paths": [
+      "config/stability_rules.json"
+    ],
+    "report_created_at": "2025-07-20T08:45:41.881697",
+    "created_at": "2025-07-20T08:55:23.619824",
+    "updated_at": "2025-07-20T09:00:06.557237",
+    "updated_by": "review_report_promotion_smoke"
+  },
+  "device_offline_history_smoke": {
+    "baseline_key": "device_offline_history_smoke",
+    "report_id": "review_report_f0576b472d83419cb6bfb685a6c6ee7e",
+    "report_name": "Rule Review Summary Smoke",
+    "policy_versions": [
+      "v1"
+    ],
+    "candidate_paths": [
+      "/tmp/asl_replay_rules.json"
+    ],
+    "baseline_paths": [
+      "config/stability_rules.json"
+    ],
+    "report_created_at": "2025-07-20T08:42:55.154533",
+    "created_at": "2025-07-20T09:08:27.060472",
+    "updated_at": "2025-07-20T09:08:38.360545",
+    "updated_by": "baseline_history_smoke",
+    "history": [
+      {
+        "revision_id": "baseline_rev_ed3e64bf2d2c4ea89c9d38555784578d",
+        "report_id": "review_report_f0576b472d83419cb6bfb685a6c6ee7e",
+        "report_name": "Rule Review Summary Smoke",
+        "policy_versions": [
+          "v1"
+        ],
+        "candidate_paths": [
+          "/tmp/asl_replay_rules.json"
+        ],
+        "baseline_paths": [
+          "config/stability_rules.json"
+        ],
+        "report_created_at": "2025-07-20T08:42:55.154533",
+        "changed_at": "2025-07-20T09:08:27.060472",
+        "changed_by": "baseline_history_smoke",
+        "action": "set"
+      },
+      {
+        "revision_id": "baseline_rev_3a028b4dadc64d23b5988a6e94f783c8",
+        "report_id": "review_report_4f2154c3b46a4fbdbaa2c56f52c2953e",
+        "report_name": "Rule Review Report Smoke",
+        "policy_versions": [
+          "v1"
+        ],
+        "candidate_paths": [
+          "/tmp/asl_replay_rules.json"
+        ],
+        "baseline_paths": [
+          "config/stability_rules.json"
+        ],
+        "report_created_at": "2025-07-20T08:45:41.881697",
+        "changed_at": "2025-07-20T09:08:31.367856",
+        "changed_by": "baseline_history_smoke",
+        "action": "set"
+      },
+      {
+        "revision_id": "baseline_rev_14644119d59e4f20947799a6ea7e32cc",
+        "report_id": "review_report_f0576b472d83419cb6bfb685a6c6ee7e",
+        "report_name": "Rule Review Summary Smoke",
+        "policy_versions": [
+          "v1"
+        ],
+        "candidate_paths": [
+          "/tmp/asl_replay_rules.json"
+        ],
+        "baseline_paths": [
+          "config/stability_rules.json"
+        ],
+        "report_created_at": "2025-07-20T08:42:55.154533",
+        "changed_at": "2025-07-20T09:08:38.360545",
+        "changed_by": "baseline_history_smoke",
+        "action": "rollback"
+      }
+    ]
+  },
+  "device_offline_audit_smoke": {
+    "baseline_key": "device_offline_audit_smoke",
+    "report_id": "review_report_4f2154c3b46a4fbdbaa2c56f52c2953e",
+    "report_name": "Rule Review Report Smoke",
+    "policy_versions": [
+      "v1"
+    ],
+    "candidate_paths": [
+      "/tmp/asl_replay_rules.json"
+    ],
+    "baseline_paths": [
+      "config/stability_rules.json"
+    ],
+    "report_created_at": "2025-07-20T08:45:41.881697",
+    "created_at": "2025-07-20T09:27:19.038341",
+    "updated_at": "2025-07-20T09:31:53.414910",
+    "updated_by": "smoke_auto",
+    "latest_audit_id": "baseline_audit_latest_device_offline_audit_smoke",
+    "latest_audit_detail_path": "runtime/analysis_review_report_baseline_audits/latest/device_offline_audit_smoke/report.json",
+    "latest_audit_markdown_path": "runtime/analysis_review_report_baseline_audits/latest/device_offline_audit_smoke/summary.md",
+    "latest_audit_html_path": "runtime/analysis_review_report_baseline_audits/latest/device_offline_audit_smoke/report.html",
+    "history": [
+      {
+        "revision_id": "baseline_rev_dbbeb142f4724c0c9f53f19e1c1f61ab",
+        "report_id": "review_report_f0576b472d83419cb6bfb685a6c6ee7e",
+        "report_name": "Rule Review Summary Smoke",
+        "policy_versions": [
+          "v1"
+        ],
+        "candidate_paths": [
+          "/tmp/asl_replay_rules.json"
+        ],
+        "baseline_paths": [
+          "config/stability_rules.json"
+        ],
+        "report_created_at": "2025-07-20T08:42:55.154533",
+        "changed_at": "2025-07-20T09:27:19.038341",
+        "changed_by": "smoke",
+        "action": "set",
+        "reasons": [],
+        "comparison_id": "",
+        "comparison_detail_path": "",
+        "policy_version": ""
+      },
+      {
+        "revision_id": "baseline_rev_c7cc18f9e18d440382e8eb1d13204cb5",
+        "report_id": "review_report_4f2154c3b46a4fbdbaa2c56f52c2953e",
+        "report_name": "Rule Review Report Smoke",
+        "policy_versions": [
+          "v1"
+        ],
+        "candidate_paths": [
+          "/tmp/asl_replay_rules.json"
+        ],
+        "baseline_paths": [
+          "config/stability_rules.json"
+        ],
+        "report_created_at": "2025-07-20T08:45:41.881697",
+        "changed_at": "2025-07-20T09:27:23.228337",
+        "changed_by": "smoke",
+        "action": "promote",
+        "reasons": [
+          "Promotion policy checks passed."
+        ],
+        "comparison_id": "review_report_compare_69b8b2e4dd464b3d837c2e097cc35434",
+        "comparison_detail_path": "runtime/analysis_review_report_comparisons/review_report_compare_69b8b2e4dd464b3d837c2e097cc35434/report.json",
+        "policy_version": "v1"
+      },
+      {
+        "revision_id": "baseline_rev_7a6cbaf4f7c0410abd50f3b28687a8c5",
+        "report_id": "review_report_f0576b472d83419cb6bfb685a6c6ee7e",
+        "report_name": "Rule Review Summary Smoke",
+        "policy_versions": [
+          "v1"
+        ],
+        "candidate_paths": [
+          "/tmp/asl_replay_rules.json"
+        ],
+        "baseline_paths": [
+          "config/stability_rules.json"
+        ],
+        "report_created_at": "2025-07-20T08:42:55.154533",
+        "changed_at": "2025-07-20T09:27:26.218177",
+        "changed_by": "smoke",
+        "action": "rollback",
+        "reasons": [
+          "Rolled back baseline to report review_report_f0576b472d83419cb6bfb685a6c6ee7e."
+        ],
+        "comparison_id": "",
+        "comparison_detail_path": "",
+        "policy_version": ""
+      },
+      {
+        "revision_id": "baseline_rev_2dba55c840d84d7f9eef167273f7caa6",
+        "report_id": "review_report_4f2154c3b46a4fbdbaa2c56f52c2953e",
+        "report_name": "Rule Review Report Smoke",
+        "policy_versions": [
+          "v1"
+        ],
+        "candidate_paths": [
+          "/tmp/asl_replay_rules.json"
+        ],
+        "baseline_paths": [
+          "config/stability_rules.json"
+        ],
+        "report_created_at": "2025-07-20T08:45:41.881697",
+        "changed_at": "2025-07-20T09:31:53.414910",
+        "changed_by": "smoke_auto",
+        "action": "promote",
+        "reasons": [
+          "Promotion policy checks passed."
+        ],
+        "comparison_id": "review_report_compare_7cf0c7e5ab434fbdb4e4816d35fad6be",
+        "comparison_detail_path": "runtime/analysis_review_report_comparisons/review_report_compare_7cf0c7e5ab434fbdb4e4816d35fad6be/report.json",
+        "policy_version": "v1"
+      }
+    ]
+  },
+  "device_offline_audit_auto_smoke": {
+    "baseline_key": "device_offline_audit_auto_smoke",
+    "report_id": "review_report_f0576b472d83419cb6bfb685a6c6ee7e",
+    "report_name": "Rule Review Summary Smoke",
+    "policy_versions": [
+      "v1"
+    ],
+    "candidate_paths": [
+      "/tmp/asl_replay_rules.json"
+    ],
+    "baseline_paths": [
+      "config/stability_rules.json"
+    ],
+    "report_created_at": "2025-07-20T08:42:55.154533",
+    "created_at": "2025-07-20T09:32:02.178969",
+    "updated_at": "2025-07-20T09:32:08.512041",
+    "updated_by": "smoke_auto",
+    "latest_audit_id": "baseline_audit_latest_device_offline_audit_auto_smoke",
+    "latest_audit_detail_path": "runtime/analysis_review_report_baseline_audits/latest/device_offline_audit_auto_smoke/report.json",
+    "latest_audit_markdown_path": "runtime/analysis_review_report_baseline_audits/latest/device_offline_audit_auto_smoke/summary.md",
+    "latest_audit_html_path": "runtime/analysis_review_report_baseline_audits/latest/device_offline_audit_auto_smoke/report.html",
+    "history": [
+      {
+        "revision_id": "baseline_rev_33911dba61ca41ba8d0da2d0886f588f",
+        "report_id": "review_report_f0576b472d83419cb6bfb685a6c6ee7e",
+        "report_name": "Rule Review Summary Smoke",
+        "policy_versions": [
+          "v1"
+        ],
+        "candidate_paths": [
+          "/tmp/asl_replay_rules.json"
+        ],
+        "baseline_paths": [
+          "config/stability_rules.json"
+        ],
+        "report_created_at": "2025-07-20T08:42:55.154533",
+        "changed_at": "2025-07-20T09:32:02.178969",
+        "changed_by": "smoke_auto",
+        "action": "set",
+        "reasons": [],
+        "comparison_id": "",
+        "comparison_detail_path": "",
+        "policy_version": ""
+      },
+      {
+        "revision_id": "baseline_rev_aef74489a4e748ad91ec394aa7686554",
+        "report_id": "review_report_4f2154c3b46a4fbdbaa2c56f52c2953e",
+        "report_name": "Rule Review Report Smoke",
+        "policy_versions": [
+          "v1"
+        ],
+        "candidate_paths": [
+          "/tmp/asl_replay_rules.json"
+        ],
+        "baseline_paths": [
+          "config/stability_rules.json"
+        ],
+        "report_created_at": "2025-07-20T08:45:41.881697",
+        "changed_at": "2025-07-20T09:32:05.745652",
+        "changed_by": "smoke_auto",
+        "action": "promote",
+        "reasons": [
+          "Promotion policy checks passed."
+        ],
+        "comparison_id": "review_report_compare_0b6bafaf854c475abb9a7f962311b07d",
+        "comparison_detail_path": "runtime/analysis_review_report_comparisons/review_report_compare_0b6bafaf854c475abb9a7f962311b07d/report.json",
+        "policy_version": "v1"
+      },
+      {
+        "revision_id": "baseline_rev_a8731308b44340a9bd1ca716bf944213",
+        "report_id": "review_report_f0576b472d83419cb6bfb685a6c6ee7e",
+        "report_name": "Rule Review Summary Smoke",
+        "policy_versions": [
+          "v1"
+        ],
+        "candidate_paths": [
+          "/tmp/asl_replay_rules.json"
+        ],
+        "baseline_paths": [
+          "config/stability_rules.json"
+        ],
+        "report_created_at": "2025-07-20T08:42:55.154533",
+        "changed_at": "2025-07-20T09:32:08.512041",
+        "changed_by": "smoke_auto",
+        "action": "rollback",
+        "reasons": [
+          "Rolled back baseline to report review_report_f0576b472d83419cb6bfb685a6c6ee7e."
+        ],
+        "comparison_id": "",
+        "comparison_detail_path": "",
+        "policy_version": ""
+      }
+    ]
+  },
+  "device_offline_audit_index_smoke": {
+    "baseline_key": "device_offline_audit_index_smoke",
+    "report_id": "review_report_f0576b472d83419cb6bfb685a6c6ee7e",
+    "report_name": "Rule Review Summary Smoke",
+    "policy_versions": [
+      "v1"
+    ],
+    "candidate_paths": [
+      "/tmp/asl_replay_rules.json"
+    ],
+    "baseline_paths": [
+      "config/stability_rules.json"
+    ],
+    "report_created_at": "2025-07-20T08:42:55.154533",
+    "created_at": "2025-07-20T09:59:07.665004",
+    "updated_at": "2025-07-20T09:59:15.093979",
+    "updated_by": "smoke_index",
+    "latest_audit_id": "baseline_audit_latest_device_offline_audit_index_smoke",
+    "latest_audit_detail_path": "runtime/analysis_review_report_baseline_audits/latest/device_offline_audit_index_smoke/report.json",
+    "latest_audit_markdown_path": "runtime/analysis_review_report_baseline_audits/latest/device_offline_audit_index_smoke/summary.md",
+    "latest_audit_html_path": "runtime/analysis_review_report_baseline_audits/latest/device_offline_audit_index_smoke/report.html",
+    "latest_audit_index_path": "runtime/analysis_review_report_baseline_audits/latest/device_offline_audit_index_smoke/index.json",
+    "latest_audit_version_count": 3,
+    "history": [
+      {
+        "revision_id": "baseline_rev_aacc9ce0d76a41679cbcc7ec1a3995de",
+        "report_id": "review_report_f0576b472d83419cb6bfb685a6c6ee7e",
+        "report_name": "Rule Review Summary Smoke",
+        "policy_versions": [
+          "v1"
+        ],
+        "candidate_paths": [
+          "/tmp/asl_replay_rules.json"
+        ],
+        "baseline_paths": [
+          "config/stability_rules.json"
+        ],
+        "report_created_at": "2025-07-20T08:42:55.154533",
+        "changed_at": "2025-07-20T09:59:07.665004",
+        "changed_by": "smoke_index",
+        "action": "set",
+        "reasons": [],
+        "comparison_id": "",
+        "comparison_detail_path": "",
+        "policy_version": ""
+      },
+      {
+        "revision_id": "baseline_rev_5651727bd55e4e259bc642c1ff768898",
+        "report_id": "review_report_4f2154c3b46a4fbdbaa2c56f52c2953e",
+        "report_name": "Rule Review Report Smoke",
+        "policy_versions": [
+          "v1"
+        ],
+        "candidate_paths": [
+          "/tmp/asl_replay_rules.json"
+        ],
+        "baseline_paths": [
+          "config/stability_rules.json"
+        ],
+        "report_created_at": "2025-07-20T08:45:41.881697",
+        "changed_at": "2025-07-20T09:59:11.682887",
+        "changed_by": "smoke_index",
+        "action": "promote",
+        "reasons": [
+          "Promotion policy checks passed."
+        ],
+        "comparison_id": "review_report_compare_9d090291ec524d80aadcb3686948ae79",
+        "comparison_detail_path": "runtime/analysis_review_report_comparisons/review_report_compare_9d090291ec524d80aadcb3686948ae79/report.json",
+        "policy_version": "v1"
+      },
+      {
+        "revision_id": "baseline_rev_95cfa060e3fe4245baffcde4c7e217c1",
+        "report_id": "review_report_f0576b472d83419cb6bfb685a6c6ee7e",
+        "report_name": "Rule Review Summary Smoke",
+        "policy_versions": [
+          "v1"
+        ],
+        "candidate_paths": [
+          "/tmp/asl_replay_rules.json"
+        ],
+        "baseline_paths": [
+          "config/stability_rules.json"
+        ],
+        "report_created_at": "2025-07-20T08:42:55.154533",
+        "changed_at": "2025-07-20T09:59:15.093979",
+        "changed_by": "smoke_index",
+        "action": "rollback",
+        "reasons": [
+          "Rolled back baseline to report review_report_f0576b472d83419cb6bfb685a6c6ee7e."
+        ],
+        "comparison_id": "",
+        "comparison_detail_path": "",
+        "policy_version": ""
+      }
+    ]
+  },
+  "device_offline_audit_retention_smoke": {
+    "baseline_key": "device_offline_audit_retention_smoke",
+    "report_id": "review_report_f0576b472d83419cb6bfb685a6c6ee7e",
+    "report_name": "Rule Review Summary Smoke",
+    "policy_versions": [
+      "v1"
+    ],
+    "candidate_paths": [
+      "/tmp/asl_replay_rules.json"
+    ],
+    "baseline_paths": [
+      "config/stability_rules.json"
+    ],
+    "report_created_at": "2025-07-20T08:42:55.154533",
+    "created_at": "2025-07-20T10:04:32.505385",
+    "updated_at": "2025-07-20T10:04:35.327194",
+    "updated_by": "smoke_retention",
+    "latest_audit_id": "baseline_audit_latest_device_offline_audit_retention_smoke",
+    "latest_audit_detail_path": "runtime/analysis_review_report_baseline_audits/latest/device_offline_audit_retention_smoke/report.json",
+    "latest_audit_markdown_path": "runtime/analysis_review_report_baseline_audits/latest/device_offline_audit_retention_smoke/summary.md",
+    "latest_audit_html_path": "runtime/analysis_review_report_baseline_audits/latest/device_offline_audit_retention_smoke/report.html",
+    "latest_audit_index_path": "runtime/analysis_review_report_baseline_audits/latest/device_offline_audit_retention_smoke/index.json",
+    "latest_audit_version_count": 10,
+    "history": [
+      {
+        "revision_id": "baseline_rev_94c054965fca4dd68b594ba0bda19e79",
+        "report_id": "review_report_f0576b472d83419cb6bfb685a6c6ee7e",
+        "report_name": "Rule Review Summary Smoke",
+        "policy_versions": [
+          "v1"
+        ],
+        "candidate_paths": [
+          "/tmp/asl_replay_rules.json"
+        ],
+        "baseline_paths": [
+          "config/stability_rules.json"
+        ],
+        "report_created_at": "2025-07-20T08:42:55.154533",
+        "changed_at": "2025-07-20T10:04:32.505385",
+        "changed_by": "smoke_retention",
+        "action": "set",
+        "reasons": [],
+        "comparison_id": "",
+        "comparison_detail_path": "",
+        "policy_version": ""
+      },
+      {
+        "revision_id": "baseline_rev_238faab5ce9d4fda87ec86f080826eb3",
+        "report_id": "review_report_4f2154c3b46a4fbdbaa2c56f52c2953e",
+        "report_name": "Rule Review Report Smoke",
+        "policy_versions": [
+          "v1"
+        ],
+        "candidate_paths": [
+          "/tmp/asl_replay_rules.json"
+        ],
+        "baseline_paths": [
+          "config/stability_rules.json"
+        ],
+        "report_created_at": "2025-07-20T08:45:41.881697",
+        "changed_at": "2025-07-20T10:04:32.808507",
+        "changed_by": "smoke_retention",
+        "action": "promote",
+        "reasons": [
+          "Promotion policy checks passed."
+        ],
+        "comparison_id": "review_report_compare_4923ddce80cb411c9010c4ac52a7667c",
+        "comparison_detail_path": "runtime/analysis_review_report_comparisons/review_report_compare_4923ddce80cb411c9010c4ac52a7667c/report.json",
+        "policy_version": "v1"
+      },
+      {
+        "revision_id": "baseline_rev_e23c48c7ca9743c3be53c08dd8add20d",
+        "report_id": "review_report_f0576b472d83419cb6bfb685a6c6ee7e",
+        "report_name": "Rule Review Summary Smoke",
+        "policy_versions": [
+          "v1"
+        ],
+        "candidate_paths": [
+          "/tmp/asl_replay_rules.json"
+        ],
+        "baseline_paths": [
+          "config/stability_rules.json"
+        ],
+        "report_created_at": "2025-07-20T08:42:55.154533",
+        "changed_at": "2025-07-20T10:04:33.087884",
+        "changed_by": "smoke_retention",
+        "action": "set",
+        "reasons": [],
+        "comparison_id": "",
+        "comparison_detail_path": "",
+        "policy_version": ""
+      },
+      {
+        "revision_id": "baseline_rev_d19c93b6d035405b832ca2415a66c97b",
+        "report_id": "review_report_4f2154c3b46a4fbdbaa2c56f52c2953e",
+        "report_name": "Rule Review Report Smoke",
+        "policy_versions": [
+          "v1"
+        ],
+        "candidate_paths": [
+          "/tmp/asl_replay_rules.json"
+        ],
+        "baseline_paths": [
+          "config/stability_rules.json"
+        ],
+        "report_created_at": "2025-07-20T08:45:41.881697",
+        "changed_at": "2025-07-20T10:04:33.363819",
+        "changed_by": "smoke_retention",
+        "action": "set",
+        "reasons": [],
+        "comparison_id": "",
+        "comparison_detail_path": "",
+        "policy_version": ""
+      },
+      {
+        "revision_id": "baseline_rev_b876ff47bfa14d29a4dea4438d63bdf5",
+        "report_id": "review_report_f0576b472d83419cb6bfb685a6c6ee7e",
+        "report_name": "Rule Review Summary Smoke",
+        "policy_versions": [
+          "v1"
+        ],
+        "candidate_paths": [
+          "/tmp/asl_replay_rules.json"
+        ],
+        "baseline_paths": [
+          "config/stability_rules.json"
+        ],
+        "report_created_at": "2025-07-20T08:42:55.154533",
+        "changed_at": "2025-07-20T10:04:33.641279",
+        "changed_by": "smoke_retention",
+        "action": "set",
+        "reasons": [],
+        "comparison_id": "",
+        "comparison_detail_path": "",
+        "policy_version": ""
+      },
+      {
+        "revision_id": "baseline_rev_c008df4dd6b943579f738ad48421256f",
+        "report_id": "review_report_4f2154c3b46a4fbdbaa2c56f52c2953e",
+        "report_name": "Rule Review Report Smoke",
+        "policy_versions": [
+          "v1"
+        ],
+        "candidate_paths": [
+          "/tmp/asl_replay_rules.json"
+        ],
+        "baseline_paths": [
+          "config/stability_rules.json"
+        ],
+        "report_created_at": "2025-07-20T08:45:41.881697",
+        "changed_at": "2025-07-20T10:04:33.911484",
+        "changed_by": "smoke_retention",
+        "action": "set",
+        "reasons": [],
+        "comparison_id": "",
+        "comparison_detail_path": "",
+        "policy_version": ""
+      },
+      {
+        "revision_id": "baseline_rev_20844dd0fae1492ab30507e278980242",
+        "report_id": "review_report_f0576b472d83419cb6bfb685a6c6ee7e",
+        "report_name": "Rule Review Summary Smoke",
+        "policy_versions": [
+          "v1"
+        ],
+        "candidate_paths": [
+          "/tmp/asl_replay_rules.json"
+        ],
+        "baseline_paths": [
+          "config/stability_rules.json"
+        ],
+        "report_created_at": "2025-07-20T08:42:55.154533",
+        "changed_at": "2025-07-20T10:04:34.191041",
+        "changed_by": "smoke_retention",
+        "action": "set",
+        "reasons": [],
+        "comparison_id": "",
+        "comparison_detail_path": "",
+        "policy_version": ""
+      },
+      {
+        "revision_id": "baseline_rev_fd39a76db17d4ba694d16a08d30d229c",
+        "report_id": "review_report_4f2154c3b46a4fbdbaa2c56f52c2953e",
+        "report_name": "Rule Review Report Smoke",
+        "policy_versions": [
+          "v1"
+        ],
+        "candidate_paths": [
+          "/tmp/asl_replay_rules.json"
+        ],
+        "baseline_paths": [
+          "config/stability_rules.json"
+        ],
+        "report_created_at": "2025-07-20T08:45:41.881697",
+        "changed_at": "2025-07-20T10:04:34.473610",
+        "changed_by": "smoke_retention",
+        "action": "set",
+        "reasons": [],
+        "comparison_id": "",
+        "comparison_detail_path": "",
+        "policy_version": ""
+      },
+      {
+        "revision_id": "baseline_rev_064309783d4141c1ae12f74a17ee0b22",
+        "report_id": "review_report_f0576b472d83419cb6bfb685a6c6ee7e",
+        "report_name": "Rule Review Summary Smoke",
+        "policy_versions": [
+          "v1"
+        ],
+        "candidate_paths": [
+          "/tmp/asl_replay_rules.json"
+        ],
+        "baseline_paths": [
+          "config/stability_rules.json"
+        ],
+        "report_created_at": "2025-07-20T08:42:55.154533",
+        "changed_at": "2025-07-20T10:04:34.766387",
+        "changed_by": "smoke_retention",
+        "action": "set",
+        "reasons": [],
+        "comparison_id": "",
+        "comparison_detail_path": "",
+        "policy_version": ""
+      },
+      {
+        "revision_id": "baseline_rev_40bdf3f5f4704aaeb87dcd94543fa886",
+        "report_id": "review_report_4f2154c3b46a4fbdbaa2c56f52c2953e",
+        "report_name": "Rule Review Report Smoke",
+        "policy_versions": [
+          "v1"
+        ],
+        "candidate_paths": [
+          "/tmp/asl_replay_rules.json"
+        ],
+        "baseline_paths": [
+          "config/stability_rules.json"
+        ],
+        "report_created_at": "2025-07-20T08:45:41.881697",
+        "changed_at": "2025-07-20T10:04:35.047822",
+        "changed_by": "smoke_retention",
+        "action": "set",
+        "reasons": [],
+        "comparison_id": "",
+        "comparison_detail_path": "",
+        "policy_version": ""
+      },
+      {
+        "revision_id": "baseline_rev_48ee4dc941354e27bcf4cf38ed5ca3b4",
+        "report_id": "review_report_f0576b472d83419cb6bfb685a6c6ee7e",
+        "report_name": "Rule Review Summary Smoke",
+        "policy_versions": [
+          "v1"
+        ],
+        "candidate_paths": [
+          "/tmp/asl_replay_rules.json"
+        ],
+        "baseline_paths": [
+          "config/stability_rules.json"
+        ],
+        "report_created_at": "2025-07-20T08:42:55.154533",
+        "changed_at": "2025-07-20T10:04:35.327194",
+        "changed_by": "smoke_retention",
+        "action": "set",
+        "reasons": [],
+        "comparison_id": "",
+        "comparison_detail_path": "",
+        "policy_version": ""
+      }
+    ]
+  },
+  "golden_suite_visibility_smoke": {
+    "baseline_key": "golden_suite_visibility_smoke",
+    "report_id": "review_report_22b7346274fd43009b876c39715355e9",
+    "report_name": "Golden Suite Review Report Smoke",
+    "policy_versions": [
+      "v1"
+    ],
+    "candidate_paths": [
+      "/tmp/asl_replay_rules.json"
+    ],
+    "baseline_paths": [
+      "config/stability_rules.json"
+    ],
+    "report_created_at": "2025-07-21T07:21:46.733212",
+    "created_at": "2025-07-21T07:21:46.736805",
+    "updated_at": "2025-07-21T07:29:41.603979",
+    "updated_by": "cli",
+    "latest_audit_id": "baseline_audit_latest_golden_suite_visibility_smoke",
+    "latest_audit_detail_path": "runtime/analysis_review_report_baseline_audits/latest/golden_suite_visibility_smoke/report.json",
+    "latest_audit_markdown_path": "runtime/analysis_review_report_baseline_audits/latest/golden_suite_visibility_smoke/summary.md",
+    "latest_audit_html_path": "runtime/analysis_review_report_baseline_audits/latest/golden_suite_visibility_smoke/report.html",
+    "latest_audit_index_path": "runtime/analysis_review_report_baseline_audits/latest/golden_suite_visibility_smoke/index.json",
+    "latest_audit_version_count": 2,
+    "history": [
+      {
+        "revision_id": "baseline_rev_5fdb5dc3e2bb4ce69bf4df0b096a2575",
+        "report_id": "review_report_4f2154c3b46a4fbdbaa2c56f52c2953e",
+        "report_name": "Rule Review Report Smoke",
+        "policy_versions": [
+          "v1"
+        ],
+        "candidate_paths": [
+          "/tmp/asl_replay_rules.json"
+        ],
+        "baseline_paths": [
+          "config/stability_rules.json"
+        ],
+        "report_created_at": "2025-07-20T08:45:41.881697",
+        "changed_at": "2025-07-21T07:21:46.736805",
+        "changed_by": "cli",
+        "action": "set",
+        "reasons": [],
+        "comparison_id": "",
+        "comparison_detail_path": "",
+        "policy_version": ""
+      },
+      {
+        "revision_id": "baseline_rev_cb44502b348f41409ce1e07322e0e636",
+        "report_id": "review_report_22b7346274fd43009b876c39715355e9",
+        "report_name": "Golden Suite Review Report Smoke",
+        "policy_versions": [
+          "v1"
+        ],
+        "candidate_paths": [
+          "/tmp/asl_replay_rules.json"
+        ],
+        "baseline_paths": [
+          "config/stability_rules.json"
+        ],
+        "report_created_at": "2025-07-21T07:21:46.733212",
+        "changed_at": "2025-07-21T07:21:54.671795",
+        "changed_by": "cli",
+        "action": "promote",
+        "reasons": [
+          "Promotion policy checks passed."
+        ],
+        "comparison_id": "review_report_compare_ad1f750765d04bfe83073f2481309566",
+        "comparison_detail_path": "runtime/analysis_review_report_comparisons/review_report_compare_ad1f750765d04bfe83073f2481309566/report.json",
+        "policy_version": "v1"
+      }
+    ]
+  }
+}

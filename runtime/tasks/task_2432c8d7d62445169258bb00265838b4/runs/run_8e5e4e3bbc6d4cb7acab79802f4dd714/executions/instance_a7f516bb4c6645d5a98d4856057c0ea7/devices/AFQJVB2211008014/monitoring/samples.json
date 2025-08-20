@@ -1,0 +1,2334 @@
+[
+  {
+    "timestamp": "2025-07-26T10:11:24.520927",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 11.0,
+      "cpu_user": 7.0,
+      "cpu_breakdown": {
+        "total": 11.0,
+        "user": 7.0,
+        "kernel": 4.5,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3219.09,
+      "memory_usage_percent": 43.53,
+      "memory_percent": 43.53,
+      "memory_system_used": 2481.05,
+      "battery_level": 100.0,
+      "network_rx_total": 6917.73,
+      "network_tx_total": 3302.09,
+      "network": 0.0,
+      "network_rx": 0.0,
+      "network_tx": 0.0,
+      "load_1min": 23.89,
+      "load_5min": 23.81,
+      "load_15min": 23.81
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 2.0,
+        "memory_pss": 46.61,
+        "memory_java": 8.54,
+        "memory_native": 5.13,
+        "frame_count": 285.0,
+        "jank_frames": 74.0,
+        "jank_percent": 25.96,
+        "gpu_p50_ms": 3.0,
+        "gpu_p90_ms": 4.0,
+        "gpu_p95_ms": 5.0,
+        "gpu_p99_ms": 8.0,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 1.5,
+        "top_memory_res_kb": 91136.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "legacy_adb"
+    }
+  },
+  {
+    "timestamp": "2025-07-26T10:11:30.810072",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 11.0,
+      "cpu_user": 7.0,
+      "cpu_breakdown": {
+        "total": 11.0,
+        "user": 7.0,
+        "kernel": 4.5,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3417.09,
+      "memory_usage_percent": 40.05,
+      "memory_percent": 40.05,
+      "memory_system_used": 2283.06,
+      "battery_level": 100.0,
+      "network_rx_total": 6917.73,
+      "network_tx_total": 3302.09,
+      "network_rx": 0,
+      "network_tx": 0,
+      "network": 0,
+      "load_1min": 23.89,
+      "load_5min": 23.81,
+      "load_15min": 23.81
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 2.0,
+        "memory_pss": 46.17,
+        "memory_java": 8.38,
+        "memory_native": 5.14,
+        "frame_count": 285.0,
+        "jank_frames": 74.0,
+        "jank_percent": 25.96,
+        "gpu_p50_ms": 3.0,
+        "gpu_p90_ms": 4.0,
+        "gpu_p95_ms": 5.0,
+        "gpu_p99_ms": 8.0,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 1.5,
+        "top_memory_res_kb": 90112.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "legacy_adb"
+    }
+  },
+  {
+    "timestamp": "2025-07-26T10:11:37.058527",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 11.0,
+      "cpu_user": 7.0,
+      "cpu_breakdown": {
+        "total": 11.0,
+        "user": 7.0,
+        "kernel": 4.5,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3414.72,
+      "memory_usage_percent": 40.09,
+      "memory_percent": 40.09,
+      "memory_system_used": 2285.43,
+      "battery_level": 100.0,
+      "network_rx_total": 6917.73,
+      "network_tx_total": 3302.09,
+      "network_rx": 0,
+      "network_tx": 0,
+      "network": 0,
+      "load_1min": 23.89,
+      "load_5min": 23.81,
+      "load_15min": 23.81
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 2.0,
+        "memory_pss": 46.2,
+        "memory_java": 8.41,
+        "memory_native": 5.14,
+        "frame_count": 285.0,
+        "jank_frames": 74.0,
+        "jank_percent": 25.96,
+        "gpu_p50_ms": 3.0,
+        "gpu_p90_ms": 4.0,
+        "gpu_p95_ms": 5.0,
+        "gpu_p99_ms": 8.0,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 1.5,
+        "top_memory_res_kb": 90112.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "legacy_adb"
+    }
+  },
+  {
+    "timestamp": "2025-07-26T10:11:43.764899",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 11.0,
+      "cpu_user": 7.0,
+      "cpu_breakdown": {
+        "total": 11.0,
+        "user": 7.0,
+        "kernel": 4.5,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3352.39,
+      "memory_usage_percent": 41.19,
+      "memory_percent": 41.19,
+      "memory_system_used": 2347.75,
+      "battery_level": 100.0,
+      "network_rx_total": 6917.73,
+      "network_tx_total": 3302.09,
+      "network_rx": 0,
+      "network_tx": 0,
+      "network": 0,
+      "load_1min": 23.89,
+      "load_5min": 23.81,
+      "load_15min": 23.81
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 2.0,
+        "memory_pss": 40.54,
+        "memory_java": 8.46,
+        "memory_native": 5.02,
+        "frame_count": 286.0,
+        "jank_frames": 74.0,
+        "jank_percent": 25.87,
+        "gpu_p50_ms": 3.0,
+        "gpu_p90_ms": 4.0,
+        "gpu_p95_ms": 5.0,
+        "gpu_p99_ms": 8.0,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 1.4,
+        "top_memory_res_kb": 84992.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "legacy_adb"
+    }
+  },
+  {
+    "timestamp": "2025-07-26T10:11:54.231528",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 11.0,
+      "cpu_user": 7.0,
+      "cpu_breakdown": {
+        "total": 11.0,
+        "user": 7.0,
+        "kernel": 4.5,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3362.79,
+      "memory_usage_percent": 41.01,
+      "memory_percent": 41.01,
+      "memory_system_used": 2337.36,
+      "battery_level": 100.0,
+      "network_rx_total": 6917.73,
+      "network_tx_total": 3302.09,
+      "network_rx": 0,
+      "network_tx": 0,
+      "network": 0,
+      "load_1min": 23.89,
+      "load_5min": 23.81,
+      "load_15min": 23.81
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 2.0,
+        "memory_pss": 35.56,
+        "memory_java": 0.08,
+        "memory_native": 0.05,
+        "frame_count": 286.0,
+        "jank_frames": 74.0,
+        "jank_percent": 25.87,
+        "gpu_p50_ms": 3.0,
+        "gpu_p90_ms": 4.0,
+        "gpu_p95_ms": 5.0,
+        "gpu_p99_ms": 8.0,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 0.9,
+        "top_memory_res_kb": 56320.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "legacy_adb"
+    }
+  },
+  {
+    "timestamp": "2025-07-26T10:12:00.765978",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 11.0,
+      "cpu_user": 7.0,
+      "cpu_breakdown": {
+        "total": 11.0,
+        "user": 7.0,
+        "kernel": 4.5,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3403.41,
+      "memory_usage_percent": 40.29,
+      "memory_percent": 40.29,
+      "memory_system_used": 2296.73,
+      "battery_level": 100.0,
+      "network_rx_total": 6935.46,
+      "network_tx_total": 3312.22,
+      "network_rx": 1.68,
+      "network_tx": 0.96,
+      "network": 2.64,
+      "load_1min": 23.74,
+      "load_5min": 23.78,
+      "load_15min": 23.8
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 2.0,
+        "memory_pss": 46.31,
+        "memory_java": 8.52,
+        "memory_native": 5.1,
+        "frame_count": 289.0,
+        "jank_frames": 75.0,
+        "jank_percent": 25.95,
+        "gpu_p50_ms": 3.0,
+        "gpu_p90_ms": 4.0,
+        "gpu_p95_ms": 5.0,
+        "gpu_p99_ms": 8.0,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 1.5,
+        "top_memory_res_kb": 90112.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "legacy_adb"
+    }
+  },
+  {
+    "timestamp": "2025-07-26T10:12:07.069527",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 11.0,
+      "cpu_user": 7.0,
+      "cpu_breakdown": {
+        "total": 11.0,
+        "user": 7.0,
+        "kernel": 4.5,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3425.44,
+      "memory_usage_percent": 39.91,
+      "memory_percent": 39.91,
+      "memory_system_used": 2274.71,
+      "battery_level": 100.0,
+      "network_rx_total": 6935.46,
+      "network_tx_total": 3312.22,
+      "network_rx": 0,
+      "network_tx": 0,
+      "network": 0,
+      "load_1min": 23.74,
+      "load_5min": 23.78,
+      "load_15min": 23.8
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 2.0,
+        "memory_pss": 46.2,
+        "memory_java": 8.41,
+        "memory_native": 5.11,
+        "frame_count": 289.0,
+        "jank_frames": 75.0,
+        "jank_percent": 25.95,
+        "gpu_p50_ms": 3.0,
+        "gpu_p90_ms": 4.0,
+        "gpu_p95_ms": 5.0,
+        "gpu_p99_ms": 8.0,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 1.5,
+        "top_memory_res_kb": 90112.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "legacy_adb"
+    }
+  },
+  {
+    "timestamp": "2025-07-26T10:12:13.384203",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 11.0,
+      "cpu_user": 6.7,
+      "cpu_breakdown": {
+        "total": 11.0,
+        "user": 6.7,
+        "kernel": 4.5,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3355.82,
+      "memory_usage_percent": 41.13,
+      "memory_percent": 41.13,
+      "memory_system_used": 2344.32,
+      "battery_level": 100.0,
+      "network_rx_total": 6935.46,
+      "network_tx_total": 3312.22,
+      "network_rx": 0,
+      "network_tx": 0,
+      "network": 0,
+      "load_1min": 23.74,
+      "load_5min": 23.78,
+      "load_15min": 23.8
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 1.8,
+        "memory_pss": 40.58,
+        "memory_java": 8.44,
+        "memory_native": 5.04,
+        "frame_count": 290.0,
+        "jank_frames": 75.0,
+        "jank_percent": 25.86,
+        "gpu_p50_ms": 3.0,
+        "gpu_p90_ms": 4.0,
+        "gpu_p95_ms": 5.0,
+        "gpu_p99_ms": 8.0,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 1.5,
+        "top_memory_res_kb": 90112.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "legacy_adb"
+    }
+  },
+  {
+    "timestamp": "2025-07-26T10:12:24.390475",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 11.0,
+      "cpu_user": 6.7,
+      "cpu_breakdown": {
+        "total": 11.0,
+        "user": 6.7,
+        "kernel": 4.5,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3363.49,
+      "memory_usage_percent": 40.99,
+      "memory_percent": 40.99,
+      "memory_system_used": 2336.66,
+      "battery_level": 100.0,
+      "network_rx_total": 6935.46,
+      "network_tx_total": 3312.22,
+      "network_rx": 0,
+      "network_tx": 0,
+      "network": 0,
+      "load_1min": 23.74,
+      "load_5min": 23.78,
+      "load_15min": 23.8
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 1.8,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 0.9,
+        "top_memory_res_kb": 56320.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "legacy_adb"
+    }
+  },
+  {
+    "timestamp": "2025-07-26T10:12:30.711686",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 12.0,
+      "cpu_user": 6.8,
+      "cpu_breakdown": {
+        "total": 12.0,
+        "user": 6.8,
+        "kernel": 5.4,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3403.34,
+      "memory_usage_percent": 40.29,
+      "memory_percent": 40.29,
+      "memory_system_used": 2296.81,
+      "battery_level": 100.0,
+      "network_rx_total": 6958.79,
+      "network_tx_total": 3320.87,
+      "network_rx": 2.09,
+      "network_tx": 0.78,
+      "network": 2.87,
+      "load_1min": 23.26,
+      "load_5min": 23.66,
+      "load_15min": 23.76
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 2.4,
+        "memory_pss": 46.29,
+        "memory_java": 8.53,
+        "memory_native": 5.11,
+        "frame_count": 293.0,
+        "jank_frames": 76.0,
+        "jank_percent": 25.94,
+        "gpu_p50_ms": 3.0,
+        "gpu_p90_ms": 4.0,
+        "gpu_p95_ms": 5.0,
+        "gpu_p99_ms": 8.0,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 1.5,
+        "top_memory_res_kb": 90112.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "legacy_adb"
+    }
+  },
+  {
+    "timestamp": "2025-07-26T10:12:37.033425",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 12.0,
+      "cpu_user": 6.8,
+      "cpu_breakdown": {
+        "total": 12.0,
+        "user": 6.8,
+        "kernel": 5.4,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3419.26,
+      "memory_usage_percent": 40.01,
+      "memory_percent": 40.01,
+      "memory_system_used": 2280.89,
+      "battery_level": 100.0,
+      "network_rx_total": 6958.79,
+      "network_tx_total": 3320.87,
+      "network_rx": 0,
+      "network_tx": 0,
+      "network": 0,
+      "load_1min": 23.26,
+      "load_5min": 23.66,
+      "load_15min": 23.76
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 1.3,
+        "memory_pss": 46.18,
+        "memory_java": 8.41,
+        "memory_native": 5.11,
+        "frame_count": 293.0,
+        "jank_frames": 76.0,
+        "jank_percent": 25.94,
+        "gpu_p50_ms": 3.0,
+        "gpu_p90_ms": 4.0,
+        "gpu_p95_ms": 5.0,
+        "gpu_p99_ms": 8.0,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 1.5,
+        "top_memory_res_kb": 90112.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "legacy_adb"
+    }
+  },
+  {
+    "timestamp": "2025-07-26T10:12:43.272977",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 11.0,
+      "cpu_user": 6.6,
+      "cpu_breakdown": {
+        "total": 11.0,
+        "user": 6.6,
+        "kernel": 4.9,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3342.1,
+      "memory_usage_percent": 41.37,
+      "memory_percent": 41.37,
+      "memory_system_used": 2358.05,
+      "battery_level": 100.0,
+      "network_rx_total": 6958.79,
+      "network_tx_total": 3320.87,
+      "network_rx": 0,
+      "network_tx": 0,
+      "network": 0,
+      "load_1min": 23.26,
+      "load_5min": 23.66,
+      "load_15min": 23.76
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 1.3,
+        "memory_pss": 45.54,
+        "memory_java": 8.44,
+        "memory_native": 5.04,
+        "frame_count": 294.0,
+        "jank_frames": 76.0,
+        "jank_percent": 25.85,
+        "gpu_p50_ms": 3.0,
+        "gpu_p90_ms": 4.0,
+        "gpu_p95_ms": 5.0,
+        "gpu_p99_ms": 8.0,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 1.5,
+        "top_memory_res_kb": 90112.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "legacy_adb"
+    }
+  },
+  {
+    "timestamp": "2025-07-26T10:12:54.393715",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 15.0,
+      "cpu_user": 8.9,
+      "cpu_breakdown": {
+        "total": 15.0,
+        "user": 8.9,
+        "kernel": 6.2,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3351.64,
+      "memory_usage_percent": 41.2,
+      "memory_percent": 41.2,
+      "memory_system_used": 2348.51,
+      "battery_level": 100.0,
+      "network_rx_total": 6958.79,
+      "network_tx_total": 3320.87,
+      "network_rx": 0,
+      "network_tx": 0,
+      "network": 0,
+      "load_1min": 23.26,
+      "load_5min": 23.66,
+      "load_15min": 23.76
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 3.7,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 0.9,
+        "top_memory_res_kb": 56320.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "legacy_adb"
+    }
+  },
+  {
+    "timestamp": "2025-07-26T10:13:00.636767",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 10.0,
+      "cpu_user": 6.2,
+      "cpu_breakdown": {
+        "total": 10.0,
+        "user": 6.2,
+        "kernel": 4.3,
+        "iowait": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3398.63,
+      "memory_usage_percent": 40.38,
+      "memory_percent": 40.38,
+      "memory_system_used": 2301.52,
+      "battery_level": 100.0,
+      "network_rx_total": 6958.79,
+      "network_tx_total": 3320.87,
+      "network_rx": 0,
+      "network_tx": 0,
+      "network": 0,
+      "load_1min": 23.26,
+      "load_5min": 23.66,
+      "load_15min": 23.76
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 2.1,
+        "memory_pss": 46.28,
+        "memory_java": 8.49,
+        "memory_native": 5.16,
+        "frame_count": 297.0,
+        "jank_frames": 77.0,
+        "jank_percent": 25.93,
+        "gpu_p50_ms": 3.0,
+        "gpu_p90_ms": 4.0,
+        "gpu_p95_ms": 5.0,
+        "gpu_p99_ms": 8.0,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 1.5,
+        "top_memory_res_kb": 90112.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "legacy_adb"
+    }
+  },
+  {
+    "timestamp": "2025-07-26T10:13:07.111291",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 10.0,
+      "cpu_user": 5.9,
+      "cpu_breakdown": {
+        "total": 10.0,
+        "user": 5.9,
+        "kernel": 4.7,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3395.44,
+      "memory_usage_percent": 40.43,
+      "memory_percent": 40.43,
+      "memory_system_used": 2304.71,
+      "battery_level": 100.0,
+      "network_rx_total": 6977.65,
+      "network_tx_total": 3329.89,
+      "network_rx": 2.96,
+      "network_tx": 1.42,
+      "network": 4.38,
+      "load_1min": 23.02,
+      "load_5min": 23.55,
+      "load_15min": 23.71
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 2.1,
+        "memory_pss": 46.17,
+        "memory_java": 8.38,
+        "memory_native": 5.17,
+        "frame_count": 297.0,
+        "jank_frames": 77.0,
+        "jank_percent": 25.93,
+        "gpu_p50_ms": 3.0,
+        "gpu_p90_ms": 4.0,
+        "gpu_p95_ms": 5.0,
+        "gpu_p99_ms": 8.0,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 1.5,
+        "top_memory_res_kb": 90112.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "legacy_adb"
+    }
+  },
+  {
+    "timestamp": "2025-07-26T10:13:13.288951",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 12.0,
+      "cpu_user": 6.8,
+      "cpu_breakdown": {
+        "total": 12.0,
+        "user": 6.8,
+        "kernel": 5.3,
+        "iowait": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3336.0,
+      "memory_usage_percent": 41.48,
+      "memory_percent": 41.48,
+      "memory_system_used": 2364.14,
+      "battery_level": 100.0,
+      "network_rx_total": 6977.65,
+      "network_tx_total": 3329.89,
+      "network_rx": 0,
+      "network_tx": 0,
+      "network": 0,
+      "load_1min": 23.02,
+      "load_5min": 23.55,
+      "load_15min": 23.71
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 2.3,
+        "memory_pss": 45.65,
+        "memory_java": 8.44,
+        "memory_native": 5.15,
+        "frame_count": 298.0,
+        "jank_frames": 77.0,
+        "jank_percent": 25.84,
+        "gpu_p50_ms": 3.0,
+        "gpu_p90_ms": 4.0,
+        "gpu_p95_ms": 5.0,
+        "gpu_p99_ms": 8.0,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 1.5,
+        "top_memory_res_kb": 90112.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "legacy_adb"
+    }
+  },
+  {
+    "timestamp": "2025-07-26T10:13:24.352159",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 17.0,
+      "cpu_user": 10.0,
+      "cpu_breakdown": {
+        "total": 17.0,
+        "user": 10.0,
+        "kernel": 7.4,
+        "iowait": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3350.02,
+      "memory_usage_percent": 41.23,
+      "memory_percent": 41.23,
+      "memory_system_used": 2350.13,
+      "battery_level": 100.0,
+      "network_rx_total": 6977.65,
+      "network_tx_total": 3329.89,
+      "network_rx": 0,
+      "network_tx": 0,
+      "network": 0,
+      "load_1min": 23.02,
+      "load_5min": 23.55,
+      "load_15min": 23.71
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 3.5,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 0.9,
+        "top_memory_res_kb": 56320.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "legacy_adb"
+    }
+  },
+  {
+    "timestamp": "2025-07-26T10:13:30.751541",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 9.3,
+      "cpu_user": 5.5,
+      "cpu_breakdown": {
+        "total": 9.3,
+        "user": 5.5,
+        "kernel": 3.7,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3391.04,
+      "memory_usage_percent": 40.51,
+      "memory_percent": 40.51,
+      "memory_system_used": 2309.11,
+      "battery_level": 100.0,
+      "network_rx_total": 6977.65,
+      "network_tx_total": 3329.89,
+      "network_rx": 0,
+      "network_tx": 0,
+      "network": 0,
+      "load_1min": 23.02,
+      "load_5min": 23.55,
+      "load_15min": 23.71
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 2.1,
+        "memory_pss": 46.26,
+        "memory_java": 8.48,
+        "memory_native": 5.14,
+        "frame_count": 301.0,
+        "jank_frames": 78.0,
+        "jank_percent": 25.91,
+        "gpu_p50_ms": 3.0,
+        "gpu_p90_ms": 4.0,
+        "gpu_p95_ms": 5.0,
+        "gpu_p99_ms": 7.0,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 1.5,
+        "top_memory_res_kb": 90112.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "legacy_adb"
+    }
+  },
+  {
+    "timestamp": "2025-07-26T10:13:37.211896",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 9.3,
+      "cpu_user": 5.5,
+      "cpu_breakdown": {
+        "total": 9.3,
+        "user": 5.5,
+        "kernel": 3.7,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3388.07,
+      "memory_usage_percent": 40.56,
+      "memory_percent": 40.56,
+      "memory_system_used": 2312.07,
+      "battery_level": 100.0,
+      "network_rx_total": 6993.15,
+      "network_tx_total": 3339.62,
+      "network_rx": 2.38,
+      "network_tx": 1.49,
+      "network": 3.87,
+      "load_1min": 23.35,
+      "load_5min": 23.58,
+      "load_15min": 23.72
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 2.1,
+        "memory_pss": 46.16,
+        "memory_java": 8.38,
+        "memory_native": 5.16,
+        "frame_count": 301.0,
+        "jank_frames": 78.0,
+        "jank_percent": 25.91,
+        "gpu_p50_ms": 3.0,
+        "gpu_p90_ms": 4.0,
+        "gpu_p95_ms": 5.0,
+        "gpu_p99_ms": 7.0,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 1.5,
+        "top_memory_res_kb": 90112.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "legacy_adb"
+    }
+  },
+  {
+    "timestamp": "2025-07-26T10:13:43.477128",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 9.3,
+      "cpu_user": 5.5,
+      "cpu_breakdown": {
+        "total": 9.3,
+        "user": 5.5,
+        "kernel": 3.7,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3332.97,
+      "memory_usage_percent": 41.53,
+      "memory_percent": 41.53,
+      "memory_system_used": 2367.18,
+      "battery_level": 100.0,
+      "network_rx_total": 6993.15,
+      "network_tx_total": 3339.62,
+      "network_rx": 0,
+      "network_tx": 0,
+      "network": 0,
+      "load_1min": 23.35,
+      "load_5min": 23.58,
+      "load_15min": 23.72
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 2.1,
+        "memory_pss": 45.7,
+        "memory_java": 8.47,
+        "memory_native": 5.18,
+        "frame_count": 302.0,
+        "jank_frames": 78.0,
+        "jank_percent": 25.83,
+        "gpu_p50_ms": 3.0,
+        "gpu_p90_ms": 4.0,
+        "gpu_p95_ms": 5.0,
+        "gpu_p99_ms": 7.0,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 1.5,
+        "top_memory_res_kb": 90112.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "legacy_adb"
+    }
+  },
+  {
+    "timestamp": "2025-07-26T10:13:54.532150",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 9.3,
+      "cpu_user": 5.5,
+      "cpu_breakdown": {
+        "total": 9.3,
+        "user": 5.5,
+        "kernel": 3.7,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3343.55,
+      "memory_usage_percent": 41.34,
+      "memory_percent": 41.34,
+      "memory_system_used": 2356.6,
+      "battery_level": 100.0,
+      "network_rx_total": 6993.15,
+      "network_tx_total": 3339.62,
+      "network_rx": 0,
+      "network_tx": 0,
+      "network": 0,
+      "load_1min": 23.35,
+      "load_5min": 23.58,
+      "load_15min": 23.72
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 2.1,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 0.9,
+        "top_memory_res_kb": 56320.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "legacy_adb"
+    }
+  },
+  {
+    "timestamp": "2025-07-26T10:14:00.831469",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 9.3,
+      "cpu_user": 5.5,
+      "cpu_breakdown": {
+        "total": 9.3,
+        "user": 5.5,
+        "kernel": 3.7,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3386.76,
+      "memory_usage_percent": 40.58,
+      "memory_percent": 40.58,
+      "memory_system_used": 2313.39,
+      "battery_level": 100.0,
+      "network_rx_total": 6993.15,
+      "network_tx_total": 3339.62,
+      "network_rx": 0,
+      "network_tx": 0,
+      "network": 0,
+      "load_1min": 23.35,
+      "load_5min": 23.58,
+      "load_15min": 23.72
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 2.1,
+        "memory_pss": 46.1,
+        "memory_java": 8.57,
+        "memory_native": 5.11,
+        "frame_count": 305.0,
+        "jank_frames": 79.0,
+        "jank_percent": 25.9,
+        "gpu_p50_ms": 3.0,
+        "gpu_p90_ms": 4.0,
+        "gpu_p95_ms": 5.0,
+        "gpu_p99_ms": 7.0,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 1.5,
+        "top_memory_res_kb": 91136.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "legacy_adb"
+    }
+  },
+  {
+    "timestamp": "2025-07-26T10:14:07.154346",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 9.3,
+      "cpu_user": 5.5,
+      "cpu_breakdown": {
+        "total": 9.3,
+        "user": 5.5,
+        "kernel": 3.7,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3381.3,
+      "memory_usage_percent": 40.68,
+      "memory_percent": 40.68,
+      "memory_system_used": 2318.85,
+      "battery_level": 100.0,
+      "network_rx_total": 7005.1,
+      "network_tx_total": 3346.46,
+      "network_rx": 1.86,
+      "network_tx": 1.07,
+      "network": 2.93,
+      "load_1min": 23.41,
+      "load_5min": 23.57,
+      "load_15min": 23.71
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 2.1,
+        "memory_pss": 45.93,
+        "memory_java": 8.39,
+        "memory_native": 5.11,
+        "frame_count": 305.0,
+        "jank_frames": 79.0,
+        "jank_percent": 25.9,
+        "gpu_p50_ms": 3.0,
+        "gpu_p90_ms": 4.0,
+        "gpu_p95_ms": 5.0,
+        "gpu_p99_ms": 7.0,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 1.5,
+        "top_memory_res_kb": 90112.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "legacy_adb"
+    }
+  },
+  {
+    "timestamp": "2025-07-26T10:14:13.200130",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 9.3,
+      "cpu_user": 5.5,
+      "cpu_breakdown": {
+        "total": 9.3,
+        "user": 5.5,
+        "kernel": 3.7,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3330.22,
+      "memory_usage_percent": 41.58,
+      "memory_percent": 41.58,
+      "memory_system_used": 2369.93,
+      "battery_level": 100.0,
+      "network_rx_total": 7005.1,
+      "network_tx_total": 3346.46,
+      "network_rx": 0,
+      "network_tx": 0,
+      "network": 0,
+      "load_1min": 23.41,
+      "load_5min": 23.57,
+      "load_15min": 23.71
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 2.1,
+        "memory_pss": 45.38,
+        "memory_java": 8.44,
+        "memory_native": 5.09,
+        "frame_count": 306.0,
+        "jank_frames": 79.0,
+        "jank_percent": 25.82,
+        "gpu_p50_ms": 3.0,
+        "gpu_p90_ms": 4.0,
+        "gpu_p95_ms": 5.0,
+        "gpu_p99_ms": 7.0,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 1.5,
+        "top_memory_res_kb": 90112.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "legacy_adb"
+    }
+  },
+  {
+    "timestamp": "2025-07-26T10:14:24.216427",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 9.3,
+      "cpu_user": 5.5,
+      "cpu_breakdown": {
+        "total": 9.3,
+        "user": 5.5,
+        "kernel": 3.7,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3339.35,
+      "memory_usage_percent": 41.42,
+      "memory_percent": 41.42,
+      "memory_system_used": 2360.8,
+      "battery_level": 100.0,
+      "network_rx_total": 7005.1,
+      "network_tx_total": 3346.46,
+      "network_rx": 0,
+      "network_tx": 0,
+      "network": 0,
+      "load_1min": 23.41,
+      "load_5min": 23.57,
+      "load_15min": 23.71
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 2.1,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 0.9,
+        "top_memory_res_kb": 56320.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "legacy_adb"
+    }
+  },
+  {
+    "timestamp": "2025-07-26T10:14:30.511548",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 9.3,
+      "cpu_user": 5.5,
+      "cpu_breakdown": {
+        "total": 9.3,
+        "user": 5.5,
+        "kernel": 3.7,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3313.06,
+      "memory_usage_percent": 41.88,
+      "memory_percent": 41.88,
+      "memory_system_used": 2387.09,
+      "battery_level": 100.0,
+      "network_rx_total": 7005.1,
+      "network_tx_total": 3346.46,
+      "network_rx": 0,
+      "network_tx": 0,
+      "network": 0,
+      "load_1min": 23.41,
+      "load_5min": 23.57,
+      "load_15min": 23.71
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 2.1,
+        "memory_pss": 45.97,
+        "memory_java": 8.5,
+        "memory_native": 5.14,
+        "frame_count": 309.0,
+        "jank_frames": 80.0,
+        "jank_percent": 25.89,
+        "gpu_p50_ms": 3.0,
+        "gpu_p90_ms": 4.0,
+        "gpu_p95_ms": 5.0,
+        "gpu_p99_ms": 7.0,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 1.5,
+        "top_memory_res_kb": 90112.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "legacy_adb"
+    }
+  },
+  {
+    "timestamp": "2025-07-26T10:14:36.906038",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 9.3,
+      "cpu_user": 5.5,
+      "cpu_breakdown": {
+        "total": 9.3,
+        "user": 5.5,
+        "kernel": 3.7,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3321.18,
+      "memory_usage_percent": 41.74,
+      "memory_percent": 41.74,
+      "memory_system_used": 2378.97,
+      "battery_level": 100.0,
+      "network_rx_total": 7005.1,
+      "network_tx_total": 3346.46,
+      "network_rx": 0,
+      "network_tx": 0,
+      "network": 0,
+      "load_1min": 23.41,
+      "load_5min": 23.57,
+      "load_15min": 23.71
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 2.1,
+        "memory_pss": 45.84,
+        "memory_java": 8.37,
+        "memory_native": 5.15,
+        "frame_count": 309.0,
+        "jank_frames": 80.0,
+        "jank_percent": 25.89,
+        "gpu_p50_ms": 3.0,
+        "gpu_p90_ms": 4.0,
+        "gpu_p95_ms": 5.0,
+        "gpu_p99_ms": 7.0,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 1.5,
+        "top_memory_res_kb": 90112.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "legacy_adb"
+    }
+  },
+  {
+    "timestamp": "2025-07-26T10:14:43.372171",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 9.3,
+      "cpu_user": 5.5,
+      "cpu_breakdown": {
+        "total": 9.3,
+        "user": 5.5,
+        "kernel": 3.7,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3264.5,
+      "memory_usage_percent": 42.73,
+      "memory_percent": 42.73,
+      "memory_system_used": 2435.65,
+      "battery_level": 100.0,
+      "network_rx_total": 7119.49,
+      "network_tx_total": 3364.15,
+      "network_rx": 17.65,
+      "network_tx": 2.73,
+      "network": 20.38,
+      "load_1min": 23.52,
+      "load_5min": 23.56,
+      "load_15min": 23.71
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 2.1,
+        "memory_pss": 45.33,
+        "memory_java": 8.46,
+        "memory_native": 5.14,
+        "frame_count": 310.0,
+        "jank_frames": 80.0,
+        "jank_percent": 25.81,
+        "gpu_p50_ms": 3.0,
+        "gpu_p90_ms": 4.0,
+        "gpu_p95_ms": 5.0,
+        "gpu_p99_ms": 7.0,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 1.5,
+        "top_memory_res_kb": 90112.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "legacy_adb"
+    }
+  },
+  {
+    "timestamp": "2025-07-26T10:14:54.780396",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 9.3,
+      "cpu_user": 5.5,
+      "cpu_breakdown": {
+        "total": 9.3,
+        "user": 5.5,
+        "kernel": 3.7,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3332.45,
+      "memory_usage_percent": 41.54,
+      "memory_percent": 41.54,
+      "memory_system_used": 2367.7,
+      "battery_level": 100.0,
+      "network_rx_total": 7119.49,
+      "network_tx_total": 3364.15,
+      "network_rx": 0,
+      "network_tx": 0,
+      "network": 0,
+      "load_1min": 23.52,
+      "load_5min": 23.56,
+      "load_15min": 23.71
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 2.1,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 0.9,
+        "top_memory_res_kb": 56320.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "legacy_adb"
+    }
+  },
+  {
+    "timestamp": "2025-07-26T10:15:01.172758",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 9.3,
+      "cpu_user": 5.5,
+      "cpu_breakdown": {
+        "total": 9.3,
+        "user": 5.5,
+        "kernel": 3.7,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3386.66,
+      "memory_usage_percent": 40.59,
+      "memory_percent": 40.59,
+      "memory_system_used": 2313.48,
+      "battery_level": 100.0,
+      "network_rx_total": 7119.49,
+      "network_tx_total": 3364.15,
+      "network_rx": 0,
+      "network_tx": 0,
+      "network": 0,
+      "load_1min": 23.52,
+      "load_5min": 23.56,
+      "load_15min": 23.71
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 2.1,
+        "memory_pss": 46.33,
+        "memory_java": 8.54,
+        "memory_native": 5.12,
+        "frame_count": 313.0,
+        "jank_frames": 81.0,
+        "jank_percent": 25.88,
+        "gpu_p50_ms": 3.0,
+        "gpu_p90_ms": 4.0,
+        "gpu_p95_ms": 5.0,
+        "gpu_p99_ms": 7.0,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 1.5,
+        "top_memory_res_kb": 90112.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "legacy_adb"
+    }
+  },
+  {
+    "timestamp": "2025-07-26T10:15:07.340835",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 9.3,
+      "cpu_user": 5.5,
+      "cpu_breakdown": {
+        "total": 9.3,
+        "user": 5.5,
+        "kernel": 3.7,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3391.17,
+      "memory_usage_percent": 40.51,
+      "memory_percent": 40.51,
+      "memory_system_used": 2308.98,
+      "battery_level": 100.0,
+      "network_rx_total": 7119.49,
+      "network_tx_total": 3364.15,
+      "network_rx": 0,
+      "network_tx": 0,
+      "network": 0,
+      "load_1min": 23.52,
+      "load_5min": 23.56,
+      "load_15min": 23.71
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 2.1,
+        "memory_pss": 46.16,
+        "memory_java": 8.38,
+        "memory_native": 5.12,
+        "frame_count": 313.0,
+        "jank_frames": 81.0,
+        "jank_percent": 25.88,
+        "gpu_p50_ms": 3.0,
+        "gpu_p90_ms": 4.0,
+        "gpu_p95_ms": 5.0,
+        "gpu_p99_ms": 7.0,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 1.5,
+        "top_memory_res_kb": 90112.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "legacy_adb"
+    }
+  },
+  {
+    "timestamp": "2025-07-26T10:15:13.646749",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 9.3,
+      "cpu_user": 5.5,
+      "cpu_breakdown": {
+        "total": 9.3,
+        "user": 5.5,
+        "kernel": 3.7,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3320.15,
+      "memory_usage_percent": 41.75,
+      "memory_percent": 41.75,
+      "memory_system_used": 2380.0,
+      "battery_level": 100.0,
+      "network_rx_total": 7131.31,
+      "network_tx_total": 3370.83,
+      "network_rx": 1.89,
+      "network_tx": 1.07,
+      "network": 2.96,
+      "load_1min": 23.52,
+      "load_5min": 23.56,
+      "load_15min": 23.7
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 2.1,
+        "memory_pss": 45.7,
+        "memory_java": 8.45,
+        "memory_native": 5.12,
+        "frame_count": 314.0,
+        "jank_frames": 81.0,
+        "jank_percent": 25.8,
+        "gpu_p50_ms": 3.0,
+        "gpu_p90_ms": 4.0,
+        "gpu_p95_ms": 5.0,
+        "gpu_p99_ms": 8.0,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 1.5,
+        "top_memory_res_kb": 90112.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "legacy_adb"
+    }
+  },
+  {
+    "timestamp": "2025-07-26T10:15:24.859542",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 9.3,
+      "cpu_user": 5.5,
+      "cpu_breakdown": {
+        "total": 9.3,
+        "user": 5.5,
+        "kernel": 3.7,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3342.52,
+      "memory_usage_percent": 41.36,
+      "memory_percent": 41.36,
+      "memory_system_used": 2357.62,
+      "battery_level": 100.0,
+      "network_rx_total": 7131.31,
+      "network_tx_total": 3370.83,
+      "network_rx": 0,
+      "network_tx": 0,
+      "network": 0,
+      "load_1min": 23.52,
+      "load_5min": 23.56,
+      "load_15min": 23.7
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 2.1,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 0.9,
+        "top_memory_res_kb": 56320.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "legacy_adb"
+    }
+  },
+  {
+    "timestamp": "2025-07-26T10:15:31.251253",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 9.3,
+      "cpu_user": 5.5,
+      "cpu_breakdown": {
+        "total": 9.3,
+        "user": 5.5,
+        "kernel": 3.7,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3385.03,
+      "memory_usage_percent": 40.62,
+      "memory_percent": 40.62,
+      "memory_system_used": 2315.12,
+      "battery_level": 100.0,
+      "network_rx_total": 7131.31,
+      "network_tx_total": 3370.83,
+      "network_rx": 0,
+      "network_tx": 0,
+      "network": 0,
+      "load_1min": 23.52,
+      "load_5min": 23.56,
+      "load_15min": 23.7
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 2.1,
+        "memory_pss": 46.31,
+        "memory_java": 8.57,
+        "memory_native": 5.13,
+        "frame_count": 317.0,
+        "jank_frames": 82.0,
+        "jank_percent": 25.87,
+        "gpu_p50_ms": 3.0,
+        "gpu_p90_ms": 4.0,
+        "gpu_p95_ms": 5.0,
+        "gpu_p99_ms": 8.0,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 1.5,
+        "top_memory_res_kb": 90112.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "legacy_adb"
+    }
+  },
+  {
+    "timestamp": "2025-07-26T10:15:37.534196",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 9.3,
+      "cpu_user": 5.5,
+      "cpu_breakdown": {
+        "total": 9.3,
+        "user": 5.5,
+        "kernel": 3.7,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3383.32,
+      "memory_usage_percent": 40.65,
+      "memory_percent": 40.65,
+      "memory_system_used": 2316.83,
+      "battery_level": 100.0,
+      "network_rx_total": 7131.31,
+      "network_tx_total": 3370.83,
+      "network_rx": 0,
+      "network_tx": 0,
+      "network": 0,
+      "load_1min": 23.52,
+      "load_5min": 23.56,
+      "load_15min": 23.7
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 2.1,
+        "memory_pss": 46.13,
+        "memory_java": 8.41,
+        "memory_native": 5.14,
+        "frame_count": 317.0,
+        "jank_frames": 82.0,
+        "jank_percent": 25.87,
+        "gpu_p50_ms": 3.0,
+        "gpu_p90_ms": 4.0,
+        "gpu_p95_ms": 5.0,
+        "gpu_p99_ms": 8.0,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 1.5,
+        "top_memory_res_kb": 90112.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "legacy_adb"
+    }
+  },
+  {
+    "timestamp": "2025-07-26T10:15:43.807947",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 9.3,
+      "cpu_user": 5.5,
+      "cpu_breakdown": {
+        "total": 9.3,
+        "user": 5.5,
+        "kernel": 3.7,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3310.88,
+      "memory_usage_percent": 41.92,
+      "memory_percent": 41.92,
+      "memory_system_used": 2389.27,
+      "battery_level": 100.0,
+      "network_rx_total": 7142.86,
+      "network_tx_total": 3377.24,
+      "network_rx": 1.82,
+      "network_tx": 1.01,
+      "network": 2.83,
+      "load_1min": 23.49,
+      "load_5min": 23.54,
+      "load_15min": 23.69
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 2.1,
+        "memory_pss": 45.59,
+        "memory_java": 8.44,
+        "memory_native": 5.11,
+        "frame_count": 318.0,
+        "jank_frames": 82.0,
+        "jank_percent": 25.79,
+        "gpu_p50_ms": 3.0,
+        "gpu_p90_ms": 4.0,
+        "gpu_p95_ms": 5.0,
+        "gpu_p99_ms": 8.0,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 1.5,
+        "top_memory_res_kb": 90112.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "legacy_adb"
+    }
+  },
+  {
+    "timestamp": "2025-07-26T10:15:54.889265",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 9.3,
+      "cpu_user": 5.5,
+      "cpu_breakdown": {
+        "total": 9.3,
+        "user": 5.5,
+        "kernel": 3.7,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3334.47,
+      "memory_usage_percent": 41.5,
+      "memory_percent": 41.5,
+      "memory_system_used": 2365.68,
+      "battery_level": 100.0,
+      "network_rx_total": 7142.86,
+      "network_tx_total": 3377.24,
+      "network_rx": 0,
+      "network_tx": 0,
+      "network": 0,
+      "load_1min": 23.49,
+      "load_5min": 23.54,
+      "load_15min": 23.69
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 2.1,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 0.9,
+        "top_memory_res_kb": 56320.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "legacy_adb"
+    }
+  },
+  {
+    "timestamp": "2025-07-26T10:16:01.261873",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 9.3,
+      "cpu_user": 5.5,
+      "cpu_breakdown": {
+        "total": 9.3,
+        "user": 5.5,
+        "kernel": 3.7,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3377.86,
+      "memory_usage_percent": 40.74,
+      "memory_percent": 40.74,
+      "memory_system_used": 2322.29,
+      "battery_level": 100.0,
+      "network_rx_total": 7142.86,
+      "network_tx_total": 3377.24,
+      "network_rx": 0,
+      "network_tx": 0,
+      "network": 0,
+      "load_1min": 23.49,
+      "load_5min": 23.54,
+      "load_15min": 23.69
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 2.1,
+        "memory_pss": 46.38,
+        "memory_java": 8.54,
+        "memory_native": 5.14,
+        "frame_count": 321.0,
+        "jank_frames": 83.0,
+        "jank_percent": 25.86,
+        "gpu_p50_ms": 3.0,
+        "gpu_p90_ms": 4.0,
+        "gpu_p95_ms": 5.0,
+        "gpu_p99_ms": 8.0,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 1.5,
+        "top_memory_res_kb": 91136.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "legacy_adb"
+    }
+  },
+  {
+    "timestamp": "2025-07-26T10:16:07.546314",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 9.3,
+      "cpu_user": 5.5,
+      "cpu_breakdown": {
+        "total": 9.3,
+        "user": 5.5,
+        "kernel": 3.7,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3381.65,
+      "memory_usage_percent": 40.67,
+      "memory_percent": 40.67,
+      "memory_system_used": 2318.5,
+      "battery_level": 100.0,
+      "network_rx_total": 7142.86,
+      "network_tx_total": 3377.24,
+      "network_rx": 0,
+      "network_tx": 0,
+      "network": 0,
+      "load_1min": 23.49,
+      "load_5min": 23.54,
+      "load_15min": 23.69
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 2.1,
+        "memory_pss": 46.27,
+        "memory_java": 8.43,
+        "memory_native": 5.14,
+        "frame_count": 321.0,
+        "jank_frames": 83.0,
+        "jank_percent": 25.86,
+        "gpu_p50_ms": 3.0,
+        "gpu_p90_ms": 4.0,
+        "gpu_p95_ms": 5.0,
+        "gpu_p99_ms": 8.0,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 1.5,
+        "top_memory_res_kb": 90112.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "legacy_adb"
+    }
+  },
+  {
+    "timestamp": "2025-07-26T10:16:13.650427",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 9.3,
+      "cpu_user": 5.5,
+      "cpu_breakdown": {
+        "total": 9.3,
+        "user": 5.5,
+        "kernel": 3.7,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3267.88,
+      "memory_usage_percent": 42.67,
+      "memory_percent": 42.67,
+      "memory_system_used": 2432.27,
+      "battery_level": 100.0,
+      "network_rx_total": 7142.86,
+      "network_tx_total": 3377.24,
+      "network_rx": 0,
+      "network_tx": 0,
+      "network": 0,
+      "load_1min": 23.49,
+      "load_5min": 23.54,
+      "load_15min": 23.69
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 2.1,
+        "memory_pss": 45.78,
+        "memory_java": 8.47,
+        "memory_native": 5.19,
+        "frame_count": 322.0,
+        "jank_frames": 83.0,
+        "jank_percent": 25.78,
+        "gpu_p50_ms": 3.0,
+        "gpu_p90_ms": 4.0,
+        "gpu_p95_ms": 5.0,
+        "gpu_p99_ms": 8.0,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 2.9,
+        "top_memory_percent": 1.5,
+        "top_memory_res_kb": 90112.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "legacy_adb"
+    }
+  },
+  {
+    "timestamp": "2025-07-26T10:16:25.410911",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 9.3,
+      "cpu_user": 5.5,
+      "cpu_breakdown": {
+        "total": 9.3,
+        "user": 5.5,
+        "kernel": 3.7,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3343.7,
+      "memory_usage_percent": 41.34,
+      "memory_percent": 41.34,
+      "memory_system_used": 2356.45,
+      "battery_level": 100.0,
+      "network_rx_total": 7154.82,
+      "network_tx_total": 3383.82,
+      "network_rx": 1.88,
+      "network_tx": 1.04,
+      "network": 2.92,
+      "load_1min": 23.23,
+      "load_5min": 23.48,
+      "load_15min": 23.66
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 2.1,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 0.9,
+        "top_memory_res_kb": 56320.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "legacy_adb"
+    }
+  },
+  {
+    "timestamp": "2025-07-26T10:16:33.217935",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 9.3,
+      "cpu_user": 5.5,
+      "cpu_breakdown": {
+        "total": 9.3,
+        "user": 5.5,
+        "kernel": 3.7,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3339.48,
+      "memory_usage_percent": 41.41,
+      "memory_percent": 41.41,
+      "memory_system_used": 2360.67,
+      "battery_level": 100.0,
+      "network_rx_total": 7154.82,
+      "network_tx_total": 3383.82,
+      "network_rx": 0,
+      "network_tx": 0,
+      "network": 0,
+      "load_1min": 23.23,
+      "load_5min": 23.48,
+      "load_15min": 23.66
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 2.1,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 0.9,
+        "top_memory_res_kb": 56320.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "legacy_adb"
+    }
+  }
+]

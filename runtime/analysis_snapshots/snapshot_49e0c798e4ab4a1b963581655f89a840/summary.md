@@ -1,0 +1,172 @@
+# Regression Snapshot Smoke
+
+- snapshot_id: snapshot_49e0c798e4ab4a1b963581655f89a840
+- snapshot_type: regression
+- created_at: 2025-07-20T03:27:31.660427
+- created_by: cli
+
+## Scope
+
+- dimension: scenario
+- left_scope: scenario:monkey
+- right_scope: scenario:cold_start_loop
+
+## Filters
+
+```json
+{
+  "package_name": "com.hihonor.calculator"
+}
+```
+
+## Rule Versions
+
+```json
+{
+  "fingerprint_rule_version": "v1",
+  "regression_rule_version": "v1"
+}
+```
+
+## Summary
+
+```json
+{
+  "dimension": "scenario",
+  "overall_result": "insufficient_data",
+  "issue_count": 2,
+  "new_count": 2,
+  "worsened_count": 0,
+  "unchanged_count": 0,
+  "improved_count": 0,
+  "gone_count": 0,
+  "insufficient_data_count": 0
+}
+```
+
+## Payload
+
+```json
+{
+  "dimension": "scenario",
+  "left_scope": {
+    "dimension": "scenario",
+    "value": "monkey",
+    "label": "scenario:monkey",
+    "filters": {
+      "task_id": "",
+      "run_status": "",
+      "package_name": "com.hihonor.calculator",
+      "issue_type": "",
+      "created_from": "",
+      "created_to": "",
+      "template_type": "monkey"
+    }
+  },
+  "right_scope": {
+    "dimension": "scenario",
+    "value": "cold_start_loop",
+    "label": "scenario:cold_start_loop",
+    "filters": {
+      "task_id": "",
+      "run_status": "",
+      "package_name": "com.hihonor.calculator",
+      "issue_type": "",
+      "created_from": "",
+      "created_to": "",
+      "template_type": "cold_start_loop"
+    }
+  },
+  "base_filters": {
+    "task_id": null,
+    "run_status": null,
+    "package_name": "com.hihonor.calculator",
+    "issue_type": null,
+    "created_from": null,
+    "created_to": null,
+    "version": null
+  },
+  "rule_set": {
+    "version": "v1",
+    "min_side_issue_groups": 1,
+    "significant_occurrence_delta": 1,
+    "significant_affected_run_delta": 1,
+    "significant_affected_device_delta": 1,
+    "significant_affected_scenario_delta": 1
+  },
+  "overall_result": "insufficient_data",
+  "issue_result_summary": {
+    "new_count": 2,
+    "worsened_count": 0,
+    "unchanged_count": 0,
+    "improved_count": 0,
+    "gone_count": 0,
+    "insufficient_data_count": 0
+  },
+  "metric_result_summary": {
+    "available": false,
+    "reason": "Performance metric regression judgment is not implemented in the current V2 phase."
+  },
+  "summary": {
+    "left_issue_group_count": 0,
+    "right_issue_group_count": 2,
+    "left_occurrence_count": 0,
+    "right_occurrence_count": 6,
+    "left_latest_seen_at": null,
+    "right_latest_seen_at": "2025-07-19T15:30:08.286882",
+    "issue_count": 2
+  },
+  "reasons": [
+    "At least one comparison side does not meet the minimum issue-group sample threshold."
+  ],
+  "comparability_notes": [
+    "Issue comparison is based on the current fingerprint rule version and current query filters.",
+    "Performance metric comparison is not implemented in the current V2 phase.",
+    "Scenario comparison currently maps scenario scope to task template_type.",
+    "One comparison side has no aggregated issues under the current filters; treat the result carefully."
+  ],
+  "issue_count": 2,
+  "issues": [
+    {
+      "comparison_key": "{\"components\": {\"issue_type\": \"startup_timeout\", \"package_name\": \"com.hihonor.calculator\", \"process_name\": \"\", \"raw_key\": \"\", \"scenario_name\": \"\", \"title_key\": \"\"}, \"rule_version\": \"v1\"}",
+      "title": "冷启动超时",
+      "issue_type": "startup_timeout",
+      "severity": "high",
+      "regression_result": "new",
+      "change_type": "new",
+      "reason": "The issue only exists on the target side.",
+      "occurrence_delta": 5,
+      "left_fingerprint": "",
+      "right_fingerprint": "ifp_21f743637f19c1d4",
+      "left_occurrence_count": 0,
+      "right_occurrence_count": 5,
+      "left_affected_run_count": 0,
+      "right_affected_run_count": 5,
+      "left_affected_device_count": 0,
+      "right_affected_device_count": 1,
+      "left_affected_scenario_count": 0,
+      "right_affected_scenario_count": 1
+    },
+    {
+      "comparison_key": "{\"components\": {\"issue_type\": \"device_offline\", \"package_name\": \"com.hihonor.calculator\", \"process_name\": \"\", \"raw_key\": \"\", \"scenario_name\": \"\", \"title_key\": \"\"}, \"rule_version\": \"v1\"}",
+      "title": "执行期间设备离线",
+      "issue_type": "device_offline",
+      "severity": "high",
+      "regression_result": "new",
+      "change_type": "new",
+      "reason": "The issue only exists on the target side.",
+      "occurrence_delta": 1,
+      "left_fingerprint": "",
+      "right_fingerprint": "ifp_9cc12c0642a31dce",
+      "left_occurrence_count": 0,
+      "right_occurrence_count": 1,
+      "left_affected_run_count": 0,
+      "right_affected_run_count": 1,
+      "left_affected_device_count": 0,
+      "right_affected_device_count": 1,
+      "left_affected_scenario_count": 0,
+      "right_affected_scenario_count": 1
+    }
+  ]
+}
+```

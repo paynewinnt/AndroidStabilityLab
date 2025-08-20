@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>Execution Summary</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; margin: 24px; color: #1f2328; }
+h1, h2 { margin-bottom: 12px; }
+section { margin-top: 24px; }
+ul { padding-left: 20px; }
+li { margin: 6px 0; }
+pre { background: #f6f8fa; padding: 12px; border-radius: 6px; overflow-x: auto; }
+code { font-family: 'SFMono-Regular', Menlo, monospace; }
+</style>
+</head>
+<body>
+<h1>Execution Summary</h1>
+<ul>
+<li><strong>task_id:</strong> task_2432c8d7d62445169258bb00265838b4</li>
+<li><strong>task_name:</strong> real_device_long_run_smoke_foreground_background_loop_com_hihonor_calculator_20250726_173505</li>
+<li><strong>run_id:</strong> run_e9c617860e6d47d78c2b926f6d381343</li>
+<li><strong>instance_id:</strong> instance_5cdfb7b217b34fbeb92f69c9242202c3</li>
+<li><strong>device_id:</strong> AFQJVB2211008014</li>
+<li><strong>status:</strong> success</li>
+<li><strong>monitoring_error:</strong> none</li>
+<li><strong>scenario_note:</strong> 前后台切换模板执行完成，共执行 10 轮。</li>
+</ul>
+<section>
+<h2>Monitoring Snapshot</h2>
+<pre><code>{
+  &quot;timestamp&quot;: &quot;2025-07-26T10:10:23.335508&quot;,
+  &quot;persisted&quot;: true,
+  &quot;system&quot;: {
+    &quot;cpu_usage&quot;: 11.0,
+    &quot;cpu_user&quot;: 7.0,
+    &quot;cpu_breakdown&quot;: {
+      &quot;total&quot;: 11.0,
+      &quot;user&quot;: 7.0,
+      &quot;kernel&quot;: 4.5,
+      &quot;iowait&quot;: 0.0,
+      &quot;softirq&quot;: 0.0
+    },
+    &quot;memory_system_total&quot;: 5700.15,
+    &quot;memory_system_available&quot;: 3230.73,
+    &quot;memory_usage_percent&quot;: 43.32,
+    &quot;memory_percent&quot;: 43.32,
+    &quot;memory_system_used&quot;: 2469.41,
+    &quot;battery_level&quot;: 100.0,
+    &quot;network_rx_total&quot;: 6907.84,
+    &quot;network_tx_total&quot;: 3295.15,
+    &quot;network_rx&quot;: 0,
+    &quot;network_tx&quot;: 0,
+    &quot;network&quot;: 0,
+    &quot;load_1min&quot;: 23.36,
+    &quot;load_5min&quot;: 23.64,
+    &quot;load_15min&quot;: 23.75
+  },
+  &quot;apps&quot;: [
+    {
+      &quot;app_package&quot;: &quot;com.hihonor.calculator&quot;,
+      &quot;cpu_usage&quot;: 2.0,
+      &quot;power_consumption&quot;: 3900.0,
+      &quot;wakelock_count&quot;: 1,
+      &quot;top_cpu_usage&quot;: 0.0,
+      &quot;top_memory_percent&quot;: 0.9,
+      &quot;top_memory_res_kb&quot;: 57344.0,
+      &quot;app_info&quot;: {
+        &quot;package_name&quot;: &quot;com.hihonor.calculator&quot;,
+        &quot;app_name&quot;: &quot;com.hihonor.calculator&quot;
+      },
+      &quot;package_name&quot;: &quot;com.hihonor.calculator&quot;
+    }
+  ],
+  &quot;metadata&quot;: {
+    &quot;backend&quot;: &quot;legacy_adb&quot;
+  }
+}</code></pre>
+</section>
+<section>
+<h2>Execution Attempts</h2>
+<ul>
+<li><strong>retry_count:</strong> 0</li>
+<li><strong>max_attempts:</strong> 1</li>
+<li><strong>strategy:</strong> classified</li>
+</ul>
+<ul>
+<li>attempt 1: status=success, exit_reason=completed, retryable=False, retry_category=completed, note=前后台切换模板执行完成，共执行 10 轮。</li>
+</ul>
+</section>
+<section>
+<h2>Scenario Result</h2>
+<pre><code>{
+  &quot;template_type&quot;: &quot;foreground_background_loop&quot;,
+  &quot;launch_target&quot;: &quot;com.hihonor.calculator/.Calculator&quot;,
+  &quot;loop_summary&quot;: {
+    &quot;configured_loops&quot;: 10,
+    &quot;completed_loops&quot;: 10,
+    &quot;iterations&quot;: [
+      {
+        &quot;loop_index&quot;: 1,
+        &quot;status&quot;: &quot;completed&quot;,
+        &quot;launch_attempts&quot;: 1,
+        &quot;background_attempts&quot;: 1,
+        &quot;recovered_after_disconnect&quot;: false
+      },
+      {
+        &quot;loop_index&quot;: 2,
+        &quot;status&quot;: &quot;completed&quot;,
+        &quot;launch_attempts&quot;: 1,
+        &quot;background_attempts&quot;: 1,
+        &quot;recovered_after_disconnect&quot;: false
+      },
+      {
+        &quot;loop_index&quot;: 3,
+        &quot;status&quot;: &quot;completed&quot;,
+        &quot;launch_attempts&quot;: 1,
+        &quot;background_attempts&quot;: 1,
+        &quot;recovered_after_disconnect&quot;: false
+      },
+      {
+        &quot;loop_index&quot;: 4,
+        &quot;status&quot;: &quot;completed&quot;,
+        &quot;launch_attempts&quot;: 1,
+        &quot;background_attempts&quot;: 1,
+        &quot;recovered_after_disconnect&quot;: false
+      },
+      {
+        &quot;loop_index&quot;: 5,
+        &quot;status&quot;: &quot;completed&quot;,
+        &quot;launch_attempts&quot;: 1,
+        &quot;background_attempts&quot;: 1,
+        &quot;recovered_after_disconnect&quot;: false
+      },
+      {
+        &quot;loop_index&quot;: 6,
+        &quot;status&quot;: &quot;completed&quot;,
+        &quot;launch_attempts&quot;: 1,
+        &quot;background_attempts&quot;: 1,
+        &quot;recovered_after_disconnect&quot;: false
+      },
+      {
+        &quot;loop_index&quot;: 7,
+        &quot;status&quot;: &quot;completed&quot;,
+        &quot;launch_attempts&quot;: 1,
+        &quot;background_attempts&quot;: 1,
+        &quot;recovered_after_disconnect&quot;: false
+      },
+      {
+        &quot;loop_index&quot;: 8,
+        &quot;status&quot;: &quot;completed&quot;,
+        &quot;launch_attempts&quot;: 1,
+        &quot;background_attempts&quot;: 1,
+        &quot;recovered_after_disconnect&quot;: false
+      },
+      {
+        &quot;loop_index&quot;: 9,
+        &quot;status&quot;: &quot;completed&quot;,
+        &quot;launch_attempts&quot;: 1,
+        &quot;background_attempts&quot;: 1,
+        &quot;recovered_after_disconnect&quot;: false
+      },
+      {
+        &quot;loop_index&quot;: 10,
+        &quot;status&quot;: &quot;completed&quot;,
+        &quot;launch_attempts&quot;: 1,
+        &quot;background_attempts&quot;: 1,
+        &quot;recovered_after_disconnect&quot;: false
+      }
+    ]
+  }
+}</code></pre>
+</section>
+</body>
+</html>

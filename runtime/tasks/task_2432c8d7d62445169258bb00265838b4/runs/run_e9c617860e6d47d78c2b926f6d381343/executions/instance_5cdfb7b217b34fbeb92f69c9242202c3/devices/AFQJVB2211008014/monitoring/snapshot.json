@@ -1,0 +1,48 @@
+{
+  "timestamp": "2025-07-26T10:10:23.335508",
+  "persisted": true,
+  "system": {
+    "cpu_usage": 11.0,
+    "cpu_user": 7.0,
+    "cpu_breakdown": {
+      "total": 11.0,
+      "user": 7.0,
+      "kernel": 4.5,
+      "iowait": 0.0,
+      "softirq": 0.0
+    },
+    "memory_system_total": 5700.15,
+    "memory_system_available": 3230.73,
+    "memory_usage_percent": 43.32,
+    "memory_percent": 43.32,
+    "memory_system_used": 2469.41,
+    "battery_level": 100.0,
+    "network_rx_total": 6907.84,
+    "network_tx_total": 3295.15,
+    "network_rx": 0,
+    "network_tx": 0,
+    "network": 0,
+    "load_1min": 23.36,
+    "load_5min": 23.64,
+    "load_15min": 23.75
+  },
+  "apps": [
+    {
+      "app_package": "com.hihonor.calculator",
+      "cpu_usage": 2.0,
+      "power_consumption": 3900.0,
+      "wakelock_count": 1,
+      "top_cpu_usage": 0.0,
+      "top_memory_percent": 0.9,
+      "top_memory_res_kb": 57344.0,
+      "app_info": {
+        "package_name": "com.hihonor.calculator",
+        "app_name": "com.hihonor.calculator"
+      },
+      "package_name": "com.hihonor.calculator"
+    }
+  ],
+  "metadata": {
+    "backend": "legacy_adb"
+  }
+}

@@ -1,0 +1,5 @@
+[2026-04-24T18:41:13.297604] preparing instance instance_8fc33e15ac854701a8cc61c1bbc76b8c
+device=192.168.31.99:5555
+[2026-04-24T18:41:13.310678] instance entered running state
+[2026-04-24T18:41:13.310822] scenario attempt 1/1 started for instance instance_8fc33e15ac854701a8cc61c1bbc76b8c
+[2026-04-24T18:41:18.212946] execution finished with status success

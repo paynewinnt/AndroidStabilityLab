@@ -1,0 +1,11 @@
+[2026-04-19T15:04:03.081079] preparing instance instance_b3422a393d8747e1b561df727f60a531
+device=192.168.31.99:5555
+[2026-04-19T15:04:03.095404] instance entered running state
+[2026-04-19T15:04:03.095502] scenario attempt 1/1 started for instance instance_b3422a393d8747e1b561df727f60a531
+[cold_start_loop] loop=1 attempt=1 target=com.hihonor.calculator/.Calculator status=ok
+[cold_start_loop] loop=1 attempt=1 wait_time_ms=268 total_time_ms=266 this_time_ms=None
+[cold_start_loop] loop=1 attempt=1 return_code=0 timed_out=False
+[2026-04-19T15:04:04.242938] cleanup reason=final scenario failure after 1 attempt(s) action=force_stop return_code=0 timed_out=False
+cleanup_stdout=
+cleanup_stderr=
+[2026-04-19T15:04:04.250621] execution finished with status failed

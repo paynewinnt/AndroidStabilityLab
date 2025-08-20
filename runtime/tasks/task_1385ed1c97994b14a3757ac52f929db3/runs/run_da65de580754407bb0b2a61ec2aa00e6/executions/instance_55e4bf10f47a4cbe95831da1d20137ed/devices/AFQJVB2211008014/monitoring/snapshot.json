@@ -1,0 +1,31 @@
+{
+  "timestamp": "2025-07-25T04:02:39.216431",
+  "persisted": true,
+  "system": {
+    "timestamp": "2025-07-25T04:02:39.216431",
+    "cpu_usage": 15.55,
+    "battery_level": 100.0,
+    "battery_temperature": 27.8
+  },
+  "apps": [
+    {
+      "package_name": "com.hihonor.calculator",
+      "timestamp": "2025-07-25T04:02:39.216431",
+      "cpu_usage": 0.0,
+      "tx_bytes": 0.0,
+      "fps": 0.0,
+      "jank_frames": 0.0
+    }
+  ],
+  "metadata": {
+    "backend": "solox",
+    "profile_name": "solox",
+    "raw_targets": [
+      "cpu",
+      "memory",
+      "network",
+      "fps",
+      "battery"
+    ]
+  }
+}

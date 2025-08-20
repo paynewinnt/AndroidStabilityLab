@@ -1,0 +1,108 @@
+{
+  "comparison_id": "review_report_compare_bd58a518d3e348beab8a1677b3ba6576",
+  "name": "Golden Suite Compare Smoke",
+  "created_at": "2025-07-21T07:29:02.702087",
+  "created_by": "cli",
+  "left_report_id": "review_report_4f2154c3b46a4fbdbaa2c56f52c2953e",
+  "right_report_id": "review_report_22b7346274fd43009b876c39715355e9",
+  "left_report_name": "Rule Review Report Smoke",
+  "right_report_name": "Golden Suite Review Report Smoke",
+  "left_detail_path": "runtime/analysis_review_reports/review_report_4f2154c3b46a4fbdbaa2c56f52c2953e/report.json",
+  "right_detail_path": "runtime/analysis_review_reports/review_report_22b7346274fd43009b876c39715355e9/report.json",
+  "summary": {
+    "left_report_id": "review_report_4f2154c3b46a4fbdbaa2c56f52c2953e",
+    "right_report_id": "review_report_22b7346274fd43009b876c39715355e9",
+    "left_created_at": "2025-07-20T08:45:41.881697",
+    "right_created_at": "2025-07-21T07:21:46.733212",
+    "snapshot_count_delta": 0,
+    "changed_family_count_total_delta": -3,
+    "finding_count_total_delta": 0,
+    "high_risk_family_count_delta": -3,
+    "left_golden_suite": {
+      "snapshot_count": 0,
+      "passed_snapshot_count": 0,
+      "failed_snapshot_count": 0,
+      "case_count_total": 0,
+      "passed_case_count_total": 0,
+      "failed_case_count_total": 0,
+      "versions": [],
+      "suite_paths": []
+    },
+    "right_golden_suite": {
+      "snapshot_count": 1,
+      "passed_snapshot_count": 1,
+      "failed_snapshot_count": 0,
+      "case_count_total": 4,
+      "passed_case_count_total": 4,
+      "failed_case_count_total": 0,
+      "versions": [
+        "v1"
+      ],
+      "suite_paths": [
+        "config/rule_replay_golden_samples.json"
+      ]
+    },
+    "golden_suite_snapshot_count_delta": 1,
+    "golden_suite_passed_snapshot_count_delta": 1,
+    "golden_suite_failed_snapshot_count_delta": 0,
+    "golden_suite_case_count_total_delta": 4,
+    "golden_suite_passed_case_count_total_delta": 4,
+    "golden_suite_failed_case_count_total_delta": 0,
+    "decision_count_deltas": {
+      "conditional_pass": 0
+    },
+    "family_delta_counts": {
+      "removed": 3
+    }
+  },
+  "family_diffs": [
+    {
+      "family_key": "{\"change_type\": \"fingerprint_changed\", \"issue_type\": \"device_offline\", \"package_name\": \"com.hihonor.calculator\", \"scenario_name\": \"cold_start_loop\", \"title\": \"执行期间设备离线\"}",
+      "issue_type": "device_offline",
+      "package_name": "com.hihonor.calculator",
+      "scenario_name": "cold_start_loop",
+      "title": "执行期间设备离线",
+      "change_type": "fingerprint_changed",
+      "delta_status": "removed",
+      "left_snapshot_count": 1,
+      "right_snapshot_count": 0,
+      "left_total_occurrence_count": 3,
+      "right_total_occurrence_count": 0,
+      "left_highest_decision": "conditional_pass",
+      "right_highest_decision": ""
+    },
+    {
+      "family_key": "{\"change_type\": \"fingerprint_changed\", \"issue_type\": \"device_offline\", \"package_name\": \"com.example.demo\", \"scenario_name\": \"monkey\", \"title\": \"执行期间设备离线\"}",
+      "issue_type": "device_offline",
+      "package_name": "com.example.demo",
+      "scenario_name": "monkey",
+      "title": "执行期间设备离线",
+      "change_type": "fingerprint_changed",
+      "delta_status": "removed",
+      "left_snapshot_count": 1,
+      "right_snapshot_count": 0,
+      "left_total_occurrence_count": 2,
+      "right_total_occurrence_count": 0,
+      "left_highest_decision": "conditional_pass",
+      "right_highest_decision": ""
+    },
+    {
+      "family_key": "{\"change_type\": \"fingerprint_changed\", \"issue_type\": \"device_offline\", \"package_name\": \"com.android.settings\", \"scenario_name\": \"cold_start_loop\", \"title\": \"执行期间设备离线\"}",
+      "issue_type": "device_offline",
+      "package_name": "com.android.settings",
+      "scenario_name": "cold_start_loop",
+      "title": "执行期间设备离线",
+      "change_type": "fingerprint_changed",
+      "delta_status": "removed",
+      "left_snapshot_count": 1,
+      "right_snapshot_count": 0,
+      "left_total_occurrence_count": 1,
+      "right_total_occurrence_count": 0,
+      "left_highest_decision": "conditional_pass",
+      "right_highest_decision": ""
+    }
+  ],
+  "detail_path": "runtime/analysis_review_report_comparisons/review_report_compare_bd58a518d3e348beab8a1677b3ba6576/report.json",
+  "markdown_path": "runtime/analysis_review_report_comparisons/review_report_compare_bd58a518d3e348beab8a1677b3ba6576/summary.md",
+  "html_path": "runtime/analysis_review_report_comparisons/review_report_compare_bd58a518d3e348beab8a1677b3ba6576/report.html"
+}

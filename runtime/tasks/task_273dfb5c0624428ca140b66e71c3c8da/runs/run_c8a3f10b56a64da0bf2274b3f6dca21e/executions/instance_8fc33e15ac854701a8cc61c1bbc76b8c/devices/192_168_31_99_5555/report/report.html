@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>Execution Summary</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; margin: 24px; color: #1f2328; }
+h1, h2 { margin-bottom: 12px; }
+section { margin-top: 24px; }
+ul { padding-left: 20px; }
+li { margin: 6px 0; }
+pre { background: #f6f8fa; padding: 12px; border-radius: 6px; overflow-x: auto; }
+code { font-family: 'SFMono-Regular', Menlo, monospace; }
+</style>
+</head>
+<body>
+<h1>Execution Summary</h1>
+<ul>
+<li><strong>task_id:</strong> task_273dfb5c0624428ca140b66e71c3c8da</li>
+<li><strong>task_name:</strong> foreground_background_loop_smoke_com_hihonor_calculator_20250725_024111</li>
+<li><strong>run_id:</strong> run_c8a3f10b56a64da0bf2274b3f6dca21e</li>
+<li><strong>instance_id:</strong> instance_8fc33e15ac854701a8cc61c1bbc76b8c</li>
+<li><strong>device_id:</strong> 192.168.31.99:5555</li>
+<li><strong>status:</strong> success</li>
+<li><strong>monitoring_error:</strong> none</li>
+<li><strong>scenario_note:</strong> 前后台切换模板执行完成，共执行 2 轮。</li>
+</ul>
+<section>
+<h2>Execution Attempts</h2>
+<ul>
+<li><strong>retry_count:</strong> 0</li>
+<li><strong>max_attempts:</strong> 1</li>
+<li><strong>strategy:</strong> classified</li>
+</ul>
+<ul>
+<li>attempt 1: status=success, exit_reason=completed, retryable=False, retry_category=completed, note=前后台切换模板执行完成，共执行 2 轮。</li>
+</ul>
+</section>
+<section>
+<h2>Scenario Result</h2>
+<pre><code>{
+  &quot;template_type&quot;: &quot;foreground_background_loop&quot;,
+  &quot;launch_target&quot;: &quot;com.hihonor.calculator/.Calculator&quot;,
+  &quot;loop_summary&quot;: {
+    &quot;configured_loops&quot;: 2,
+    &quot;completed_loops&quot;: 2,
+    &quot;iterations&quot;: [
+      {
+        &quot;loop_index&quot;: 1,
+        &quot;status&quot;: &quot;completed&quot;,
+        &quot;launch_attempts&quot;: 1,
+        &quot;background_attempts&quot;: 1,
+        &quot;recovered_after_disconnect&quot;: false
+      },
+      {
+        &quot;loop_index&quot;: 2,
+        &quot;status&quot;: &quot;completed&quot;,
+        &quot;launch_attempts&quot;: 1,
+        &quot;background_attempts&quot;: 1,
+        &quot;recovered_after_disconnect&quot;: false
+      }
+    ]
+  }
+}</code></pre>
+</section>
+</body>
+</html>

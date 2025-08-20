@@ -1,0 +1,62 @@
+{
+  "timestamp": "2025-07-25T20:44:00.040205",
+  "persisted": true,
+  "system": {
+    "cpu_usage": 7.5,
+    "cpu_user": 4.6,
+    "cpu_breakdown": {
+      "total": 7.5,
+      "user": 4.6,
+      "kernel": 2.7,
+      "iowait": 0.0,
+      "softirq": 0.0
+    },
+    "memory_system_total": 5700.15,
+    "memory_system_available": 2418.73,
+    "memory_usage_percent": 57.57,
+    "memory_percent": 57.57,
+    "memory_system_used": 3281.42,
+    "battery_level": 100.0,
+    "network_rx_total": 71929.14,
+    "network_tx_total": 5437.46,
+    "network_rx": 0,
+    "network_tx": 0,
+    "network": 0,
+    "load_1min": 22.6,
+    "load_5min": 23.55,
+    "load_15min": 23.84
+  },
+  "apps": [
+    {
+      "app_package": "com.ss.android.ugc.aweme",
+      "memory_pss": 1004.44,
+      "memory_java": 192.02,
+      "memory_native": 221.96,
+      "frame_count": 396.0,
+      "jank_frames": 76.0,
+      "jank_percent": 19.19,
+      "gpu_p50_ms": 4.0,
+      "gpu_p90_ms": 6.0,
+      "gpu_p95_ms": 6.0,
+      "gpu_p99_ms": 8.0,
+      "fps": 2.4,
+      "power_consumption": 3900.0,
+      "wakelock_count": 1,
+      "top_cpu_usage": 25.0,
+      "top_memory_percent": 18.7,
+      "top_memory_res_kb": 1048576.0,
+      "app_info": {
+        "package_name": "com.ss.android.ugc.aweme",
+        "app_name": "com.ss.android.ugc.aweme"
+      },
+      "package_name": "com.ss.android.ugc.aweme"
+    }
+  ],
+  "metadata": {
+    "backend": "legacy_adb",
+    "profile_name": "solox",
+    "warnings": [
+      "metrics backend 'solox' unavailable, falling back to legacy_adb: no process found"
+    ]
+  }
+}

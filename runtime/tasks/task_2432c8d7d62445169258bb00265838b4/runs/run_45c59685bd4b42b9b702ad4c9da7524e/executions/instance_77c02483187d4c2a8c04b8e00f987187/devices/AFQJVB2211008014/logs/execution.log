@@ -1,0 +1,5 @@
+[2026-04-26 17:59:03.771399] preparing instance instance_77c02483187d4c2a8c04b8e00f987187
+device=AFQJVB2211008014
+[2026-04-26 17:59:03.784320] instance entered running state
+[2026-04-26 17:59:03.784690] scenario attempt 1/1 started for instance instance_77c02483187d4c2a8c04b8e00f987187
+[2026-04-26 18:04:13.464653] execution finished with status success

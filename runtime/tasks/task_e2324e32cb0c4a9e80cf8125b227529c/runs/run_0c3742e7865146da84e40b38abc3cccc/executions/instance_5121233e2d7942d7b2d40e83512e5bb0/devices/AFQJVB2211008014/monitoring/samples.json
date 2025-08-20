@@ -1,0 +1,1493 @@
+[
+  {
+    "timestamp": "2025-07-27T13:26:54.960501",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 2.2,
+      "cpu_user": 1.2,
+      "cpu_breakdown": {
+        "total": 2.2,
+        "user": 1.2,
+        "kernel": 0.9,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3658.79,
+      "memory_usage_percent": 35.81,
+      "memory_percent": 35.81,
+      "memory_system_used": 2041.36,
+      "battery_level": 100.0,
+      "network_rx_total": 10951.51,
+      "network_tx_total": 5061.96,
+      "network": 0.0,
+      "network_rx": 0.0,
+      "network_tx": 0.0,
+      "load_1min": 22.86,
+      "load_5min": 22.74,
+      "load_15min": 22.64,
+      "perfetto_trace_size_bytes": 188680,
+      "perfetto_duration_ms": 0
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 0.1,
+        "frame_count": 0.0,
+        "jank_frames": 0.0,
+        "jank_percent": 0.0,
+        "gpu_p50_ms": 4950.0,
+        "gpu_p90_ms": 4950.0,
+        "gpu_p95_ms": 4950.0,
+        "gpu_p99_ms": 4950.0,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 1.3,
+        "top_memory_res_kb": 78848.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "perfetto",
+      "profile_name": "perfetto",
+      "trace_artifact_path": "runtime/tasks/task_e2324e32cb0c4a9e80cf8125b227529c/runs/run_0c3742e7865146da84e40b38abc3cccc/executions/instance_5121233e2d7942d7b2d40e83512e5bb0/devices/AFQJVB2211008014/monitoring/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+      "normalized_stats": {
+        "trace_status": "captured",
+        "trace_size_bytes": 188680,
+        "duration_ms": 0
+      },
+      "best_effort_degraded": false,
+      "perfetto": {
+        "trace_status": "captured",
+        "captured_at": "2025-07-27T13:26:54.960547",
+        "local_trace_path": "runtime/tasks/task_e2324e32cb0c4a9e80cf8125b227529c/runs/run_0c3742e7865146da84e40b38abc3cccc/executions/instance_5121233e2d7942d7b2d40e83512e5bb0/devices/AFQJVB2211008014/monitoring/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+        "remote_trace_path": "/data/local/tmp/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+        "capture_mode": "stdout_fallback",
+        "trace_size_bytes": 188680,
+        "duration_ms": 0,
+        "config_path": "",
+        "stdout_tail": "captured perfetto stdout",
+        "stderr_tail": "[682.482] perfetto_cmd.cc:940     Failed to open /data/local/tmp/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace. If you get permission denied in /data/misc/perfetto-traces, the file might have been created by another user, try deleting it first. (errno: 13, Permission denied)\n",
+        "best_effort_degraded": false,
+        "degraded_reason": "remote trace pull failed; captured trace from stdout fallback"
+      },
+      "artifacts": [
+        {
+          "artifact_type": "perfetto_trace",
+          "file_path": "runtime/tasks/task_e2324e32cb0c4a9e80cf8125b227529c/runs/run_0c3742e7865146da84e40b38abc3cccc/executions/instance_5121233e2d7942d7b2d40e83512e5bb0/devices/AFQJVB2211008014/monitoring/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+          "capture_reason": "perfetto trace sidecar",
+          "capture_message": "captured",
+          "metadata": {
+            "backend": "perfetto",
+            "remote_trace_path": "/data/local/tmp/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+            "trace_size_bytes": 188680
+          }
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2025-07-27T13:27:07.511108",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 2.0,
+      "cpu_user": 1.0,
+      "cpu_breakdown": {
+        "total": 2.0,
+        "user": 1.0,
+        "kernel": 0.9,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3580.81,
+      "memory_usage_percent": 37.18,
+      "memory_percent": 37.18,
+      "memory_system_used": 2119.34,
+      "battery_level": 100.0,
+      "network_rx_total": 10951.51,
+      "network_tx_total": 5061.96,
+      "network_rx": 0,
+      "network_tx": 0,
+      "network": 0,
+      "load_1min": 22.86,
+      "load_5min": 22.74,
+      "load_15min": 22.64,
+      "perfetto_trace_size_bytes": 188680,
+      "perfetto_duration_ms": 0
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 0.0,
+        "memory_pss": 30.48,
+        "memory_java": 8.75,
+        "memory_native": 10.97,
+        "frame_count": 0.0,
+        "jank_frames": 0.0,
+        "jank_percent": 0.0,
+        "gpu_p50_ms": 4950.0,
+        "gpu_p90_ms": 4950.0,
+        "gpu_p95_ms": 4950.0,
+        "gpu_p99_ms": 4950.0,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 1.3,
+        "top_memory_res_kb": 78848.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "perfetto",
+      "profile_name": "perfetto",
+      "trace_artifact_path": "runtime/tasks/task_e2324e32cb0c4a9e80cf8125b227529c/runs/run_0c3742e7865146da84e40b38abc3cccc/executions/instance_5121233e2d7942d7b2d40e83512e5bb0/devices/AFQJVB2211008014/monitoring/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+      "normalized_stats": {
+        "trace_status": "captured",
+        "trace_size_bytes": 188680,
+        "duration_ms": 0
+      },
+      "best_effort_degraded": false,
+      "perfetto": {
+        "trace_status": "captured",
+        "captured_at": "2025-07-27T13:26:54.960547",
+        "local_trace_path": "runtime/tasks/task_e2324e32cb0c4a9e80cf8125b227529c/runs/run_0c3742e7865146da84e40b38abc3cccc/executions/instance_5121233e2d7942d7b2d40e83512e5bb0/devices/AFQJVB2211008014/monitoring/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+        "remote_trace_path": "/data/local/tmp/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+        "capture_mode": "stdout_fallback",
+        "trace_size_bytes": 188680,
+        "duration_ms": 0,
+        "config_path": "",
+        "stdout_tail": "captured perfetto stdout",
+        "stderr_tail": "[682.482] perfetto_cmd.cc:940     Failed to open /data/local/tmp/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace. If you get permission denied in /data/misc/perfetto-traces, the file might have been created by another user, try deleting it first. (errno: 13, Permission denied)\n",
+        "best_effort_degraded": false,
+        "degraded_reason": "remote trace pull failed; captured trace from stdout fallback"
+      },
+      "artifacts": [
+        {
+          "artifact_type": "perfetto_trace",
+          "file_path": "runtime/tasks/task_e2324e32cb0c4a9e80cf8125b227529c/runs/run_0c3742e7865146da84e40b38abc3cccc/executions/instance_5121233e2d7942d7b2d40e83512e5bb0/devices/AFQJVB2211008014/monitoring/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+          "capture_reason": "perfetto trace sidecar",
+          "capture_message": "captured",
+          "metadata": {
+            "backend": "perfetto",
+            "remote_trace_path": "/data/local/tmp/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+            "trace_size_bytes": 188680
+          }
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2025-07-27T13:27:13.718551",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 2.0,
+      "cpu_user": 1.0,
+      "cpu_breakdown": {
+        "total": 2.0,
+        "user": 1.0,
+        "kernel": 0.9,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3575.15,
+      "memory_usage_percent": 37.28,
+      "memory_percent": 37.28,
+      "memory_system_used": 2125.0,
+      "battery_level": 100.0,
+      "network_rx_total": 10951.51,
+      "network_tx_total": 5061.96,
+      "network_rx": 0,
+      "network_tx": 0,
+      "network": 0,
+      "load_1min": 22.86,
+      "load_5min": 22.74,
+      "load_15min": 22.64,
+      "perfetto_trace_size_bytes": 188680,
+      "perfetto_duration_ms": 0
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 0.0,
+        "frame_count": 0.0,
+        "jank_frames": 0.0,
+        "jank_percent": 0.0,
+        "gpu_p50_ms": 4950.0,
+        "gpu_p90_ms": 4950.0,
+        "gpu_p95_ms": 4950.0,
+        "gpu_p99_ms": 4950.0,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 1.3,
+        "top_memory_res_kb": 78848.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "perfetto",
+      "profile_name": "perfetto",
+      "trace_artifact_path": "runtime/tasks/task_e2324e32cb0c4a9e80cf8125b227529c/runs/run_0c3742e7865146da84e40b38abc3cccc/executions/instance_5121233e2d7942d7b2d40e83512e5bb0/devices/AFQJVB2211008014/monitoring/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+      "normalized_stats": {
+        "trace_status": "captured",
+        "trace_size_bytes": 188680,
+        "duration_ms": 0
+      },
+      "best_effort_degraded": false,
+      "perfetto": {
+        "trace_status": "captured",
+        "captured_at": "2025-07-27T13:26:54.960547",
+        "local_trace_path": "runtime/tasks/task_e2324e32cb0c4a9e80cf8125b227529c/runs/run_0c3742e7865146da84e40b38abc3cccc/executions/instance_5121233e2d7942d7b2d40e83512e5bb0/devices/AFQJVB2211008014/monitoring/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+        "remote_trace_path": "/data/local/tmp/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+        "capture_mode": "stdout_fallback",
+        "trace_size_bytes": 188680,
+        "duration_ms": 0,
+        "config_path": "",
+        "stdout_tail": "captured perfetto stdout",
+        "stderr_tail": "[682.482] perfetto_cmd.cc:940     Failed to open /data/local/tmp/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace. If you get permission denied in /data/misc/perfetto-traces, the file might have been created by another user, try deleting it first. (errno: 13, Permission denied)\n",
+        "best_effort_degraded": false,
+        "degraded_reason": "remote trace pull failed; captured trace from stdout fallback"
+      },
+      "artifacts": [
+        {
+          "artifact_type": "perfetto_trace",
+          "file_path": "runtime/tasks/task_e2324e32cb0c4a9e80cf8125b227529c/runs/run_0c3742e7865146da84e40b38abc3cccc/executions/instance_5121233e2d7942d7b2d40e83512e5bb0/devices/AFQJVB2211008014/monitoring/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+          "capture_reason": "perfetto trace sidecar",
+          "capture_message": "captured",
+          "metadata": {
+            "backend": "perfetto",
+            "remote_trace_path": "/data/local/tmp/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+            "trace_size_bytes": 188680
+          }
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2025-07-27T13:27:19.788035",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 13.0,
+      "cpu_user": 9.7,
+      "cpu_breakdown": {
+        "total": 13.0,
+        "user": 9.7,
+        "kernel": 3.4,
+        "iowait": 0.0,
+        "softirq": 0.1
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3574.11,
+      "memory_usage_percent": 37.3,
+      "memory_percent": 37.3,
+      "memory_system_used": 2126.04,
+      "battery_level": 100.0,
+      "network_rx_total": 10951.51,
+      "network_tx_total": 5061.96,
+      "network_rx": 0,
+      "network_tx": 0,
+      "network": 0,
+      "load_1min": 22.86,
+      "load_5min": 22.74,
+      "load_15min": 22.64,
+      "perfetto_trace_size_bytes": 188680,
+      "perfetto_duration_ms": 0
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 1.3,
+        "frame_count": 0.0,
+        "jank_frames": 0.0,
+        "jank_percent": 0.0,
+        "gpu_p50_ms": 4950.0,
+        "gpu_p90_ms": 4950.0,
+        "gpu_p95_ms": 4950.0,
+        "gpu_p99_ms": 4950.0,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 1.3,
+        "top_memory_res_kb": 78848.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "perfetto",
+      "profile_name": "perfetto",
+      "trace_artifact_path": "runtime/tasks/task_e2324e32cb0c4a9e80cf8125b227529c/runs/run_0c3742e7865146da84e40b38abc3cccc/executions/instance_5121233e2d7942d7b2d40e83512e5bb0/devices/AFQJVB2211008014/monitoring/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+      "normalized_stats": {
+        "trace_status": "captured",
+        "trace_size_bytes": 188680,
+        "duration_ms": 0
+      },
+      "best_effort_degraded": false,
+      "perfetto": {
+        "trace_status": "captured",
+        "captured_at": "2025-07-27T13:26:54.960547",
+        "local_trace_path": "runtime/tasks/task_e2324e32cb0c4a9e80cf8125b227529c/runs/run_0c3742e7865146da84e40b38abc3cccc/executions/instance_5121233e2d7942d7b2d40e83512e5bb0/devices/AFQJVB2211008014/monitoring/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+        "remote_trace_path": "/data/local/tmp/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+        "capture_mode": "stdout_fallback",
+        "trace_size_bytes": 188680,
+        "duration_ms": 0,
+        "config_path": "",
+        "stdout_tail": "captured perfetto stdout",
+        "stderr_tail": "[682.482] perfetto_cmd.cc:940     Failed to open /data/local/tmp/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace. If you get permission denied in /data/misc/perfetto-traces, the file might have been created by another user, try deleting it first. (errno: 13, Permission denied)\n",
+        "best_effort_degraded": false,
+        "degraded_reason": "remote trace pull failed; captured trace from stdout fallback"
+      },
+      "artifacts": [
+        {
+          "artifact_type": "perfetto_trace",
+          "file_path": "runtime/tasks/task_e2324e32cb0c4a9e80cf8125b227529c/runs/run_0c3742e7865146da84e40b38abc3cccc/executions/instance_5121233e2d7942d7b2d40e83512e5bb0/devices/AFQJVB2211008014/monitoring/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+          "capture_reason": "perfetto trace sidecar",
+          "capture_message": "captured",
+          "metadata": {
+            "backend": "perfetto",
+            "remote_trace_path": "/data/local/tmp/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+            "trace_size_bytes": 188680
+          }
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2025-07-27T13:27:26.383925",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 4.4,
+      "cpu_user": 1.8,
+      "cpu_breakdown": {
+        "total": 4.4,
+        "user": 1.8,
+        "kernel": 2.5,
+        "iowait": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3570.49,
+      "memory_usage_percent": 37.36,
+      "memory_percent": 37.36,
+      "memory_system_used": 2129.66,
+      "battery_level": 100.0,
+      "network_rx_total": 11006.94,
+      "network_tx_total": 5067.01,
+      "network_rx": 8.96,
+      "network_tx": 0.82,
+      "network": 9.78,
+      "load_1min": 23.12,
+      "load_5min": 22.83,
+      "load_15min": 22.67,
+      "perfetto_trace_size_bytes": 188680,
+      "perfetto_duration_ms": 0
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 0.3,
+        "memory_pss": 30.43,
+        "memory_java": 8.7,
+        "memory_native": 10.96,
+        "frame_count": 0.0,
+        "jank_frames": 0.0,
+        "jank_percent": 0.0,
+        "gpu_p50_ms": 4950.0,
+        "gpu_p90_ms": 4950.0,
+        "gpu_p95_ms": 4950.0,
+        "gpu_p99_ms": 4950.0,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 1.3,
+        "top_memory_res_kb": 78848.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "perfetto",
+      "profile_name": "perfetto",
+      "trace_artifact_path": "runtime/tasks/task_e2324e32cb0c4a9e80cf8125b227529c/runs/run_0c3742e7865146da84e40b38abc3cccc/executions/instance_5121233e2d7942d7b2d40e83512e5bb0/devices/AFQJVB2211008014/monitoring/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+      "normalized_stats": {
+        "trace_status": "captured",
+        "trace_size_bytes": 188680,
+        "duration_ms": 0
+      },
+      "best_effort_degraded": false,
+      "perfetto": {
+        "trace_status": "captured",
+        "captured_at": "2025-07-27T13:26:54.960547",
+        "local_trace_path": "runtime/tasks/task_e2324e32cb0c4a9e80cf8125b227529c/runs/run_0c3742e7865146da84e40b38abc3cccc/executions/instance_5121233e2d7942d7b2d40e83512e5bb0/devices/AFQJVB2211008014/monitoring/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+        "remote_trace_path": "/data/local/tmp/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+        "capture_mode": "stdout_fallback",
+        "trace_size_bytes": 188680,
+        "duration_ms": 0,
+        "config_path": "",
+        "stdout_tail": "captured perfetto stdout",
+        "stderr_tail": "[682.482] perfetto_cmd.cc:940     Failed to open /data/local/tmp/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace. If you get permission denied in /data/misc/perfetto-traces, the file might have been created by another user, try deleting it first. (errno: 13, Permission denied)\n",
+        "best_effort_degraded": false,
+        "degraded_reason": "remote trace pull failed; captured trace from stdout fallback"
+      },
+      "artifacts": [
+        {
+          "artifact_type": "perfetto_trace",
+          "file_path": "runtime/tasks/task_e2324e32cb0c4a9e80cf8125b227529c/runs/run_0c3742e7865146da84e40b38abc3cccc/executions/instance_5121233e2d7942d7b2d40e83512e5bb0/devices/AFQJVB2211008014/monitoring/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+          "capture_reason": "perfetto trace sidecar",
+          "capture_message": "captured",
+          "metadata": {
+            "backend": "perfetto",
+            "remote_trace_path": "/data/local/tmp/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+            "trace_size_bytes": 188680
+          }
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2025-07-27T13:27:32.880660",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 4.4,
+      "cpu_user": 1.8,
+      "cpu_breakdown": {
+        "total": 4.4,
+        "user": 1.8,
+        "kernel": 2.5,
+        "iowait": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3568.33,
+      "memory_usage_percent": 37.4,
+      "memory_percent": 37.4,
+      "memory_system_used": 2131.82,
+      "battery_level": 100.0,
+      "network_rx_total": 11006.94,
+      "network_tx_total": 5067.01,
+      "network_rx": 0,
+      "network_tx": 0,
+      "network": 0,
+      "load_1min": 23.12,
+      "load_5min": 22.83,
+      "load_15min": 22.67,
+      "perfetto_trace_size_bytes": 188680,
+      "perfetto_duration_ms": 0
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 0.3,
+        "memory_pss": 30.29,
+        "memory_java": 8.57,
+        "memory_native": 10.96,
+        "frame_count": 0.0,
+        "jank_frames": 0.0,
+        "jank_percent": 0.0,
+        "gpu_p50_ms": 4950.0,
+        "gpu_p90_ms": 4950.0,
+        "gpu_p95_ms": 4950.0,
+        "gpu_p99_ms": 4950.0,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 1.3,
+        "top_memory_res_kb": 78848.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "perfetto",
+      "profile_name": "perfetto",
+      "trace_artifact_path": "runtime/tasks/task_e2324e32cb0c4a9e80cf8125b227529c/runs/run_0c3742e7865146da84e40b38abc3cccc/executions/instance_5121233e2d7942d7b2d40e83512e5bb0/devices/AFQJVB2211008014/monitoring/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+      "normalized_stats": {
+        "trace_status": "captured",
+        "trace_size_bytes": 188680,
+        "duration_ms": 0
+      },
+      "best_effort_degraded": false,
+      "perfetto": {
+        "trace_status": "captured",
+        "captured_at": "2025-07-27T13:26:54.960547",
+        "local_trace_path": "runtime/tasks/task_e2324e32cb0c4a9e80cf8125b227529c/runs/run_0c3742e7865146da84e40b38abc3cccc/executions/instance_5121233e2d7942d7b2d40e83512e5bb0/devices/AFQJVB2211008014/monitoring/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+        "remote_trace_path": "/data/local/tmp/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+        "capture_mode": "stdout_fallback",
+        "trace_size_bytes": 188680,
+        "duration_ms": 0,
+        "config_path": "",
+        "stdout_tail": "captured perfetto stdout",
+        "stderr_tail": "[682.482] perfetto_cmd.cc:940     Failed to open /data/local/tmp/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace. If you get permission denied in /data/misc/perfetto-traces, the file might have been created by another user, try deleting it first. (errno: 13, Permission denied)\n",
+        "best_effort_degraded": false,
+        "degraded_reason": "remote trace pull failed; captured trace from stdout fallback"
+      },
+      "artifacts": [
+        {
+          "artifact_type": "perfetto_trace",
+          "file_path": "runtime/tasks/task_e2324e32cb0c4a9e80cf8125b227529c/runs/run_0c3742e7865146da84e40b38abc3cccc/executions/instance_5121233e2d7942d7b2d40e83512e5bb0/devices/AFQJVB2211008014/monitoring/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+          "capture_reason": "perfetto trace sidecar",
+          "capture_message": "captured",
+          "metadata": {
+            "backend": "perfetto",
+            "remote_trace_path": "/data/local/tmp/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+            "trace_size_bytes": 188680
+          }
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2025-07-27T13:27:39.186057",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 4.4,
+      "cpu_user": 1.8,
+      "cpu_breakdown": {
+        "total": 4.4,
+        "user": 1.8,
+        "kernel": 2.5,
+        "iowait": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3564.58,
+      "memory_usage_percent": 37.47,
+      "memory_percent": 37.47,
+      "memory_system_used": 2135.57,
+      "battery_level": 100.0,
+      "network_rx_total": 11006.94,
+      "network_tx_total": 5067.01,
+      "network_rx": 0,
+      "network_tx": 0,
+      "network": 0,
+      "load_1min": 23.12,
+      "load_5min": 22.83,
+      "load_15min": 22.67,
+      "perfetto_trace_size_bytes": 188680,
+      "perfetto_duration_ms": 0
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 0.3,
+        "memory_pss": 30.29,
+        "memory_java": 8.57,
+        "memory_native": 10.96,
+        "frame_count": 0.0,
+        "jank_frames": 0.0,
+        "jank_percent": 0.0,
+        "gpu_p50_ms": 4950.0,
+        "gpu_p90_ms": 4950.0,
+        "gpu_p95_ms": 4950.0,
+        "gpu_p99_ms": 4950.0,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 1.3,
+        "top_memory_res_kb": 78848.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "perfetto",
+      "profile_name": "perfetto",
+      "trace_artifact_path": "runtime/tasks/task_e2324e32cb0c4a9e80cf8125b227529c/runs/run_0c3742e7865146da84e40b38abc3cccc/executions/instance_5121233e2d7942d7b2d40e83512e5bb0/devices/AFQJVB2211008014/monitoring/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+      "normalized_stats": {
+        "trace_status": "captured",
+        "trace_size_bytes": 188680,
+        "duration_ms": 0
+      },
+      "best_effort_degraded": false,
+      "perfetto": {
+        "trace_status": "captured",
+        "captured_at": "2025-07-27T13:26:54.960547",
+        "local_trace_path": "runtime/tasks/task_e2324e32cb0c4a9e80cf8125b227529c/runs/run_0c3742e7865146da84e40b38abc3cccc/executions/instance_5121233e2d7942d7b2d40e83512e5bb0/devices/AFQJVB2211008014/monitoring/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+        "remote_trace_path": "/data/local/tmp/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+        "capture_mode": "stdout_fallback",
+        "trace_size_bytes": 188680,
+        "duration_ms": 0,
+        "config_path": "",
+        "stdout_tail": "captured perfetto stdout",
+        "stderr_tail": "[682.482] perfetto_cmd.cc:940     Failed to open /data/local/tmp/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace. If you get permission denied in /data/misc/perfetto-traces, the file might have been created by another user, try deleting it first. (errno: 13, Permission denied)\n",
+        "best_effort_degraded": false,
+        "degraded_reason": "remote trace pull failed; captured trace from stdout fallback"
+      },
+      "artifacts": [
+        {
+          "artifact_type": "perfetto_trace",
+          "file_path": "runtime/tasks/task_e2324e32cb0c4a9e80cf8125b227529c/runs/run_0c3742e7865146da84e40b38abc3cccc/executions/instance_5121233e2d7942d7b2d40e83512e5bb0/devices/AFQJVB2211008014/monitoring/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+          "capture_reason": "perfetto trace sidecar",
+          "capture_message": "captured",
+          "metadata": {
+            "backend": "perfetto",
+            "remote_trace_path": "/data/local/tmp/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+            "trace_size_bytes": 188680
+          }
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2025-07-27T13:27:45.401260",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 4.4,
+      "cpu_user": 1.8,
+      "cpu_breakdown": {
+        "total": 4.4,
+        "user": 1.8,
+        "kernel": 2.5,
+        "iowait": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3578.45,
+      "memory_usage_percent": 37.22,
+      "memory_percent": 37.22,
+      "memory_system_used": 2121.7,
+      "battery_level": 100.0,
+      "network_rx_total": 11006.94,
+      "network_tx_total": 5067.01,
+      "network_rx": 0,
+      "network_tx": 0,
+      "network": 0,
+      "load_1min": 23.12,
+      "load_5min": 22.83,
+      "load_15min": 22.67,
+      "perfetto_trace_size_bytes": 188680,
+      "perfetto_duration_ms": 0
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 0.3,
+        "frame_count": 0.0,
+        "jank_frames": 0.0,
+        "jank_percent": 0.0,
+        "gpu_p50_ms": 4950.0,
+        "gpu_p90_ms": 4950.0,
+        "gpu_p95_ms": 4950.0,
+        "gpu_p99_ms": 4950.0,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 1.3,
+        "top_memory_res_kb": 78848.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "perfetto",
+      "profile_name": "perfetto",
+      "trace_artifact_path": "runtime/tasks/task_e2324e32cb0c4a9e80cf8125b227529c/runs/run_0c3742e7865146da84e40b38abc3cccc/executions/instance_5121233e2d7942d7b2d40e83512e5bb0/devices/AFQJVB2211008014/monitoring/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+      "normalized_stats": {
+        "trace_status": "captured",
+        "trace_size_bytes": 188680,
+        "duration_ms": 0
+      },
+      "best_effort_degraded": false,
+      "perfetto": {
+        "trace_status": "captured",
+        "captured_at": "2025-07-27T13:26:54.960547",
+        "local_trace_path": "runtime/tasks/task_e2324e32cb0c4a9e80cf8125b227529c/runs/run_0c3742e7865146da84e40b38abc3cccc/executions/instance_5121233e2d7942d7b2d40e83512e5bb0/devices/AFQJVB2211008014/monitoring/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+        "remote_trace_path": "/data/local/tmp/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+        "capture_mode": "stdout_fallback",
+        "trace_size_bytes": 188680,
+        "duration_ms": 0,
+        "config_path": "",
+        "stdout_tail": "captured perfetto stdout",
+        "stderr_tail": "[682.482] perfetto_cmd.cc:940     Failed to open /data/local/tmp/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace. If you get permission denied in /data/misc/perfetto-traces, the file might have been created by another user, try deleting it first. (errno: 13, Permission denied)\n",
+        "best_effort_degraded": false,
+        "degraded_reason": "remote trace pull failed; captured trace from stdout fallback"
+      },
+      "artifacts": [
+        {
+          "artifact_type": "perfetto_trace",
+          "file_path": "runtime/tasks/task_e2324e32cb0c4a9e80cf8125b227529c/runs/run_0c3742e7865146da84e40b38abc3cccc/executions/instance_5121233e2d7942d7b2d40e83512e5bb0/devices/AFQJVB2211008014/monitoring/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+          "capture_reason": "perfetto trace sidecar",
+          "capture_message": "captured",
+          "metadata": {
+            "backend": "perfetto",
+            "remote_trace_path": "/data/local/tmp/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+            "trace_size_bytes": 188680
+          }
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2025-07-27T13:27:51.748609",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 4.6,
+      "cpu_user": 2.3,
+      "cpu_breakdown": {
+        "total": 4.6,
+        "user": 2.3,
+        "kernel": 2.2,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3581.5,
+      "memory_usage_percent": 37.17,
+      "memory_percent": 37.17,
+      "memory_system_used": 2118.64,
+      "battery_level": 100.0,
+      "network_rx_total": 11006.94,
+      "network_tx_total": 5067.01,
+      "network_rx": 0,
+      "network_tx": 0,
+      "network": 0,
+      "load_1min": 23.12,
+      "load_5min": 22.83,
+      "load_15min": 22.67,
+      "perfetto_trace_size_bytes": 188680,
+      "perfetto_duration_ms": 0
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 2.5,
+        "memory_pss": 30.34,
+        "memory_java": 8.62,
+        "memory_native": 10.96,
+        "frame_count": 0.0,
+        "jank_frames": 0.0,
+        "jank_percent": 0.0,
+        "gpu_p50_ms": 4950.0,
+        "gpu_p90_ms": 4950.0,
+        "gpu_p95_ms": 4950.0,
+        "gpu_p99_ms": 4950.0,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 1.3,
+        "top_memory_res_kb": 78848.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "perfetto",
+      "profile_name": "perfetto",
+      "trace_artifact_path": "runtime/tasks/task_e2324e32cb0c4a9e80cf8125b227529c/runs/run_0c3742e7865146da84e40b38abc3cccc/executions/instance_5121233e2d7942d7b2d40e83512e5bb0/devices/AFQJVB2211008014/monitoring/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+      "normalized_stats": {
+        "trace_status": "captured",
+        "trace_size_bytes": 188680,
+        "duration_ms": 0
+      },
+      "best_effort_degraded": false,
+      "perfetto": {
+        "trace_status": "captured",
+        "captured_at": "2025-07-27T13:26:54.960547",
+        "local_trace_path": "runtime/tasks/task_e2324e32cb0c4a9e80cf8125b227529c/runs/run_0c3742e7865146da84e40b38abc3cccc/executions/instance_5121233e2d7942d7b2d40e83512e5bb0/devices/AFQJVB2211008014/monitoring/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+        "remote_trace_path": "/data/local/tmp/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+        "capture_mode": "stdout_fallback",
+        "trace_size_bytes": 188680,
+        "duration_ms": 0,
+        "config_path": "",
+        "stdout_tail": "captured perfetto stdout",
+        "stderr_tail": "[682.482] perfetto_cmd.cc:940     Failed to open /data/local/tmp/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace. If you get permission denied in /data/misc/perfetto-traces, the file might have been created by another user, try deleting it first. (errno: 13, Permission denied)\n",
+        "best_effort_degraded": false,
+        "degraded_reason": "remote trace pull failed; captured trace from stdout fallback"
+      },
+      "artifacts": [
+        {
+          "artifact_type": "perfetto_trace",
+          "file_path": "runtime/tasks/task_e2324e32cb0c4a9e80cf8125b227529c/runs/run_0c3742e7865146da84e40b38abc3cccc/executions/instance_5121233e2d7942d7b2d40e83512e5bb0/devices/AFQJVB2211008014/monitoring/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+          "capture_reason": "perfetto trace sidecar",
+          "capture_message": "captured",
+          "metadata": {
+            "backend": "perfetto",
+            "remote_trace_path": "/data/local/tmp/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+            "trace_size_bytes": 188680
+          }
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2025-07-27T13:27:58.382144",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 4.6,
+      "cpu_user": 2.3,
+      "cpu_breakdown": {
+        "total": 4.6,
+        "user": 2.3,
+        "kernel": 2.2,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3576.05,
+      "memory_usage_percent": 37.26,
+      "memory_percent": 37.26,
+      "memory_system_used": 2124.09,
+      "battery_level": 100.0,
+      "network_rx_total": 11007.52,
+      "network_tx_total": 5067.54,
+      "network_rx": 0.09,
+      "network_tx": 0.08,
+      "network": 0.17,
+      "load_1min": 22.86,
+      "load_5min": 22.8,
+      "load_15min": 22.67,
+      "perfetto_trace_size_bytes": 188680,
+      "perfetto_duration_ms": 0
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 2.5,
+        "memory_pss": 30.29,
+        "memory_java": 8.57,
+        "memory_native": 10.96,
+        "frame_count": 0.0,
+        "jank_frames": 0.0,
+        "jank_percent": 0.0,
+        "gpu_p50_ms": 4950.0,
+        "gpu_p90_ms": 4950.0,
+        "gpu_p95_ms": 4950.0,
+        "gpu_p99_ms": 4950.0,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 1.3,
+        "top_memory_res_kb": 78848.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "perfetto",
+      "profile_name": "perfetto",
+      "trace_artifact_path": "runtime/tasks/task_e2324e32cb0c4a9e80cf8125b227529c/runs/run_0c3742e7865146da84e40b38abc3cccc/executions/instance_5121233e2d7942d7b2d40e83512e5bb0/devices/AFQJVB2211008014/monitoring/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+      "normalized_stats": {
+        "trace_status": "captured",
+        "trace_size_bytes": 188680,
+        "duration_ms": 0
+      },
+      "best_effort_degraded": false,
+      "perfetto": {
+        "trace_status": "captured",
+        "captured_at": "2025-07-27T13:26:54.960547",
+        "local_trace_path": "runtime/tasks/task_e2324e32cb0c4a9e80cf8125b227529c/runs/run_0c3742e7865146da84e40b38abc3cccc/executions/instance_5121233e2d7942d7b2d40e83512e5bb0/devices/AFQJVB2211008014/monitoring/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+        "remote_trace_path": "/data/local/tmp/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+        "capture_mode": "stdout_fallback",
+        "trace_size_bytes": 188680,
+        "duration_ms": 0,
+        "config_path": "",
+        "stdout_tail": "captured perfetto stdout",
+        "stderr_tail": "[682.482] perfetto_cmd.cc:940     Failed to open /data/local/tmp/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace. If you get permission denied in /data/misc/perfetto-traces, the file might have been created by another user, try deleting it first. (errno: 13, Permission denied)\n",
+        "best_effort_degraded": false,
+        "degraded_reason": "remote trace pull failed; captured trace from stdout fallback"
+      },
+      "artifacts": [
+        {
+          "artifact_type": "perfetto_trace",
+          "file_path": "runtime/tasks/task_e2324e32cb0c4a9e80cf8125b227529c/runs/run_0c3742e7865146da84e40b38abc3cccc/executions/instance_5121233e2d7942d7b2d40e83512e5bb0/devices/AFQJVB2211008014/monitoring/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+          "capture_reason": "perfetto trace sidecar",
+          "capture_message": "captured",
+          "metadata": {
+            "backend": "perfetto",
+            "remote_trace_path": "/data/local/tmp/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+            "trace_size_bytes": 188680
+          }
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2025-07-27T13:28:04.666039",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 4.6,
+      "cpu_user": 2.3,
+      "cpu_breakdown": {
+        "total": 4.6,
+        "user": 2.3,
+        "kernel": 2.2,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3571.48,
+      "memory_usage_percent": 37.34,
+      "memory_percent": 37.34,
+      "memory_system_used": 2128.66,
+      "battery_level": 100.0,
+      "network_rx_total": 11007.52,
+      "network_tx_total": 5067.54,
+      "network_rx": 0,
+      "network_tx": 0,
+      "network": 0,
+      "load_1min": 22.86,
+      "load_5min": 22.8,
+      "load_15min": 22.67,
+      "perfetto_trace_size_bytes": 188680,
+      "perfetto_duration_ms": 0
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 2.5,
+        "memory_pss": 30.29,
+        "memory_java": 8.56,
+        "memory_native": 10.96,
+        "frame_count": 0.0,
+        "jank_frames": 0.0,
+        "jank_percent": 0.0,
+        "gpu_p50_ms": 4950.0,
+        "gpu_p90_ms": 4950.0,
+        "gpu_p95_ms": 4950.0,
+        "gpu_p99_ms": 4950.0,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 1.3,
+        "top_memory_res_kb": 78848.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "perfetto",
+      "profile_name": "perfetto",
+      "trace_artifact_path": "runtime/tasks/task_e2324e32cb0c4a9e80cf8125b227529c/runs/run_0c3742e7865146da84e40b38abc3cccc/executions/instance_5121233e2d7942d7b2d40e83512e5bb0/devices/AFQJVB2211008014/monitoring/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+      "normalized_stats": {
+        "trace_status": "captured",
+        "trace_size_bytes": 188680,
+        "duration_ms": 0
+      },
+      "best_effort_degraded": false,
+      "perfetto": {
+        "trace_status": "captured",
+        "captured_at": "2025-07-27T13:26:54.960547",
+        "local_trace_path": "runtime/tasks/task_e2324e32cb0c4a9e80cf8125b227529c/runs/run_0c3742e7865146da84e40b38abc3cccc/executions/instance_5121233e2d7942d7b2d40e83512e5bb0/devices/AFQJVB2211008014/monitoring/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+        "remote_trace_path": "/data/local/tmp/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+        "capture_mode": "stdout_fallback",
+        "trace_size_bytes": 188680,
+        "duration_ms": 0,
+        "config_path": "",
+        "stdout_tail": "captured perfetto stdout",
+        "stderr_tail": "[682.482] perfetto_cmd.cc:940     Failed to open /data/local/tmp/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace. If you get permission denied in /data/misc/perfetto-traces, the file might have been created by another user, try deleting it first. (errno: 13, Permission denied)\n",
+        "best_effort_degraded": false,
+        "degraded_reason": "remote trace pull failed; captured trace from stdout fallback"
+      },
+      "artifacts": [
+        {
+          "artifact_type": "perfetto_trace",
+          "file_path": "runtime/tasks/task_e2324e32cb0c4a9e80cf8125b227529c/runs/run_0c3742e7865146da84e40b38abc3cccc/executions/instance_5121233e2d7942d7b2d40e83512e5bb0/devices/AFQJVB2211008014/monitoring/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+          "capture_reason": "perfetto trace sidecar",
+          "capture_message": "captured",
+          "metadata": {
+            "backend": "perfetto",
+            "remote_trace_path": "/data/local/tmp/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+            "trace_size_bytes": 188680
+          }
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2025-07-27T13:28:10.945187",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 4.6,
+      "cpu_user": 2.3,
+      "cpu_breakdown": {
+        "total": 4.6,
+        "user": 2.3,
+        "kernel": 2.2,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3562.43,
+      "memory_usage_percent": 37.5,
+      "memory_percent": 37.5,
+      "memory_system_used": 2137.72,
+      "battery_level": 100.0,
+      "network_rx_total": 11007.52,
+      "network_tx_total": 5067.54,
+      "network_rx": 0,
+      "network_tx": 0,
+      "network": 0,
+      "load_1min": 22.86,
+      "load_5min": 22.8,
+      "load_15min": 22.67,
+      "perfetto_trace_size_bytes": 188680,
+      "perfetto_duration_ms": 0
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 2.5,
+        "frame_count": 0.0,
+        "jank_frames": 0.0,
+        "jank_percent": 0.0,
+        "gpu_p50_ms": 4950.0,
+        "gpu_p90_ms": 4950.0,
+        "gpu_p95_ms": 4950.0,
+        "gpu_p99_ms": 4950.0,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 1.3,
+        "top_memory_res_kb": 78848.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "perfetto",
+      "profile_name": "perfetto",
+      "trace_artifact_path": "runtime/tasks/task_e2324e32cb0c4a9e80cf8125b227529c/runs/run_0c3742e7865146da84e40b38abc3cccc/executions/instance_5121233e2d7942d7b2d40e83512e5bb0/devices/AFQJVB2211008014/monitoring/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+      "normalized_stats": {
+        "trace_status": "captured",
+        "trace_size_bytes": 188680,
+        "duration_ms": 0
+      },
+      "best_effort_degraded": false,
+      "perfetto": {
+        "trace_status": "captured",
+        "captured_at": "2025-07-27T13:26:54.960547",
+        "local_trace_path": "runtime/tasks/task_e2324e32cb0c4a9e80cf8125b227529c/runs/run_0c3742e7865146da84e40b38abc3cccc/executions/instance_5121233e2d7942d7b2d40e83512e5bb0/devices/AFQJVB2211008014/monitoring/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+        "remote_trace_path": "/data/local/tmp/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+        "capture_mode": "stdout_fallback",
+        "trace_size_bytes": 188680,
+        "duration_ms": 0,
+        "config_path": "",
+        "stdout_tail": "captured perfetto stdout",
+        "stderr_tail": "[682.482] perfetto_cmd.cc:940     Failed to open /data/local/tmp/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace. If you get permission denied in /data/misc/perfetto-traces, the file might have been created by another user, try deleting it first. (errno: 13, Permission denied)\n",
+        "best_effort_degraded": false,
+        "degraded_reason": "remote trace pull failed; captured trace from stdout fallback"
+      },
+      "artifacts": [
+        {
+          "artifact_type": "perfetto_trace",
+          "file_path": "runtime/tasks/task_e2324e32cb0c4a9e80cf8125b227529c/runs/run_0c3742e7865146da84e40b38abc3cccc/executions/instance_5121233e2d7942d7b2d40e83512e5bb0/devices/AFQJVB2211008014/monitoring/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+          "capture_reason": "perfetto trace sidecar",
+          "capture_message": "captured",
+          "metadata": {
+            "backend": "perfetto",
+            "remote_trace_path": "/data/local/tmp/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+            "trace_size_bytes": 188680
+          }
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2025-07-27T13:28:17.099066",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 5.5,
+      "cpu_user": 2.7,
+      "cpu_breakdown": {
+        "total": 5.5,
+        "user": 2.7,
+        "kernel": 2.7,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3562.67,
+      "memory_usage_percent": 37.5,
+      "memory_percent": 37.5,
+      "memory_system_used": 2137.48,
+      "battery_level": 100.0,
+      "network_rx_total": 11007.52,
+      "network_tx_total": 5067.54,
+      "network_rx": 0,
+      "network_tx": 0,
+      "network": 0,
+      "load_1min": 22.86,
+      "load_5min": 22.8,
+      "load_15min": 22.67,
+      "perfetto_trace_size_bytes": 188680,
+      "perfetto_duration_ms": 0
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 1.7,
+        "memory_pss": 30.43,
+        "memory_java": 8.69,
+        "memory_native": 10.98,
+        "frame_count": 0.0,
+        "jank_frames": 0.0,
+        "jank_percent": 0.0,
+        "gpu_p50_ms": 4950.0,
+        "gpu_p90_ms": 4950.0,
+        "gpu_p95_ms": 4950.0,
+        "gpu_p99_ms": 4950.0,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 1.3,
+        "top_memory_res_kb": 78848.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "perfetto",
+      "profile_name": "perfetto",
+      "trace_artifact_path": "runtime/tasks/task_e2324e32cb0c4a9e80cf8125b227529c/runs/run_0c3742e7865146da84e40b38abc3cccc/executions/instance_5121233e2d7942d7b2d40e83512e5bb0/devices/AFQJVB2211008014/monitoring/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+      "normalized_stats": {
+        "trace_status": "captured",
+        "trace_size_bytes": 188680,
+        "duration_ms": 0
+      },
+      "best_effort_degraded": false,
+      "perfetto": {
+        "trace_status": "captured",
+        "captured_at": "2025-07-27T13:26:54.960547",
+        "local_trace_path": "runtime/tasks/task_e2324e32cb0c4a9e80cf8125b227529c/runs/run_0c3742e7865146da84e40b38abc3cccc/executions/instance_5121233e2d7942d7b2d40e83512e5bb0/devices/AFQJVB2211008014/monitoring/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+        "remote_trace_path": "/data/local/tmp/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+        "capture_mode": "stdout_fallback",
+        "trace_size_bytes": 188680,
+        "duration_ms": 0,
+        "config_path": "",
+        "stdout_tail": "captured perfetto stdout",
+        "stderr_tail": "[682.482] perfetto_cmd.cc:940     Failed to open /data/local/tmp/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace. If you get permission denied in /data/misc/perfetto-traces, the file might have been created by another user, try deleting it first. (errno: 13, Permission denied)\n",
+        "best_effort_degraded": false,
+        "degraded_reason": "remote trace pull failed; captured trace from stdout fallback"
+      },
+      "artifacts": [
+        {
+          "artifact_type": "perfetto_trace",
+          "file_path": "runtime/tasks/task_e2324e32cb0c4a9e80cf8125b227529c/runs/run_0c3742e7865146da84e40b38abc3cccc/executions/instance_5121233e2d7942d7b2d40e83512e5bb0/devices/AFQJVB2211008014/monitoring/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+          "capture_reason": "perfetto trace sidecar",
+          "capture_message": "captured",
+          "metadata": {
+            "backend": "perfetto",
+            "remote_trace_path": "/data/local/tmp/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+            "trace_size_bytes": 188680
+          }
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2025-07-27T13:28:23.332588",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 5.5,
+      "cpu_user": 2.7,
+      "cpu_breakdown": {
+        "total": 5.5,
+        "user": 2.7,
+        "kernel": 2.7,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3588.18,
+      "memory_usage_percent": 37.05,
+      "memory_percent": 37.05,
+      "memory_system_used": 2111.97,
+      "battery_level": 100.0,
+      "network_rx_total": 11007.52,
+      "network_tx_total": 5067.54,
+      "network_rx": 0,
+      "network_tx": 0,
+      "network": 0,
+      "load_1min": 22.86,
+      "load_5min": 22.8,
+      "load_15min": 22.67,
+      "perfetto_trace_size_bytes": 188680,
+      "perfetto_duration_ms": 0
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 1.7,
+        "memory_pss": 30.22,
+        "memory_java": 8.5,
+        "memory_native": 10.96,
+        "frame_count": 0.0,
+        "jank_frames": 0.0,
+        "jank_percent": 0.0,
+        "gpu_p50_ms": 4950.0,
+        "gpu_p90_ms": 4950.0,
+        "gpu_p95_ms": 4950.0,
+        "gpu_p99_ms": 4950.0,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 1.3,
+        "top_memory_res_kb": 78848.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "perfetto",
+      "profile_name": "perfetto",
+      "trace_artifact_path": "runtime/tasks/task_e2324e32cb0c4a9e80cf8125b227529c/runs/run_0c3742e7865146da84e40b38abc3cccc/executions/instance_5121233e2d7942d7b2d40e83512e5bb0/devices/AFQJVB2211008014/monitoring/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+      "normalized_stats": {
+        "trace_status": "captured",
+        "trace_size_bytes": 188680,
+        "duration_ms": 0
+      },
+      "best_effort_degraded": false,
+      "perfetto": {
+        "trace_status": "captured",
+        "captured_at": "2025-07-27T13:26:54.960547",
+        "local_trace_path": "runtime/tasks/task_e2324e32cb0c4a9e80cf8125b227529c/runs/run_0c3742e7865146da84e40b38abc3cccc/executions/instance_5121233e2d7942d7b2d40e83512e5bb0/devices/AFQJVB2211008014/monitoring/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+        "remote_trace_path": "/data/local/tmp/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+        "capture_mode": "stdout_fallback",
+        "trace_size_bytes": 188680,
+        "duration_ms": 0,
+        "config_path": "",
+        "stdout_tail": "captured perfetto stdout",
+        "stderr_tail": "[682.482] perfetto_cmd.cc:940     Failed to open /data/local/tmp/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace. If you get permission denied in /data/misc/perfetto-traces, the file might have been created by another user, try deleting it first. (errno: 13, Permission denied)\n",
+        "best_effort_degraded": false,
+        "degraded_reason": "remote trace pull failed; captured trace from stdout fallback"
+      },
+      "artifacts": [
+        {
+          "artifact_type": "perfetto_trace",
+          "file_path": "runtime/tasks/task_e2324e32cb0c4a9e80cf8125b227529c/runs/run_0c3742e7865146da84e40b38abc3cccc/executions/instance_5121233e2d7942d7b2d40e83512e5bb0/devices/AFQJVB2211008014/monitoring/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+          "capture_reason": "perfetto trace sidecar",
+          "capture_message": "captured",
+          "metadata": {
+            "backend": "perfetto",
+            "remote_trace_path": "/data/local/tmp/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+            "trace_size_bytes": 188680
+          }
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2025-07-27T13:28:29.667179",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 5.5,
+      "cpu_user": 2.7,
+      "cpu_breakdown": {
+        "total": 5.5,
+        "user": 2.7,
+        "kernel": 2.7,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3582.98,
+      "memory_usage_percent": 37.14,
+      "memory_percent": 37.14,
+      "memory_system_used": 2117.17,
+      "battery_level": 100.0,
+      "network_rx_total": 11011.97,
+      "network_tx_total": 5073.67,
+      "network_rx": 0.7,
+      "network_tx": 0.96,
+      "network": 1.66,
+      "load_1min": 22.85,
+      "load_5min": 22.81,
+      "load_15min": 22.67,
+      "perfetto_trace_size_bytes": 188680,
+      "perfetto_duration_ms": 0
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 1.7,
+        "memory_pss": 30.28,
+        "memory_java": 8.56,
+        "memory_native": 10.96,
+        "frame_count": 0.0,
+        "jank_frames": 0.0,
+        "jank_percent": 0.0,
+        "gpu_p50_ms": 4950.0,
+        "gpu_p90_ms": 4950.0,
+        "gpu_p95_ms": 4950.0,
+        "gpu_p99_ms": 4950.0,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 1.3,
+        "top_memory_res_kb": 78848.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "perfetto",
+      "profile_name": "perfetto",
+      "trace_artifact_path": "runtime/tasks/task_e2324e32cb0c4a9e80cf8125b227529c/runs/run_0c3742e7865146da84e40b38abc3cccc/executions/instance_5121233e2d7942d7b2d40e83512e5bb0/devices/AFQJVB2211008014/monitoring/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+      "normalized_stats": {
+        "trace_status": "captured",
+        "trace_size_bytes": 188680,
+        "duration_ms": 0
+      },
+      "best_effort_degraded": false,
+      "perfetto": {
+        "trace_status": "captured",
+        "captured_at": "2025-07-27T13:26:54.960547",
+        "local_trace_path": "runtime/tasks/task_e2324e32cb0c4a9e80cf8125b227529c/runs/run_0c3742e7865146da84e40b38abc3cccc/executions/instance_5121233e2d7942d7b2d40e83512e5bb0/devices/AFQJVB2211008014/monitoring/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+        "remote_trace_path": "/data/local/tmp/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+        "capture_mode": "stdout_fallback",
+        "trace_size_bytes": 188680,
+        "duration_ms": 0,
+        "config_path": "",
+        "stdout_tail": "captured perfetto stdout",
+        "stderr_tail": "[682.482] perfetto_cmd.cc:940     Failed to open /data/local/tmp/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace. If you get permission denied in /data/misc/perfetto-traces, the file might have been created by another user, try deleting it first. (errno: 13, Permission denied)\n",
+        "best_effort_degraded": false,
+        "degraded_reason": "remote trace pull failed; captured trace from stdout fallback"
+      },
+      "artifacts": [
+        {
+          "artifact_type": "perfetto_trace",
+          "file_path": "runtime/tasks/task_e2324e32cb0c4a9e80cf8125b227529c/runs/run_0c3742e7865146da84e40b38abc3cccc/executions/instance_5121233e2d7942d7b2d40e83512e5bb0/devices/AFQJVB2211008014/monitoring/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+          "capture_reason": "perfetto trace sidecar",
+          "capture_message": "captured",
+          "metadata": {
+            "backend": "perfetto",
+            "remote_trace_path": "/data/local/tmp/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+            "trace_size_bytes": 188680
+          }
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2025-07-27T13:28:39.526596",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 5.5,
+      "cpu_user": 2.7,
+      "cpu_breakdown": {
+        "total": 5.5,
+        "user": 2.7,
+        "kernel": 2.7,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3578.07,
+      "memory_usage_percent": 37.23,
+      "memory_percent": 37.23,
+      "memory_system_used": 2122.07,
+      "battery_level": 100.0,
+      "network_rx_total": 11011.97,
+      "network_tx_total": 5073.67,
+      "network_rx": 0,
+      "network_tx": 0,
+      "network": 0,
+      "load_1min": 22.85,
+      "load_5min": 22.81,
+      "load_15min": 22.67,
+      "perfetto_trace_size_bytes": 188680,
+      "perfetto_duration_ms": 0
+    },
+    "apps": [
+      {
+        "app_package": "com.hihonor.calculator",
+        "cpu_usage": 1.7,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 0.0,
+        "top_memory_percent": 1.3,
+        "top_memory_res_kb": 77824.0,
+        "app_info": {
+          "package_name": "com.hihonor.calculator",
+          "app_name": "com.hihonor.calculator"
+        },
+        "package_name": "com.hihonor.calculator"
+      }
+    ],
+    "metadata": {
+      "backend": "perfetto",
+      "profile_name": "perfetto",
+      "trace_artifact_path": "runtime/tasks/task_e2324e32cb0c4a9e80cf8125b227529c/runs/run_0c3742e7865146da84e40b38abc3cccc/executions/instance_5121233e2d7942d7b2d40e83512e5bb0/devices/AFQJVB2211008014/monitoring/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+      "normalized_stats": {
+        "trace_status": "captured",
+        "trace_size_bytes": 188680,
+        "duration_ms": 0
+      },
+      "best_effort_degraded": false,
+      "perfetto": {
+        "trace_status": "captured",
+        "captured_at": "2025-07-27T13:26:54.960547",
+        "local_trace_path": "runtime/tasks/task_e2324e32cb0c4a9e80cf8125b227529c/runs/run_0c3742e7865146da84e40b38abc3cccc/executions/instance_5121233e2d7942d7b2d40e83512e5bb0/devices/AFQJVB2211008014/monitoring/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+        "remote_trace_path": "/data/local/tmp/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+        "capture_mode": "stdout_fallback",
+        "trace_size_bytes": 188680,
+        "duration_ms": 0,
+        "config_path": "",
+        "stdout_tail": "captured perfetto stdout",
+        "stderr_tail": "[682.482] perfetto_cmd.cc:940     Failed to open /data/local/tmp/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace. If you get permission denied in /data/misc/perfetto-traces, the file might have been created by another user, try deleting it first. (errno: 13, Permission denied)\n",
+        "best_effort_degraded": false,
+        "degraded_reason": "remote trace pull failed; captured trace from stdout fallback"
+      },
+      "artifacts": [
+        {
+          "artifact_type": "perfetto_trace",
+          "file_path": "runtime/tasks/task_e2324e32cb0c4a9e80cf8125b227529c/runs/run_0c3742e7865146da84e40b38abc3cccc/executions/instance_5121233e2d7942d7b2d40e83512e5bb0/devices/AFQJVB2211008014/monitoring/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+          "capture_reason": "perfetto trace sidecar",
+          "capture_message": "captured",
+          "metadata": {
+            "backend": "perfetto",
+            "remote_trace_path": "/data/local/tmp/task_e2324e32cb0c4a9e80cf8125b227529c_instance_5121233e2d7942d7b2d40e83512e5bb0.perfetto-trace",
+            "trace_size_bytes": 188680
+          }
+        }
+      ]
+    }
+  }
+]

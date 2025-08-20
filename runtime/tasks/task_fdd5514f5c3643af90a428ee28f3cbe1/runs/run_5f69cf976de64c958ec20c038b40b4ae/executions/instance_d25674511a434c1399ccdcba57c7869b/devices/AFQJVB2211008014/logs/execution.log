@@ -1,0 +1,122 @@
+[2026-04-26 04:31:49.053376] preparing instance instance_d25674511a434c1399ccdcba57c7869b
+device=AFQJVB2211008014
+[2026-04-26 04:31:50.257893] instance entered running state
+[2026-04-26 04:31:50.258093] scenario attempt 1/1 started for instance instance_d25674511a434c1399ccdcba57c7869b
+[monkey] attempt=1 return_code=0 timed_out=False
+bash arg: -p
+  bash arg: com.ss.android.ugc.aweme
+  bash arg: --throttle
+  bash arg: 300
+  bash arg: --ignore-crashes
+  bash arg: --ignore-timeouts
+  bash arg: --ignore-security-exceptions
+  bash arg: -v
+  bash arg: 240
+:Monkey: seed=1777381774670 count=240
+:AllowPackage: com.ss.android.ugc.aweme
+:IncludeCategory: android.intent.category.LAUNCHER
+:IncludeCategory: android.intent.category.MONKEY
+// Event percentages:
+//   0: 15.0%
+//   1: 10.0%
+//   2: 2.0%
+//   3: 15.0%
+//   4: -0.0%
+//   5: -0.0%
+//   6: 25.0%
+//   7: 15.0%
+//   8: 2.0%
+//   9: 2.0%
+//   10: 1.0%
+//   11: 13.0%
+:Switch: #Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;launchFlags=0x10200000;component=com.ss.android.ugc.aweme/.splash.SplashActivity;end
+    // Allowing start of Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=com.ss.android.ugc.aweme/.splash.SplashActivity } in package com.ss.android.ugc.aweme
+:Sending Touch (ACTION_DOWN): 0:(841.0,553.0)
+:Sending Touch (ACTION_UP): 0:(783.63324,466.19095)
+:Switch: #Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;launchFlags=0x10200000;component=com.ss.android.ugc.aweme/.splash.SplashActivity;end
+    // Allowing start of Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=com.ss.android.ugc.aweme/.splash.SplashActivity } in package com.ss.android.ugc.aweme
+:Switch: #Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;launchFlags=0x10200000;component=com.ss.android.ugc.aweme/.splash.SplashActivity;end
+    // Allowing start of Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=com.ss.android.ugc.aweme/.splash.SplashActivity } in package com.ss.android.ugc.aweme
+:Sending Touch (ACTION_DOWN): 0:(194.0,1830.0)
+:Sending Touch (ACTION_UP): 0:(191.80067,1832.6768)
+:Sending Touch (ACTION_DOWN): 0:(446.0,1836.0)
+:Sending Touch (ACTION_UP): 0:(453.9649,1833.5367)
+:Sending Touch (ACTION_DOWN): 0:(397.0,2019.0)
+:Sending Touch (ACTION_UP): 0:(394.76062,2028.3264)
+:Sending Touch (ACTION_DOWN): 0:(939.0,38.0)
+:Sending Touch (ACTION_UP): 0:(941.69403,31.04823)
+:Sending Touch (ACTION_DOWN): 0:(882.0,1847.0)
+:Sending Touch (ACTION_UP): 0:(834.94116,1828.1973)
+:Sending Touch (ACTION_DOWN): 0:(102.0,997.0)
+:Sending Touch (ACTION_UP): 0:(88.37829,1011.7827)
+:Sending Touch (ACTION_DOWN): 0:(843.0,138.0)
+:Sending Touch (ACTION_UP): 0:(842.9247,137.52745)
+    // Rejecting start of Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=com.hihonor.contacts/com.android.contacts.activities.PeopleActivity } in package com.hihonor.contacts
+:Sending Touch (ACTION_DOWN): 0:(693.0,1770.0)
+:Sending Touch (ACTION_UP): 0:(682.6182,1774.8813)
+:Sending Trackball (ACTION_MOVE): 0:(2.0,0.0)
+:Sending Trackball (ACTION_MOVE): 0:(2.0,-1.0)
+:Sending Touch (ACTION_DOWN): 0:(924.0,1369.0)
+:Sending Touch (ACTION_UP): 0:(953.4932,1380.9146)
+:Sending Trackball (ACTION_MOVE): 0:(-2.0,1.0)
+:Sending Trackball (ACTION_MOVE): 0:(-1.0,0.0)
+    //[calendar_time:2026-04-26 04:32:03.453  system_uptime:91206315]
+    // Sending event #100
+:Sending Trackball (ACTION_MOVE): 0:(-4.0,-1.0)
+    // Allowing start of Intent { cmp=com.ss.android.ugc.aweme/com.bytedance.timon.permission_keeper.activity.RequestPermissionActivity } in package com.ss.android.ugc.aweme
+:Sending Trackball (ACTION_MOVE): 0:(3.0,0.0)
+:Sending Touch (ACTION_DOWN): 0:(336.0,1994.0)
+:Sending Touch (ACTION_UP): 0:(307.54767,2014.6498)
+:Sending Touch (ACTION_DOWN): 0:(588.0,163.0)
+:Sending Touch (ACTION_UP): 0:(580.86975,162.09546)
+:Sending Touch (ACTION_DOWN): 0:(1013.0,1705.0)
+:Sending Touch (ACTION_UP): 0:(1006.48553,1706.1094)
+    // Rejecting start of Intent { act=android.content.pm.action.REQUEST_PERMISSIONS pkg=com.android.permissioncontroller cmp=com.android.permissioncontroller/.permission.ui.GrantPermissionsActivity } in package com.android.permissioncontroller
+    // activityResuming(com.ss.android.ugc.aweme)
+:Sending Touch (ACTION_DOWN): 0:(759.0,883.0)
+:Sending Touch (ACTION_UP): 0:(736.98724,878.528)
+:Switch: #Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;launchFlags=0x10200000;component=com.ss.android.ugc.aweme/.splash.SplashActivity;end
+    // Allowing start of Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=com.ss.android.ugc.aweme/.splash.SplashActivity } in package com.ss.android.ugc.aweme
+:Sending Trackball (ACTION_MOVE): 0:(0.0,1.0)
+    // Allowing start of Intent { dat=snssdk1128://detail pkg=com.ss.android.ugc.aweme cmp=com.ss.android.ugc.aweme/.detail.ui.DetailActivity } in package com.ss.android.ugc.aweme
+:Sending Trackball (ACTION_MOVE): 0:(1.0,-1.0)
+    // Allowing start of Intent { cmp=com.ss.android.ugc.aweme/.account.business.login.DYLoginActivity } in package com.ss.android.ugc.aweme
+:Sending Touch (ACTION_DOWN): 0:(631.0,875.0)
+:Sending Touch (ACTION_UP): 0:(624.4641,893.84143)
+:Sending Trackball (ACTION_MOVE): 0:(3.0,-3.0)
+    //[calendar_time:2026-04-26 04:32:15.068  system_uptime:91217811]
+    // Sending event #200
+:Sending Trackball (ACTION_UP): 0:(0.0,0.0)
+:Sending Touch (ACTION_DOWN): 0:(1057.0,382.0)
+:Sending Touch (ACTION_UP): 0:(1031.2039,387.41873)
+:Sending Touch (ACTION_DOWN): 0:(676.0,1947.0)
+:Sending Touch (ACTION_UP): 0:(668.7536,1947.4984)
+    // Allowing start of Intent { cmp=com.ss.android.ugc.aweme/.search.activity.SearchResultActivity } in package com.ss.android.ugc.aweme
+    // activityResuming(com.ss.android.ugc.aweme)
+:Sending Touch (ACTION_DOWN): 0:(527.0,427.0)
+:Sending Touch (ACTION_UP): 0:(512.5184,413.24484)
+:Sending Touch (ACTION_DOWN): 0:(997.0,1089.0)
+:Sending Touch (ACTION_UP): 0:(1018.7999,1087.3739)
+:Sending Touch (ACTION_DOWN): 0:(42.0,396.0)
+Events injected: 240
+:Sending rotation degree=0, persist=false
+:Dropped: keys=0 pointers=0 trackballs=0 flips=0 rotations=0
+## Network stats: elapsed time=31484ms (0ms mobile, 0ms wifi, 31484ms not connected)
+// Monkey finished
+args: [-p, com.ss.android.ugc.aweme, --throttle, 300, --ignore-crashes, --ignore-timeouts, --ignore-security-exceptions, -v, 240]
+ arg: "-p"
+ arg: "com.ss.android.ugc.aweme"
+ arg: "--throttle"
+ arg: "300"
+ arg: "--ignore-crashes"
+ arg: "--ignore-timeouts"
+ arg: "--ignore-security-exceptions"
+ arg: "-v"
+ arg: "240"
+data="com.ss.android.ugc.aweme"
+arg="--throttle" mCurArgData="null" mNextArg=3 argwas="--throttle" nextarg="300"
+data="300"
+arg="--ignore-crashes" mCurArgData="null" mNextArg=5 argwas="--ignore-crashes" nextarg="--ignore-timeouts"
+arg="--ignore-timeouts" mCurArgData="null" mNextArg=6 argwas="--ignore-timeouts" nextarg="--ignore-security-exceptions"
+arg="--ignore-security-exceptions" mCurArgData="null" mNextArg=7 argwas="--ignore-security-exceptions" nextarg="-v"
+[2026-04-26 04:32:28.585792] execution finished with status success

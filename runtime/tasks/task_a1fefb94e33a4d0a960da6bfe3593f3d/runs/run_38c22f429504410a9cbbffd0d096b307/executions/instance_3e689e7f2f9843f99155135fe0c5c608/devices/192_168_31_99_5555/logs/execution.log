@@ -1,0 +1,13 @@
+[2026-04-19T12:26:20.385731] preparing instance instance_3e689e7f2f9843f99155135fe0c5c608
+device=192.168.31.99:5555
+[2026-04-19T12:26:20.400762] instance entered running state
+[cold_start_loop] loop=1 target=com.android.settings/.HWSettings status=ok
+[cold_start_loop] loop=1 wait_time_ms=33 total_time_ms=0 this_time_ms=None
+[cold_start_loop] loop=1 return_code=0 timed_out=False
+[cold_start_loop] loop=2 target=com.android.settings/.HWSettings status=ok
+[cold_start_loop] loop=2 wait_time_ms=10 total_time_ms=0 this_time_ms=None
+[cold_start_loop] loop=2 return_code=0 timed_out=False
+[cold_start_loop] loop=3 target=com.android.settings/.HWSettings status=ok
+[cold_start_loop] loop=3 wait_time_ms=305 total_time_ms=301 this_time_ms=None
+[cold_start_loop] loop=3 return_code=0 timed_out=False
+[2026-04-19T12:26:27.058728] execution finished with status success

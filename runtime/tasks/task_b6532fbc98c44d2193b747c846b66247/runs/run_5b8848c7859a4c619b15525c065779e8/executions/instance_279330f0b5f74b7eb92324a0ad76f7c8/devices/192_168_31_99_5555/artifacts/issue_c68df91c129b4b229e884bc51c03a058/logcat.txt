@@ -1,0 +1,429 @@
+===== crash_buffer =====
+--------- beginning of crash
+07-19 00:58:46.862 24057 24174 E AndroidRuntime: FATAL EXCEPTION: reportKitInfos-thread-1
+07-19 00:58:46.862 24057 24174 E AndroidRuntime: Process: com.huawei.hwid.core, PID: 24057
+07-19 00:58:46.862 24057 24174 E AndroidRuntime: java.lang.IllegalStateException: Couldn't read row 23, col 1 from CursorWindow.  Make sure the Cursor is initialized correctly before accessing data from it.
+07-19 00:58:46.862 24057 24174 E AndroidRuntime: 	at android.database.CursorWindow.nativeGetLong(Native Method)
+07-19 00:58:46.862 24057 24174 E AndroidRuntime: 	at android.database.CursorWindow.getLong(CursorWindow.java:536)
+07-19 00:58:46.862 24057 24174 E AndroidRuntime: 	at android.database.CursorWindow.getInt(CursorWindow.java:603)
+07-19 00:58:46.862 24057 24174 E AndroidRuntime: 	at android.database.AbstractWindowedCursor.getInt(AbstractWindowedCursor.java:72)
+07-19 00:58:46.862 24057 24174 E AndroidRuntime: 	at h2.n.a(PackageInfoDAO_Impl.java:142)
+07-19 00:58:46.862 24057 24174 E AndroidRuntime: 	at com.huawei.hms.fwkit.common.l$b.run(Reporter.java:21)
+07-19 00:58:46.862 24057 24174 E AndroidRuntime: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1167)
+07-19 00:58:46.862 24057 24174 E AndroidRuntime: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:641)
+07-19 00:58:46.862 24057 24174 E AndroidRuntime: 	at java.lang.Thread.run(Thread.java:930)
+
+===== all_buffers =====
+--------- beginning of main
+07-19 23:30:07.569  5014  5014 I OverScrollerOptimization: start init SmartSlideOverScroller and get the overscroller config
+07-19 23:30:07.569  5014  5014 I OverScrollerOptimization: get the overscroller config
+07-19 23:30:07.572  1137 20018 I AGPService: AGP-EXTINFO: code 90001
+07-19 23:30:07.572  1137 20018 E Parcel  : Reading a NULL string not supported here.
+07-19 23:30:07.572  1137 20018 I AGPService: ExternalInfoCode 90001 enterInfo 
+07-19 23:30:07.572  1137 20018 I AGPService: FrameRateManager::GetExternalInfo promotionWhitePkgList 0#
+--------- beginning of events
+07-19 23:30:07.575  2225  2225 I auditd  : type=1400 audit(0.0:1820049): avc: denied { read } for comm="WifiDftHandler" name="u:object_r:wifi_hal_prop:s0" dev="tmpfs" ino=8959 scontext=u:r:system_app:s0 tcontext=u:object_r:wifi_hal_prop:s0 tclass=file permissive=0
+07-19 23:30:07.575  2225  2225 W WifiDftHandler: type=1400 audit(0.0:1820049): avc: denied { read } for name="u:object_r:wifi_hal_prop:s0" dev="tmpfs" ino=8959 scontext=u:r:system_app:s0 tcontext=u:object_r:wifi_hal_prop:s0 tclass=file permissive=0
+07-19 23:30:07.579  2225  2380 W libc    : Access denied finding property "wifi.interface"
+07-19 23:30:07.590  1060  1615 D VibratorManagerService: checkHwVibrator: Using Aidl Interface
+07-19 23:30:07.590   841   841 I honor_custvibrator: checkHwVibrator haptic.common.long_press_notice_mode
+--------- beginning of system
+07-19 23:30:07.590  1060  1615 I VibratorManagerService: isSupportHwVibrator type:haptic.common.long_press_notice_mode, isSupport:0
+07-19 23:30:07.596  1060  1615 E TaskChangeNotificationController: forAllLocalListeners pid must be equal, but the callingPid 5014 pid 1060
+07-19 23:30:07.596  1060  1615 E TaskChangeNotificationController: java.lang.Exception
+07-19 23:30:07.596  1060  1615 E TaskChangeNotificationController: 	at com.android.server.wm.TaskChangeNotificationController.forAllLocalListeners(TaskChangeNotificationController.java:347)
+07-19 23:30:07.596  1060  1615 E TaskChangeNotificationController: 	at com.android.server.wm.TaskChangeNotificationController.notifyTaskDescriptionChanged(TaskChangeNotificationController.java:468)
+07-19 23:30:07.596  1060  1615 E TaskChangeNotificationController: 	at com.android.server.wm.Task.updateTaskDescription(Task.java:2639)
+07-19 23:30:07.596  1060  1615 E TaskChangeNotificationController: 	at com.android.server.wm.ActivityRecord.setTaskDescription(ActivityRecord.java:7232)
+07-19 23:30:07.596  1060  1615 E TaskChangeNotificationController: 	at com.android.server.wm.ActivityClientController.setTaskDescription(ActivityClientController.java:1204)
+07-19 23:30:07.596  1060  1615 E TaskChangeNotificationController: 	at android.app.IActivityClientController$Stub.onTransact(IActivityClientController.java:943)
+07-19 23:30:07.596  1060  1615 E TaskChangeNotificationController: 	at com.android.server.wm.ActivityClientController.onTransact(ActivityClientController.java:167)
+07-19 23:30:07.596  1060  1615 E TaskChangeNotificationController: 	at android.os.Binder.execTransactInternal(Binder.java:1186)
+07-19 23:30:07.596  1060  1615 E TaskChangeNotificationController: 	at android.os.Binder.execTransact(Binder.java:1150)
+07-19 23:30:07.601  5014  5014 I wm_on_create_called: [101466242,com.hihonor.calculator.Calculator,performCreate]
+07-19 23:30:07.601  5014  5014 D ActivityThread: add activity client record, r= ActivityRecord{f5a3c69 token=android.os.BinderProxy@cf94bf5 {com.hihonor.calculator/com.hihonor.calculator.Calculator}} token= android.os.BinderProxy@cf94bf5
+07-19 23:30:07.606  1137 20018 I AGPService: AGP-EXTINFO: code 90003
+07-19 23:30:07.606  1137 20018 I AGPService: ExternalInfoCode 90003 enterInfo 5014
+07-19 23:30:07.606  1137 20018 E AGPService: FrameRateManager: GetNameByPid open /proc/5014/cmdline fail, ret = -1!.
+07-19 23:30:07.603  1137  1137 I auditd  : type=1400 audit(0.0:1820050): avc: denied { search } for comm="Binder:1137_6" name="5014" dev="proc" ino=2009065 scontext=u:r:ITouchservice:s0 tcontext=u:r:priv_app:s0:c512,c768 tclass=dir permissive=0
+07-19 23:30:07.603  1137  1137 W Binder:1137_6: type=1400 audit(0.0:1820050): avc: denied { search } for name="5014" dev="proc" ino=2009065 scontext=u:r:ITouchservice:s0 tcontext=u:r:priv_app:s0:c512,c768 tclass=dir permissive=0
+07-19 23:30:07.606  5014  5014 I DisplayManager: mask is 7 and Registered Mask is 7
+07-19 23:30:07.607   902   902 E afehal  : to enter IDLE mode , Interval=240/1400/0/0
+07-19 23:30:07.608  5014  5014 I wm_on_start_called: [101466242,com.hihonor.calculator.Calculator,handleStartActivity]
+07-19 23:30:07.608  5014  5014 I wm_on_resume_called: [101466242,com.hihonor.calculator.Calculator,RESUME_ACTIVITY]
+07-19 23:30:07.608  1060  1768 I TrafficMonitor: expired arrive. level:-1
+07-19 23:30:07.609  1060  1768 I TrafficMonitor: during_ms:2004,period_ms:2000
+07-19 23:30:07.609  1060  1768 I TrafficMonitor: count:542,rx_sum:96,tx_sum:92,rxBytes:6456,during_ms:2004,rx_speed:3221.556886227545,tx_speed:3096.307385229541,rto:1.0434782608695652
+07-19 23:30:07.609  1060  1768 I HihonorWifiWatchdogStateMachine: Get speed information rx_speed = 3221 ,tx_speed = 3096 ,isSpeedOk = false ,mBestSpeedInPeriod = 3221
+07-19 23:30:07.609   832   858 I vendor.honor.hardware.iawareperf@1.0-service: PerfServiceAcq:cmdId = 4098,mPerfBoostPrior = 1!
+07-19 23:30:07.609   842   900 I libPowerHal: cmdSetting - unknown cmd:1c3c000, scmd:(null) ,param_1:1
+07-19 23:30:07.609   842   900 I libPowerHal: [perfLockAcq] idx:4 hdl:2908 hint:-1 pid:832 duration:500 lock_user:iawareperf@1.0- => ret_hdl:2908
+07-19 23:30:07.609   842   900 I libPowerHal: iawareperf@1.0-: set gpu opp level max: 0
+07-19 23:30:07.610  5014  5014 I DecorView[]: set decor visibility 4
+07-19 23:30:07.613  5014  5014 I DisplayManager: mask is 7 and Registered Mask is 7
+07-19 23:30:07.614  1060  1667 E RtgSchedIpcFile: setCommandByIoctl not opened
+07-19 23:30:07.614  1231  1238 I AwareLog: SetThreadToVipGroup:: iawared vipgroup set pid[5014] Success!
+07-19 23:30:07.614  1231  1238 I AwareLog: SetThreadToVipGroup:: iawared vipgroup set pid[5042] Success!
+07-19 23:30:07.614  1060  1667 D HwActivityManagerServiceEx: notifyAppToTop pid:5014, enable:1
+07-19 23:30:07.615  5014  5042 D libMEOW : meow new tls: 0xb4000072d60fc080
+07-19 23:30:07.615  5014  5042 D libMEOW : applied 0 plugin for [com.hihonor.calculator].
+07-19 23:30:07.615  5014  5042 D libMEOW : rebuild call chain: 0xb4000072d611c0a0
+07-19 23:30:07.615  5014  5042 I FrameFlow: FrameFlowInit app is not supported by frameflow solution
+07-19 23:30:07.615  5014  5042 I iGraphics: [GetTotalMemory] total memory =5836952KB
+07-19 23:30:07.615  5014  5014 I DecorView[]:  old windowMode:1 new windoMode:1
+07-19 23:30:07.615  5014  5014 I ViewRootImpl[Calculator]: controlInsetsForCompatibility not hide statusbar
+07-19 23:30:07.615  5014  5042 I iGraphics: [0020080c] pn: com.hihonor.calculator, p: 5014
+07-19 23:30:07.615  5014  5042 I onor.calculato: HwCustType is 0
+07-19 23:30:07.615  5014  5042 E onor.calculato: open file error
+07-19 23:30:07.615  5014  5042 I onor.calculato: no cota live update cust policy found
+07-19 23:30:07.615  5014  5042 I onor.calculato: GetCfgDirRealPolicyValue: custPolicyDirs: /system/magic/base:/system/magic/china:/system/magic/china_honor:/vendor/etc:/odm/cust/all/cn:/odm/etc:/odm/hn_odm/TFY-AN00:/product_h/etc:/product_h/region_comm/china:/preas/china:/product_h/hn_oem/TFY-AN00:/preload/TFY-AN00/all/cn:/cust/global:/cust/def/cn:/version/cust/all/cn:/version/special_cust/TFY-AN00/all/cn:/cust/cotalite:/cust/ecota
+07-19 23:30:07.615  5014  5042 I iGraphics: [0030080c] no spt app: com.hihonor.calculator
+07-19 23:30:07.616  1060  2973 D WindowManager: construct win Window{eadbb60 u0 com.hihonor.calculator/com.hihonor.calculator.Calculator},comp ComponentInfo{com.hihonor.calculator/com.hihonor.calculator.Calculator},mLayoutInCutoutLandscape false
+07-19 23:30:07.616   847   930 E SurfaceFlingerEx: Invalid parameter(s)!
+07-19 23:30:07.616   847   930 I SurfaceFlinger: createLayer layername: eadbb60 com.hihonor.calculator/com.hihonor.calculator.Calculator#0 type: ContainerLayer
+07-19 23:30:07.617   847   847 I SurfaceFlinger: handleLayerCreatedLocked layer update primary transform hint.
+07-19 23:30:07.618  1060  1079 I TaskOrganizerController: onTaskInfoChanged,task=Task{56b4393 #38 type=standard A=10018:com.hihonor.calculator U=0 visible=true mode=fullscreen bound=Rect(0, 0 - 1080, 2388) translucent=false sz=1}
+07-19 23:30:07.619  5014  5014 D libMEOW : meow new tls: 0xb4000072d612c0b0
+07-19 23:30:07.619  5014  5014 D libMEOW : applied 0 plugin for [com.hihonor.calculator].
+07-19 23:30:07.619  5014  5014 D libMEOW : rebuild call chain: 0xb4000072d613c0c0
+07-19 23:30:07.620  5014  5014 D InputTransport: Create ARC handle: 0xb4000071320dd6b0
+07-19 23:30:07.620  5014  5014 D InputEventReceiver: dispatchInputInterval 1000000
+07-19 23:30:07.621  5014  5042 D hw-ProcessState: Binder ioctl to enable oneway spam detection failed: Invalid argument
+07-19 23:30:07.621  5014  5014 I HwForceDarkManager: isSystemInDarkMode isResUiModeYes: false, isDarkMode: false
+07-19 23:30:07.621  5014  5014 I DecorView[]: set decor visibility 0
+07-19 23:30:07.621   902   902 I aptouch_daemon: tsa_set_ctrlflag, set TSA_CTRL_FREQ_HOPPED
+07-19 23:30:07.621   902   902 I aptouch_daemon: check_afe_status, afe[90 120 X6] [ctrl:X40010 ftr:X100] dif[51 -3] raw[65534 65476] [exp:X0 aN:0 lo:0]
+07-19 23:30:07.621   565   565 I hwservicemanager: getTransport: Cannot find entry android.hardware.configstore@1.0::ISurfaceFlingerConfigs/default in either framework or device VINTF manifest.
+07-19 23:30:07.622  2166  2422 D DollieActivityManagerAdapter: [Resumed] bg:true pid:5014 uid:10018 ComponentInfo{com.hihonor.calculator/com.hihonor.calculator.Calculator}
+07-19 23:30:07.622  2166  2422 E DollieAdapterService: notifyActivityState pkg:com.hihonor.calculator/com.hihonor.calculator.Calculator state:2 fg:true mUid:10018
+07-19 23:30:07.622  5014  5014 I wm_on_top_resumed_gained_called: [101466242,com.hihonor.calculator.Calculator,topStateChangedWhenResumed]
+07-19 23:30:07.623  1060  1839 W HwAudioServiceEx: SoundEffectState bundle get reserved is invalid
+07-19 23:30:07.623  2166  3213 I Hicom_Monitor: mActivityNotifierEx, className = com.hihonor.calculator.Calculator
+07-19 23:30:07.623  2166  3213 I Hicom_Monitor: notifyForegroundAppActivityChanged: className:com.hihonor.calculator.Calculator
+07-19 23:30:07.623  5014  5014 D OpenGLRenderer: disableOutlineDraw is true
+07-19 23:30:07.624 19656 21782 W AWARENESS_AmsRegister: state:onResume,com.hihonor.calculator,Calculator,taskId:38,call:,launch:-1,uid:0
+07-19 23:30:07.624  2159  2367 D ApsDynamicCameraFps: APS: APK: handleSpecialCameraState:0
+07-19 23:30:07.624 19656 21782 W AWARENESS_PCIAbility: switch is closed
+07-19 23:30:07.624  2159  2704 D ApsDynamicCameraFps: APS: APK: handleMessage: msg.what: 0
+07-19 23:30:07.624  2159  2704 I ApsAGPAdapter: APS: APK: ApsAGPAdapter: camera changed and mode = 0
+07-19 23:30:07.624  5014  5014 D PhoneWindow: onViewRootImplSet activityToken android.os.BinderProxy@cf94bf5,activityClientRecord ActivityRecord{f5a3c69 token=android.os.BinderProxy@cf94bf5 {com.hihonor.calculator/com.hihonor.calculator.Calculator}},isHwNavigationHide false isHidePrivateFlag = false
+07-19 23:30:07.624  5014  5014 D HiTouch_PressGestureDetector: onAttached:1
+07-19 23:30:07.624  2166  3213 I Hicom_MessageServ: sendMessageInternal: MESSAGE_FOREGROUND_ACTIVITY_CHANGED
+07-19 23:30:07.625  2166  2422 I NsaPowerConsumptionMonitor: mIsSpeedTesting:false isTopActivity:true isSpeedTestApk:false
+07-19 23:30:07.625  2166  2620 I Hicom_MessageServ: handleMessage: MESSAGE_FOREGROUND_ACTIVITY_CHANGED, distributing for + 2 handlers
+07-19 23:30:07.625  2166  2422 I UidCloseNrStateMachine: addUidChanged uid: 10018
+07-19 23:30:07.625  2166  2422 I ConnCureStateMonitor: handleMessage: msg[2]
+07-19 23:30:07.625  2166  2422 I HwPacketFilterBypass: handleActivityUidStateChanged uid:10018 -1 foreground:1
+07-19 23:30:07.625  2166  2422 I NetworkQoeChr: checkForegroundApp timer end
+07-19 23:30:07.625  2166  2422 I NetworkQoeChr: start qoe report
+07-19 23:30:07.626  2166  2422 I NetworkQoe: setNetworkQoeEnable:true,status=32,mNetworkQoeConditions=222
+07-19 23:30:07.626  2166  2422 D NetworkQoe: checkModemParaCollecEnable: false,mNetworkQoeConditions=254
+07-19 23:30:07.626  2166  2422 I NetworkQoe: sendWifiParaCollectCmdToKernel:wifiType = 20
+07-19 23:30:07.627  1060 19036 D wifiserviceimpl: netmask =16777215
+07-19 23:30:07.628  5014  5014 E WindowManagerEx: getDisplaySideRegion: windowInsets is null please check!
+07-19 23:30:07.631  2166  3249 I Collector: HandleRawWifiInfo: flag:0, netId:0!
+07-19 23:30:07.631  2166  3249 I Collector: HandleRawWifiInfo: flag:0, netId:0!
+07-19 23:30:07.632  2166  2422 I NsaPowerConsumptionMonitor: isAreaSaSwitchOn, nrOptionMode = 3, nrOptionAutoMode = 0
+07-19 23:30:07.632  2166  2422 I UidCloseNrStateMachine: enter uidStateChanged, ForeGrountApp=com.hihonor.calculator, mIsCallOn=false, mIsUsbPlugged=false, openLowPowerSwitch=true, QoeSlowState=false, powerMode=2, isOpenAreaSaSwitch=false, isSpeedSensitivityApp=false, mIsCloseLowPowerByArea=false
+07-19 23:30:07.632  2166  2422 I UidCloseNrStateMachine: setConfigValue, appConfig is AppConfig packageName:None mPeriodM:5 mPeriodN:3 mThresholdX:15000 mThresholdY:35000 mTimerA:30 mTimerB:30 mCloseNrCount:7 mLteQoeTimerA:10 mLteQoeCloseNrCnt:4 mLteQoeOpenNrCnt:4
+07-19 23:30:07.632  2166  2422 I UidCloseNrStateMachine: uidStateChanged, powerMode = 2, go to NrOpenedState, start other.package.name
+07-19 23:30:07.632  1060  2973 D HwConnectivityManagerImpl: startappqoednscollection action =0timer =1000
+07-19 23:30:07.632  2166  2422 I SpeedTestNotifier: Speed test app is back Activity
+07-19 23:30:07.633  2166  2422 I SmartDualCardConfig: getAppType,pkgName=com.hihonor.calculator,appType=15
+07-19 23:30:07.633  2166  2422 E SmartDualCardConfig: isAppInBlackList false,items==null
+07-19 23:30:07.633  2166  2422 I SmartDualCardConfig: isAppInWhiteList false,uid=10018
+07-19 23:30:07.633  2166  2422 I PowerMsgAdapter: addUidChanged uid: 10018
+07-19 23:30:07.633  2166  2422 D SaToLteForPowerSave: msg is come in
+07-19 23:30:07.633  2166  2422 D SaToLteForPowerSave: LocalHandler handleMessage is come in:msg.what: 2130771969
+07-19 23:30:07.633  2166  2422 I SaToLteForPowerSave: isSpeedSensitivityAppNow:false
+07-19 23:30:07.633  2166  2422 I SaToLteForPowerSave: updateCondStatus  EVENT_CLOSE_SA_OK
+07-19 23:30:07.633  2166  2422 D ForegroundDataOpt: is APK changed:true uid:10018 mBgLimitLevel:0
+07-19 23:30:07.634  2166  2422 I NetworkQoe: onAppStateChanged: mForeAppUid=10018, packageName:com.hihonor.calculator
+07-19 23:30:07.634  2166  2422 I NetworkQoeProxy: handleAppStateChanged: mForeAppUid=10018
+07-19 23:30:07.634   847   847 I Layer   : [setLayer] c873bc9 Splash Screen com.hihonor.calculator#0 debug_AOD setlayer z = 1
+07-19 23:30:07.635  2166  2422 D SaToLteForPowerSave: Sa2LTE DefaultState processMessage msg.what:3 mIsCloseSaTimerStart:false isSaWeakSig:false
+07-19 23:30:07.635  2166  2422 I ForegroundDataOpt: mCurUid changed to 10018
+07-19 23:30:07.635  2166  2422 D NetworkQoe: handleShortVideoMonitorMsg:app=0
+07-19 23:30:07.636  2166  2422 I NetworkQoe: setAppQoeModemId modemId:0 ,mDsModem:0 ,mNetworkQoeConditions:254
+07-19 23:30:07.636  2166  2422 D DsduChr : uid=10018, isTrafficFree=false, isUsingFreeTraffic=false
+07-19 23:30:07.636  2166  2422 I DsdaManager: onForeAppInfoChanged isForegroundUid = true  newPackageName = com.hihonor.calculator
+07-19 23:30:07.642  5014  5014 I ViewRootImpl[Calculator]: controlInsetsForCompatibility not hide statusbar
+07-19 23:30:07.643   847   930 E SurfaceFlingerEx: Invalid parameter(s)!
+07-19 23:30:07.643   847   930 I SurfaceFlinger: createLayer layername: com.hihonor.calculator/com.hihonor.calculator.Calculator#0 type: BufferStateLayer
+07-19 23:30:07.645  1060  2973 I WindowManager: Changing focus from null to Window{eadbb60 u0 com.hihonor.calculator/com.hihonor.calculator.Calculator} mode 0 displayId=0
+07-19 23:30:07.645  1060  2973 D GestureNav_Strategy: mIsScaledWindow = false
+07-19 23:30:07.645  1060  2973 D GestureNav_Strategy: mIsScaledWindow = false
+07-19 23:30:07.645  1060  2973 D GestureNav_Strategy: mIsScaledWindow = false
+07-19 23:30:07.645  1060  1699 I GestureNavManager: update game status: false
+07-19 23:30:07.645  1060  1699 I InputDispatcher: IsGameDndOn is : 0
+07-19 23:30:07.645  1060  2973 V HwPhoneWindowManager: updateSystemUiColorLw window=Window{eadbb60 u0 com.hihonor.calculator/com.hihonor.calculator.Calculator},MagicStyle=1,StatusBarColor=0xffffffff,NavigationBarColor=0xffffffff, mForceNotchStatusBar=false
+07-19 23:30:07.645  1060  1076 D HwPhoneWindowManager: Transact:setSystemUIColor to status bar service
+07-19 23:30:07.645  1060  2973 I WindowManager: removeLeash, the window position need update Window{e6712f4 u0 StatusBar}
+07-19 23:30:07.645  1952 24490 I HwCommandQueue: updateBarBgColor
+07-19 23:30:07.645  1952 24490 D HwCommandQueue: CommandQueue, setBarBackgroundColor
+07-19 23:30:07.645   847  1120 E SurfaceFlingerEx: Invalid parameter(s)!
+07-19 23:30:07.646   847  1120 I SurfaceFlinger: createLayer layername: Surface(name=e6712f4 StatusBar)/@0x5a37d8f - animation-leash of insets_animation#1 type: EffectLayer
+07-19 23:30:07.646  1060  2973 I WindowManager: removeLeash, the window position need update Window{ffa6583 u0 NavigationBar0}
+07-19 23:30:07.646   847  2160 E SurfaceFlingerEx: Invalid parameter(s)!
+07-19 23:30:07.646   847  2160 I SurfaceFlinger: createLayer layername: Surface(name=ffa6583 NavigationBar0)/@0xf24e87f - animation-leash of insets_animation#1 type: EffectLayer
+07-19 23:30:07.646  1060  2973 I HwDisplayContentEx: currentFocus windowstate not null
+07-19 23:30:07.646  1060  2973 E ZrHung.AppEyeFocusWindow: cancel check
+07-19 23:30:07.646  1060  2973 D ZrHung.AppEyeFocusWindow: FocusWindowErrorScene cancelCheckFreezeScreen
+07-19 23:30:07.647  1060  2973 I HwDisplayContentEx: trans currentFocus windowstate not null
+07-19 23:30:07.647  1060  2973 D ZrHung.AppEyeTransparentWindow: TransparentWindow mHungConfigStatus = 0,mHungConfigEnable = 1
+07-19 23:30:07.647  1060  1079 D CompatibilityChangeReporter: Compat change id reported: 158002302; UID 10018; state: ENABLED
+07-19 23:30:07.647  1060  1079 I input_focus: [Focus request eadbb60 com.hihonor.calculator/com.hihonor.calculator.Calculator,reason=UpdateInputWindows]
+07-19 23:30:07.647  5014  5014 I BufferQueueConsumer: [](id:139600000000,api:0,p:0,c:5014) connect: controlledByApp=false
+07-19 23:30:07.648  5014  5014 D RenderService: RCS is disable
+07-19 23:30:07.649  1060 19036 D HwInputMethodManagerService: removeImeSurfaceFromWindowAsync.android.os.BinderProxy@a63b363
+07-19 23:30:07.649  2159  2668 I ScenarioService: refresh visibleApp:[com.hihonor.calculator]
+07-19 23:30:07.649  2159  2668 I PGServer: report state:14 event type:1 pid:-1 uid:-1 pkg:com.hihonor.calculator to pid: 1060
+07-19 23:30:07.649  2159  2668 I PGServer: report state:14 event type:1 pid:-1 uid:-1 pkg:com.hihonor.calculator to pid: 2159
+07-19 23:30:07.650  2159  2668 I ApsDynamicVideoFps: APS: APK: <REDUCEFPS>Front Changed Stop reduce fps
+07-19 23:30:07.650   847   930 E HWComposer: getSupportedContentTypes: getSupportedContentTypes failed for display 0: Unsupported (8)
+07-19 23:30:07.650  1060  2973 I DE J DES: [effect] pkgStatusfalse, FocusPkg:com.hihonor.calculator, mIsInSplitScreenStatus: false, mIsInFreeFormStatus:false
+07-19 23:30:07.650  2159  2668 I ApsAccKitAdapter: APS: APK: ApsAccKitAdapter: not setNotifyInfo
+07-19 23:30:07.650  1060  2973 I DE J DES: [effect] same
+07-19 23:30:07.650  1060  2973 I DE J DES: [effect] pkgStatusfalse, FocusPkg:com.hihonor.calculator, mDarkModeStatus: false
+07-19 23:30:07.650  1060  2973 I DE J DES: [effect] same
+07-19 23:30:07.650  1060  2973 I DE J DES: [effect] Pg pkg:com.hihonor.calculator
+07-19 23:30:07.650  5014  5042 I BufferQueueProducer: [ViewRootImpl[Calculator]#0(BLAST Consumer)0](id:139600000000,api:0,p:0,c:5014) connect: api=1 producerControlledByApp=true
+07-19 23:30:07.651  1137 20018 I AGPService: aps-info: focus pkgName - com.hihonor.calculator, with 0 more apps
+07-19 23:30:07.651  1137 20018 I AGPService: FrameRateManager: aps-info: new pkgName - com.hihonor.calculator, type - 15
+07-19 23:30:07.651   847   847 I SurfaceFlinger: handleLayerCreatedLocked layer update primary transform hint.
+07-19 23:30:07.651   847   847 I SurfaceFlinger: handleLayerCreatedLocked layer update primary transform hint.
+07-19 23:30:07.651   847   847 I SurfaceFlinger: handleLayerCreatedLocked layer update primary transform hint.
+07-19 23:30:07.651   565   565 I hwservicemanager: getTransport: Cannot find entry vendor.honor.hardware.hwsched@1.0::ISched/hwsched in either framework or device VINTF manifest.
+07-19 23:30:07.651  1137 20018 E AGPService: FrameRateManager: BindVipCpus: fopen failed
+07-19 23:30:07.651  1137 20018 I AGPService: TryRefresh isUnderHighestControl
+07-19 23:30:07.651  1137 20018 I AGPService: GpuPolicyManager: m_currentPkgName - com.hihonor.calculator
+07-19 23:30:07.651  1137  1213 E AGPService: LcdFpsMonitor: [SendTargetFps]: could not find AISched service
+07-19 23:30:07.651  1137  1213 I AGPService: LcdFpsMonitor: send lcd freq 60 to sched v0
+07-19 23:30:07.652  2159  2823 I AppsUsage: BgAPP:com.hihonor.android.launcher
+07-19 23:30:07.652  2159  2823 I PG_ash  : com.hihonor.android.launcher become invisible
+07-19 23:30:07.655  5014  5014 D HwAutofillHelper: recordCurrentInfo:0
+07-19 23:30:07.655  5014  5014 D HwAutofillHelper: inputType = 524289
+07-19 23:30:07.656  1060  2973 I sysui_multi_action: [757,906,758,4,806,com.hihonor.calculator,871,,908,com.hihonor.keychain,1452,0,1456,1988119852]
+07-19 23:30:07.668   847   847 I Layer   : [setLayer] homeAnimationLayer#0 debug_AOD setlayer z = 1
+07-19 23:30:07.668   847   847 I Layer   : [setLayer] animationLayer#0 debug_AOD setlayer z = 10
+07-19 23:30:07.668   847   847 I Layer   : [setLayer] splitScreenDividerAnchor#0 debug_AOD setlayer z = 2
+07-19 23:30:07.668   847   847 I Layer   : [setLayer] boostedAnimationLayer#0 debug_AOD setlayer z = 11
+07-19 23:30:07.668   847   847 I Layer   : [setLayer] boostedHwFreeFormAnimationLayer#0 debug_AOD setlayer z = 11
+07-19 23:30:07.668   847   847 I SurfaceFlinger: [onLayerDestroyed] [Surface(name=e6712f4 StatusBar)/@0x5a37d8f - animation-leash of insets_animation#0] has destroyed
+07-19 23:30:07.668   847   847 I SurfaceFlinger: [onLayerDestroyed] [Surface(name=ffa6583 NavigationBar0)/@0xf24e87f - animation-leash of insets_animation#0] has destroyed
+07-19 23:30:07.669  5014  5042 D hw-ProcessState: Binder ioctl to enable oneway spam detection failed: Invalid argument
+07-19 23:30:07.682  1245  1342 D AAL     : 07-19 11:30:07.649 BL= 479,ESS= 256, 
+07-19 23:30:07.689  1137 20018 E AGPService: FrameRateManager: GetNameByPid open /proc/5014/cmdline fail, ret = -1!.
+07-19 23:30:07.690  5014  5042 E onor.calculato: fbcNotifyFrameComplete error: undefined symbol: fbcNotifyFrameComplete
+07-19 23:30:07.690  5014  5042 E onor.calculato: fbcNotifyNoRender error: undefined symbol: fbcNotifyNoRender
+07-19 23:30:07.691   902   902 E afehal  : to enter IDLE mode , Interval=240/1400/0/0
+07-19 23:30:07.691  5014  5014 I HwViewRootImpl: removeInvalidNode jank list is null
+07-19 23:30:07.692  5014  5014 E RtgSchedIpcFile: RtgSchedIpcFile failed to open /proc/5014/rtg
+07-19 23:30:07.692  5014  5014 I RmeSchedManager: init Rme, version is: v1.0
+07-19 23:30:07.692  5014  5014 E RtgSchedIpcFile: RtgSchedIpcFile failed to open /proc/5014/rtg
+07-19 23:30:07.692  5014  5014 I RmeSchedManager: init Rme, version is: v1.0
+07-19 23:30:07.692  5014  5014 E RtgSchedIpcFile: setCommandByIoctl not opened
+07-19 23:30:07.692  5014  5014 D RtgSched: resetRtgSchedHandle failed enable:1
+07-19 23:30:07.694  1060  1079 D TaskOrganizerController: removeStartingWindow contains googlepatch
+07-19 23:30:07.694   847  2160 E SurfaceFlingerEx: Invalid parameter(s)!
+07-19 23:30:07.694   847  2160 I SurfaceFlinger: createLayer layername: Surface(name=eadbb60 com.hihonor.calculator/com.hihonor.calculator.Calculator)/@0xe5d8da8 - animation-leash of starting_reveal#0 type: EffectLayer
+07-19 23:30:07.698  1060  1075 I sysui_multi_action: [319,67,321,60,322,255,325,69025,757,761,758,7,759,1,806,com.hihonor.calculator,871,com.hihonor.calculator.Calculator,904,com.android.shell,905,0,945,57,1320,4,1321,1]
+07-19 23:30:07.699  1060  1075 I wm_activity_launch_time: [0,101466242,com.hihonor.calculator/.Calculator,255]
+07-19 23:30:07.699  1060  1075 I ActivityTaskManager: Displayed com.hihonor.calculator/.Calculator: +255ms
+07-19 23:30:07.701   847   847 I SurfaceFlinger: handleLayerCreatedLocked layer update primary transform hint.
+07-19 23:30:07.703  1060 19806 I InputDispatcher: Focus entered window: eadbb60 com.hihonor.calculator/com.hihonor.calculator.Calculator (server) in display 0
+07-19 23:30:07.703  1060  1720 I input_focus: [Focus entering eadbb60 com.hihonor.calculator/com.hihonor.calculator.Calculator (server),reason=Window became focusable. Previous reason: NOT_VISIBLE]
+07-19 23:30:07.705  1060 19806 D HwInputMethodManagerService: removeImeSurfaceFromWindowAsync.android.os.BinderProxy@a63b363
+07-19 23:30:07.705   902   902 I aptouch_daemon: tsa_set_ctrlflag, set TSA_CTRL_FREQ_HOPPED
+07-19 23:30:07.705   902   902 I aptouch_daemon: check_afe_status, afe[90 120 X6] [ctrl:X40010 ftr:X100] dif[40 -6] raw[65534 65490] [exp:X0 aN:0 lo:0]
+07-19 23:30:07.707  5014  5014 D CompatibilityChangeReporter: Compat change id reported: 163400105; UID 10018; state: DISABLED
+07-19 23:30:07.708  5014  5014 I AssistStructure: Flattened final assist data: 5560 bytes, containing 1 windows, 31 views
+07-19 23:30:07.710  1060  1060 I am_uid_active: 10087
+07-19 23:30:07.710  5014  5014 D DecorView: showOrHideHighlightView: hasFocus=true; winMode=1; isMrgNull=true
+07-19 23:30:07.710  1231  1238 I AwareLog: SetThreadToVipGroup:: iawared vipgroup set pid[5014] Success!
+07-19 23:30:07.710   844  1262 D AudioPolicyService: getUidState(10087) !cacheIter->second.first, return PROCESS_STATE_UNKNOWN
+07-19 23:30:07.710   844  1262 D AudioPolicyService: getUidState(10087) cacheIter->second.first, return cacheIter->second.second(-1)
+07-19 23:30:07.710  1231  1238 I AwareLog: SetThreadToVipGroup:: iawared vipgroup set pid[5042] Success!
+07-19 23:30:07.710  1231  1238 I AwareLog: SetThreadToVipGroup:: iawared vipgroup set pid[5072] Success!
+07-19 23:30:07.710  1060  1060 I am_create_service: [0,21952062,.HwAutofillService,10087,2441]
+07-19 23:30:07.714  1060 19806 I LockPatternUtils: getCredentialTypeForUser: type=3
+07-19 23:30:07.714  1060 19806 I AssistStructure: Flattened final assist data: 4476 bytes, containing 1 windows, 31 views
+07-19 23:30:07.715  1060  1060 I sysui_multi_action: [757,907,758,10,806,com.hihonor.calculator,871,,908,com.hihonor.keychain,909,-1,1454,1,1456,1988119852]
+07-19 23:30:07.715  1060  1060 I sysui_multi_action: [757,919,758,4,806,com.hihonor.calculator,871,,908,com.hihonor.keychain,1455,1,1456,1988119852]
+07-19 23:30:07.716  2292  2292 V InlineSuggestionRenderService: handleDestroySuggestionViews called for 0:1988119852
+07-19 23:30:07.716  1060  1060 I am_destroy_service: [0,21952062,2441]
+07-19 23:30:07.717   844 11560 D AudioPolicyService: getUidState(10087) cacheIter->second.first, return cacheIter->second.second(6)
+07-19 23:30:07.717   844 11560 D AudioPolicyService: getUidState(10087) cacheIter->second.first, return cacheIter->second.second(10)
+07-19 23:30:07.726  1060  1074 W NetworkStatsFactory: mTunAnd464xlatAdjustedStats size: 205,delta:205
+07-19 23:30:07.729  1060  1074 W NetworkStatsFactory: mTunAnd464xlatAdjustedStats size: 205,delta:205
+07-19 23:30:07.734  1142  1815 E dubaid  : [WifiStats.cpp] ReadWifiSleepStats# Failed to open wifi power stats: No such file or directory
+07-19 23:30:07.734  1142  1815 E dubaid  : [WifiStats.cpp] BalanceWifiSleepTime# Failed to read wifi sleep data
+07-19 23:30:07.735  1060 19806 V ActivityTaskManager: Activity idle: ActivityRecord{60c4082 u0 com.hihonor.calculator/.Calculator t38 mode=fullscreen boundsRect(0, 0 - 1080, 2388)}
+07-19 23:30:07.735  1060 19806 I PowerManagerService: need release WakeLockSuspendBlocker
+07-19 23:30:07.735  1060 19806 I PowerManagerService: Releasing suspend blocker "PowerManagerService.WakeLocks".
+07-19 23:30:07.736  1060 19806 I ActivityTaskManager: animating need stay in stopping state: com.hihonor.android.launcher/.unihome.UniHomeLauncher
+07-19 23:30:07.737   842   852 I mtkpower@impl: [setMode] Note:type:5, enabled:0 !
+07-19 23:30:07.738   842   900 I libPowerHal: [perfLockRel] hdl:2907, idx:3
+07-19 23:30:07.738   842   900 I libPowerHal: [setClusterFreq] LAUNCH: sysfs_freq set cpu freq: 1750000 -1 2118000 -1
+07-19 23:30:07.738   842   900 I libPowerHal: [PD] LAUNCH update cmd:1000000, param:1
+07-19 23:30:07.739   842   900 I libPowerHal: [PD] LAUNCH update cmd:1420100 param:0
+07-19 23:30:07.739   842   900 I libPowerHal: [PD] LAUNCH update cmd:1408300 param:0
+07-19 23:30:07.739   842   900 I libPowerHal: [PD] LAUNCH update cmd:1000000 param:1
+07-19 23:30:07.748  2159  2668 D SrManager: front pkgs: [com.hihonor.calculator]
+07-19 23:30:07.775   902   902 E afehal  : to enter IDLE mode , Interval=240/1400/0/0
+07-19 23:30:07.785  1137 20018 I AGPService: FrameRateManager::NotifyAnimationState 0
+07-19 23:30:07.785  1137 20018 I AGPService: FrameRateManager::NotifyAnimationState 0
+07-19 23:30:07.786  1060  1079 I WindowManager: onAnimationFinished task=38
+07-19 23:30:07.786  1060  1079 I WindowManager: New wallpaper target: null prevTarget: Window{9816e62 u0 com.hihonor.android.launcher/com.hihonor.android.launcher.unihome.UniHomeLauncher}
+07-19 23:30:07.787  1952  1952 D ImageWallpaper: wallpaper visibility changes to: false
+07-19 23:30:07.787  1137  1200 I AGPService: currAppStrategy name 2, isDynamic 0, isFactor 0, minFps 60, maxFps 60 forceMinFps 60
+07-19 23:30:07.788  1060  1079 I TaskOrganizerController: onTaskInfoChanged,task=Task{56b4393 #38 type=standard A=10018:com.hihonor.calculator U=0 visible=true mode=fullscreen bound=Rect(0, 0 - 1080, 2388) translucent=false sz=1}
+07-19 23:30:07.788  1137  1200 I AGPService: FrameRefreshThread: set refreshrate - 60
+07-19 23:30:07.788  1137  1200 E power   : ISystemSuspend::getService() failed.
+07-19 23:30:07.788  1137  1200 I AGPService: currAppStrategy name 2, isDynamic 0, isFactor 0, minFps 60, maxFps 60 forceMinFps 60
+07-19 23:30:07.788   847  2160 I SurfaceFlingerEx: AGP setting activeMode, id:0
+07-19 23:30:07.788  1137  1200 I AGPService: FrameRefreshThread: set refreshrate - 60
+07-19 23:30:07.789   902   902 I aptouch_daemon: tsa_set_ctrlflag, set TSA_CTRL_FREQ_HOPPED
+07-19 23:30:07.789   902   902 I aptouch_daemon: check_afe_status, afe[90 120 X6] [ctrl:X40010 ftr:X100] dif[25 -3] raw[65534 65506] [exp:X0 aN:0 lo:0]
+07-19 23:30:07.790  1060  1078 V ActivityTaskManager: Activity idle: null
+07-19 23:30:07.791  1060  1078 I wm_stop_activity: [0,138122264,com.hihonor.android.launcher/.unihome.UniHomeLauncher]
+07-19 23:30:07.791   842   900 I libPowerHal: [perfNotifyAppState] pack:com.hihonor.android.launcher, act:com.hihonor.android.launcher.unihome.UniHomeLauncher, state:0, pid:2288, uid:10089, fps:-1
+07-19 23:30:07.791  2288 10187 I ClientTransactionHandler: send EXECUTE_TRANSACTION
+07-19 23:30:07.791  1060  1078 V ActivityTaskManager: Activity idle: null
+07-19 23:30:07.792  1137  1204 I AGPService: FrameRateManager: set active config - id = 0
+07-19 23:30:07.793   847  2160 I SurfaceFlingerEx: AGP setting activeMode, id:0
+07-19 23:30:07.793  1137  1204 I AGPService: FrameRateManager: set active config - id = 0
+07-19 23:30:07.794   844 11560 D AudioPolicyService: getUidState(10089) cacheIter->second.first, return cacheIter->second.second(2)
+07-19 23:30:07.794  2166  2422 D DollieActivityManagerAdapter: [UidStateChanged]  uid:10089 uidState:5
+07-19 23:30:07.794  2166  2422 E DollieAdapterService: notifyActivityState pkg:com.hihonor.android.launcher/com.hihonor.android.launcher.unihome.UniHomeLauncher state:5 fg:false mUid:10089
+07-19 23:30:07.795   844 11560 D AudioPolicyService: getUidState(10045) cacheIter->second.first, return cacheIter->second.second(3)
+07-19 23:30:07.795   844 11560 D AudioPolicyService: getUidState(10029) cacheIter->second.first, return cacheIter->second.second(3)
+07-19 23:30:07.795  2166  2422 I NsaPowerConsumptionMonitor: mIsSpeedTesting:false isTopActivity:false isSpeedTestApk:false
+07-19 23:30:07.796  2166  2422 I SmartDualCardConfig: getAppType,pkgName=com.hihonor.android.launcher,appType=28
+07-19 23:30:07.796  2166  2422 E SmartDualCardConfig: isAppInBlackList false,items==null
+07-19 23:30:07.796  2166  2422 I SmartDualCardConfig: isAppInWhiteList false,uid=10089
+07-19 23:30:07.796  2166  2422 E ScgQuickAddManager: uidInfo.isForeGroundUid() is false
+07-19 23:30:07.796  2166  2422 D SaToLteForPowerSave: msg is come in
+07-19 23:30:07.796  2166  2422 D SaToLteForPowerSave: LocalHandler handleMessage is come in:msg.what: 2130771969
+07-19 23:30:07.796  2166  2422 I DsdaManager: onForeAppInfoChanged isForegroundUid = false  newPackageName = com.hihonor.android.launcher
+07-19 23:30:07.796  2166  2422 I DsdaManager: switchDsdaManagerState eventId = 128 state = 0 new dsdaManagerState 37
+07-19 23:30:07.801 29319 29319 I hiboard_9.3.0.304: HiBoardWorkSpace onWindowVisibilityChanged:8 slideState STATE_SLIDE_INIT openMethodEvent HiBoard
+07-19 23:30:07.802   847   847 I Layer   : [setLayer] Task=38#0 debug_AOD setlayer z = 9
+07-19 23:30:07.802   847   847 I Layer   : [setLayer] homeAnimationLayer#0 debug_AOD setlayer z = 1
+07-19 23:30:07.802   847   847 I Layer   : [setLayer] animationLayer#0 debug_AOD setlayer z = 3
+07-19 23:30:07.802   847   847 I Layer   : [setLayer] splitScreenDividerAnchor#0 debug_AOD setlayer z = 2
+07-19 23:30:07.802   847   847 I Layer   : [setLayer] boostedAnimationLayer#0 debug_AOD setlayer z = 10
+07-19 23:30:07.802   847   847 I Layer   : [setLayer] boostedHwFreeFormAnimationLayer#0 debug_AOD setlayer z = 10
+07-19 23:30:07.803   847   847 I Layer   : [setLayer] homeAnimationLayer#0 debug_AOD setlayer z = 1
+07-19 23:30:07.803   847   847 I Layer   : [setLayer] animationLayer#0 debug_AOD setlayer z = 3
+07-19 23:30:07.803   847   847 I Layer   : [setLayer] splitScreenDividerAnchor#0 debug_AOD setlayer z = 2
+07-19 23:30:07.803   847   847 I Layer   : [setLayer] boostedAnimationLayer#0 debug_AOD setlayer z = 10
+07-19 23:30:07.803   847   847 I Layer   : [setLayer] boostedHwFreeFormAnimationLayer#0 debug_AOD setlayer z = 10
+07-19 23:30:07.803   847   847 I SurfaceFlinger: [onLayerDestroyed] [Surface(name=ActivityRecord{83b9418 u0 com.hihonor.android.launcher/.unihome.UniHomeLauncher t7 mode=fullscreen boundsRect(0, 0 - 1080, 2388)})/@0xdc7d6cd - animation-bounds#0] has destroyed
+07-19 23:30:07.803   847   847 I SurfaceFlinger: [onLayerDestroyed] [Surface(name=ActivityRecord{83b9418 u0 com.hihonor.android.launcher/.unihome.UniHomeLauncher t7 mode=fullscreen boundsRect(0, 0 - 1080, 2388)})/@0xdc7d6cd - animation-leash of app_transition#0] has destroyed
+07-19 23:30:07.803   847   847 I SurfaceFlinger: [onLayerDestroyed] [Surface(name=Task=38)/@0xe2943e7 - animation-leash of app_transition#0] has destroyed
+07-19 23:30:07.804   988   988 I WifiHAL : Get link layer stats
+07-19 23:30:07.804   988   988 I WifiHAL : GetLinkStatsCommand::create
+07-19 23:30:07.804   988   988 D vendor.honor.hardware.wifi@1.2-service: WifiRequest::create vendor command to iface 32, vendor_id=0x1a11, subcmd=0x1200, res=0
+07-19 23:30:07.804   988   988 I vendor.honor.hardware.wifi@1.2-service: WifiCommand::requestResponse err=-14
+07-19 23:30:07.804   988   988 I WifiHAL : wifi_get_link_stats: result=-1
+07-19 23:30:07.805 29319 29547 I BufferQueueProducer: [ViewRootImpl[Workspace]#6(BLAST Consumer)6](id:728700000006,api:1,p:29319,c:29319) disconnect: api 1
+07-19 23:30:07.805  1060  1768 E WifiVendorHal: getWifiLinkLayerStats_1_5_Internal(l.1213) failed {.code = ERROR_UNKNOWN, .description = unknown}
+07-19 23:30:07.806   832   858 E uniperf server: DoParse failed, xmlInfo not find cmdId 4290
+07-19 23:30:07.806   832   858 W uniperf server: EnterActionProc DoParse failed, cmdId=4290
+07-19 23:30:07.806   832   858 D uniperf hal: do UniPerfEvent failed, cmdId=4290, ret=2
+07-19 23:30:07.808  2288  2463 I BufferQueueProducer: [ViewRootImpl[UniHomeLauncher]#22(BLAST Consumer)22](id:8f000000016,api:1,p:2288,c:2288) disconnect: api 1
+07-19 23:30:07.809  1060  1768 I WifiNl80211Manager: Noise: 0, Snr: 0, Chload: 0, rssi: -24, txBitrate: 433, rxBitrate: 433, frequency: 5745, UlDelay: 0, currentTxBytes: 6788771, currentTxPackets: 61796, currentTxFailed: 0, currentRxBytes: 84348354, currentRxPackets: 95087
+07-19 23:30:07.811  1060  1768 V HwWifiServiceFactory: get AllImpl object = com.android.server.wifi.HwWifiServiceFactoryImpl@3521ef5
+07-19 23:30:07.812  1060  1768 V HwWifiServiceFactory: get AllImpl object = com.android.server.wifi.HwWifiServiceFactoryImpl@3521ef5
+07-19 23:30:07.812  1060  1768 I WifiScoreReport:  rawScore = 106, score = 60, wifiInfo.score = 60
+07-19 23:30:07.814 29319 29319 I BufferQueueConsumer: [ViewRootImpl[Workspace]#6(BLAST Consumer)6](id:728700000006,api:0,p:-1,c:29319) disconnect
+07-19 23:30:07.815  1060 19806 D HwInputMethodManagerService: removeImeSurfaceFromWindowAsync.android.os.BinderProxy@3bd0d65
+07-19 23:30:07.815 29319 29319 E WindowManagerEx: getDisplaySideRegion: windowInsets is null please check!
+07-19 23:30:07.816 29319 29319 I hiboard_9.3.0.304: BarUtils getNavigationBarHeight: 116
+07-19 23:30:07.816 29319 29319 I hiboard_9.3.0.304: HiLibraryWorkSpace updatePadding_hasNavBar:false navigationBarHeight:116 navMargin:72
+07-19 23:30:07.816 29319 29319 E WindowManagerEx: getDisplaySideRegion: windowInsets is null please check!
+07-19 23:30:07.816 29319 29319 I hiboard_9.3.0.304: BarUtils getNavigationBarHeight: 116
+07-19 23:30:07.817 29319 29319 I hiboard_9.3.0.304: HiBoardWorkSpace updatePadding_hasNavBar:false navigationBarHeight:116 navMargin:72
+07-19 23:30:07.817 29319 29319 D Choreographer: still have 3 traversal callbacks
+07-19 23:30:07.817 29319 29319 I hiboard_9.3.0.304: HiBoardWorkSpace isWorkspaceClosed=true, visibility=8, alpha=0.0,this.visibility=0, isApplicationVisible=false, curOffsetProgress=0.0
+07-19 23:30:07.817 29319 29319 I hiboard_9.3.0.304: HiBoardWorkSpace WorkSpace change alpha to 0!
+07-19 23:30:07.817 29319 29319 I hiboard_9.3.0.304: HiBoardWorkSpace processLauncherOnStopEvent mIsScrollerOver true isFinished true
+07-19 23:30:07.817 29319 29319 I hiboard_9.3.0.304: HiBoardWorkSpace DisplayBoard isOverlayClosed=true, slideState=STATE_SLIDE_INIT
+07-19 23:30:07.817 29319 29319 I hiboard_9.3.0.304: HiBoardCustHelper onWindowVisibilityChanged windowVisibility=8, overlayStatus=1, reclaimCounter=2, isOverlayClosed=true
+07-19 23:30:07.817 29319 29319 I hiboard_9.3.0.304: HiBoardCustHelper reclaimMemory reclaimCounter=2
+07-19 23:30:07.817 29319 29319 I hiboard_9.3.0.304: HiBoardWorkSpace END visibility=8, alpha=0.0,this.visibility=0
+07-19 23:30:07.817  2288  2288 I BufferQueueConsumer: [ViewRootImpl[UniHomeLauncher]#22(BLAST Consumer)22](id:8f000000016,api:0,p:-1,c:2288) disconnect
+07-19 23:30:07.819   847   847 I Layer   : [setLayer] homeAnimationLayer#0 debug_AOD setlayer z = 1
+07-19 23:30:07.819   847   847 I Layer   : [setLayer] animationLayer#0 debug_AOD setlayer z = 3
+07-19 23:30:07.819   847   847 I Layer   : [setLayer] splitScreenDividerAnchor#0 debug_AOD setlayer z = 2
+07-19 23:30:07.819   847   847 I Layer   : [setLayer] boostedAnimationLayer#0 debug_AOD setlayer z = 10
+07-19 23:30:07.819   847   847 I Layer   : [setLayer] boostedHwFreeFormAnimationLayer#0 debug_AOD setlayer z = 10
+07-19 23:30:07.820  2288  2288 W HnLauncher: StateManager Launcher in state:NormalState{f70597c ordinal = 0,mContainerType = 1,mIsOverviewUi = false}, mConfig.mCurrentAnimationSet == null
+07-19 23:30:07.822  2288  2288 W HnLauncher: WisdomCardSetManager widgetInfos is empty
+07-19 23:30:07.823  2288  2288 I HnAppRec_14.5.0.3 YOYOCardManager: onStop
+07-19 23:30:07.824  2288  2288 I HnLauncher: Launcher Icon:51 Widget:1 Folder:2 Icon in folder:26, in drawer:0
+07-19 23:30:07.824  2288  2288 I wm_on_stop_called: [138122264,com.hihonor.android.launcher.unihome.UniHomeLauncher,STOP_ACTIVITY_ITEM]
+07-19 23:30:07.826  2288  2616 W HnLauncher: AbstractOperateStrategy mCardUniqueIdList is empty
+07-19 23:30:07.826  2288  2288 I DecorView[UniHomeLauncher]: set decor visibility 4
+07-19 23:30:07.827  2288  2616 I YOYOCardUtil: isSignedWithPlatformKey:true
+07-19 23:30:07.827  2288  2616 I CSM_AsEnableObserverVal: isOverCheckTime lastRestTime: 1776526708111 currentTimeMillis:1776612607827
+07-19 23:30:07.827  2288  2616 I ProviderClientProxy: methodName :updateCardsExpose
+07-19 23:30:07.827  2288  2616 I YOYOCardUtil: getBatchId =
+07-19 23:30:07.827  2288  2616 I YOYOCardUtil: getBatchIdStatus batchId ： ,brainSupport :1
+07-19 23:30:07.827  2288  2616 I YOYOCardUtil: isSignedWithPlatformKey:true
+07-19 23:30:07.828  1060  1074 I am_uid_active: 10082
+07-19 23:30:07.830   844 11560 D AudioPolicyService: getUidState(10082) !cacheIter->second.first, return PROCESS_STATE_UNKNOWN
+07-19 23:30:07.830   844 11560 D AudioPolicyService: getUidState(10082) cacheIter->second.first, return cacheIter->second.second(-1)
+07-19 23:30:07.831   844 11560 D AudioPolicyService: getUidState(10080) cacheIter->second.first, return cacheIter->second.second(6)
+07-19 23:30:07.833  2159  2823 I AppFastHibernation: wakeup 2487 for 2288 binder call
+07-19 23:30:07.833  2159  2823 I PG_ash  : 2288|<IPC> binder call 2487|com.hihonor.assistant:cardmgr
+07-19 23:30:07.833  1231  1231 I Pged-IPgedBinderService: ****action is 2, pid num is 2***
+07-19 23:30:07.833  1231  1231 I Pged-Freezer: thawPids
+07-19 23:30:07.835  2487  2516 I CardSortMGR_DisplayCardProvider: updateCardsExpose in : callingPackagecom.hihonor.android.launcher
+07-19 23:30:07.835   847   847 I Layer   : [setLayer] homeAnimationLayer#0 debug_AOD setlayer z = 1
+07-19 23:30:07.835   847   847 I Layer   : [setLayer] animationLayer#0 debug_AOD setlayer z = 3
+07-19 23:30:07.835   847   847 I Layer   : [setLayer] splitScreenDividerAnchor#0 debug_AOD setlayer z = 2
+07-19 23:30:07.835   847   847 I Layer   : [setLayer] boostedAnimationLayer#0 debug_AOD setlayer z = 10
+07-19 23:30:07.835   847   847 I Layer   : [setLayer] boostedHwFreeFormAnimationLayer#0 debug_AOD setlayer z = 10
+07-19 23:30:07.835  2487  2516 I CardSortMGR_CardProxy: com.hihonor.android.launcher proxy in:$Proxy3 call updateCardsExpose
+07-19 23:30:07.836  2159  2814 D PgedBinderAdapter: unF_Z ok, pid: [2487]
+07-19 23:30:07.836  2487  2516 I CardSortMGR_DisplayCardBundleInterceptor: apply in  method name: updateCardsExpose  ,callingPackage: com.hihonor.android.launcher
+07-19 23:30:07.836  2487  2516 I CardSortMGR_OverSeaChannelInterceptor: apply in  method name: updateCardsExpose  ,callingPackage: com.hihonor.android.launcher
+07-19 23:30:07.836  2487  2516 I CardSortMGR_CardDisplayImpl: updateCardExposure in :  originalsList size : 1
+07-19 23:30:07.836  2487  2516 I CardSortMGR_CardSortManager: updateCardExposure in :  cardInfoList size : 1
+07-19 23:30:07.837  2487  2516 I CardSortMGR_CardSortManager: isSameCardType  in cardSortType:normal cardInfoType:normal cardSortDetailType:null cardInfoDetailType:null isSameCard=true
+07-19 23:30:07.841  1060  1667 E AwareLog: CpuProcessInherit: files null 
+07-19 23:30:07.841  2336  9797 D HSC_BG_SecurityThreatsService: onForegroundActivitiesChanged: 2288, 10089, false
+07-19 23:30:07.842  2159  2823 I PG_ash  : pkg null calling: com.hihonor.assistant, pid: 0 ,type: acquire_provider
+07-19 23:30:07.842  2487  2516 I CardSortMGR_BlockListConfigHandler: getBlockList in
+07-19 23:30:07.842  2487  2516 I CardSortMGR_BlockListConfigHandler: block config result = 
+07-19 23:30:07.843  2487  2516 I CardSortMGR_SortConfigHandler: current sortConfigs size: 64
+07-19 23:30:07.844  2487  2516 I CardSortMGR_CardExposureConfigHandler: getExposureRefreshEntity in
+07-19 23:30:07.844  2487  2516 I CardSortMGR_CardExposureConfigHandler: obtainKey key: com.hihonor.android.totemweather_weather_normal_null
+07-19 23:30:07.844  2487  2516 W CardSortMGR_CardExposureConfigHandler: find ExposureRefreshConfig base on widgetPackage: com.hihonor.android.totemweather and business: weather
+07-19 23:30:07.844  2487  2516 I CardSortMGR_CardExposureConfigHandler: obtainKey key: com.hihonor.android.totemweather_weather_null_null
+07-19 23:30:07.845  1060  1074 D UsageStatsService: drop event
+07-19 23:30:07.846  1060  1074 I UsageStatsService: User[0] Results: 92
+07-19 23:30:07.846  2487  2516 I CardSortMGR_CardSortService: begin execTrigger.
+07-19 23:30:07.846  2487  2516 D BrainClient: BrainClient: call disconnect, caller is com.hihonor.assistant
+07-19 23:30:07.846  2487  2516 W BrainClient: BrainClient: Brain service is not connecting with the current process in disconnect
+07-19 23:30:07.846  2487  2516 I CardSortMGR_CardSortService: try bind And connect
+07-19 23:30:07.846  2487  2516 D BrainClient: BrainClient: call connect, caller is com.hihonor.assistant
+07-19 23:30:07.847  1060  1074 I am_uid_active: 10076
+07-19 23:30:07.848   844 11560 D AudioPolicyService: getUidState(10076) !cacheIter->second.first, return PROCESS_STATE_UNKNOWN
+07-19 23:30:07.848   844 11560 D AudioPolicyService: getUidState(10076) cacheIter->second.first, return cacheIter->second.second(-1)
+07-19 23:30:07.848  1060  1074 I am_create_service: [0,25197165,.BrainService,10076,24663]
+07-19 23:30:07.850 24663 24663 I Brain_BrainService: onCreated end
+07-19 23:30:07.850 24663 24663 I Brain_BrainService: onBind start
+07-19 23:30:07.850  2487  2516 I BrainClient: BrainClient: ret = true
+07-19 23:30:07.851  2487  2487 I BrainClient: BrainClient: connected.
+07-19 23:30:07.852  2487  2516 D BrainClient: BrainClient: call executeTrigger 20000, caller is com.hihonor.assistant
+07-19 23:30:07.853 24663 24904 I Brain_CardMgrAsm: com.hihonor.assistant feed com.hihonor.assistant.UPDATE_CARDS_EXPOSURE
+07-19 23:30:07.853 24663 24698 I Brain_CardMgrAsm: dispatch com.hihonor.assistant.UPDATE_CARDS_EXPOSURE
+07-19 23:30:07.853 24663 24698 I Brain_EventBus: CardMgrAsm loaded
+07-19 23:30:07.853 24663 24698 I Brain_CardMgrAsm: business has 1 listener execute success true
+07-19 23:30:07.853 24663 24723 I Brain_CardMgrAsm: [ts]start tsk CardMgrAsm_CardMgrTrigger_com.hihonor.assistant.UPDATE_CARDS_EXPOSURE__NONE
+07-19 23:30:07.853 24663 24723 I Brain_CardMgrTrigger: fence type: com.hihonor.assistant.UPDATE_CARDS_EXPOSURE
+07-19 23:30:07.854 24663 24723 I Brain_LocalCache: updateExposureData update expoInfo: [{"business":"weather","businessId":"1000","count":50,"detailType":"","endTime":-1,"exposure":1565016,"packageName":"com.hihonor.android.launcher","perDayExposure":1565016,"singleIncreaseExposure":228734,"topDuration":951143614,"type":"normal"}]
+07-19 23:30:07.854 24663 24723 I Brain_CardUtils: businessType: weather-normal-

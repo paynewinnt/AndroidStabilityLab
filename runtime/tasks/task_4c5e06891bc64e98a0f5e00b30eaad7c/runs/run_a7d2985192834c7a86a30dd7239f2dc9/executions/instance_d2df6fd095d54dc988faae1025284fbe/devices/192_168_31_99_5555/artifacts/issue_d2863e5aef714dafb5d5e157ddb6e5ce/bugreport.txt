@@ -1,0 +1,8 @@
+===== stderr =====
+=============================================================================
+WARNING: Flat (text file, non-zipped) bugreports are deprecated.
+WARNING: Please generate zipped bugreports instead.
+WARNING: On the host use: adb bugreport filename.zip
+WARNING: On the device use: bugreportz
+WARNING: bugreportz will output the filename to use with adb pull.
+=============================================================================

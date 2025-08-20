@@ -1,0 +1,45 @@
+{
+  "timestamp": "2025-07-19T10:54:35.352900",
+  "persisted": false,
+  "system": {
+    "cpu_usage": 6.4,
+    "cpu_user": 4.2,
+    "cpu_breakdown": {
+      "total": 6.4,
+      "user": 4.2,
+      "kernel": 2.1,
+      "iowait": 0.0,
+      "softirq": 0.0
+    },
+    "memory_system_total": 5700.15,
+    "memory_system_available": 2454.7,
+    "memory_usage_percent": 56.94,
+    "memory_percent": 56.94,
+    "memory_system_used": 3245.45,
+    "battery_level": 100.0,
+    "network_rx_total": 80622.92,
+    "network_tx_total": 7962.95,
+    "network": 0.0,
+    "network_rx": 0.0,
+    "network_tx": 0.0,
+    "load_1min": 23.81,
+    "load_5min": 23.57,
+    "load_15min": 23.49
+  },
+  "apps": [
+    {
+      "app_package": "com.ss.android.ugc.aweme",
+      "memory_pss": 595.31,
+      "memory_java": 109.53,
+      "memory_native": 83.51,
+      "power_consumption": 3900.0,
+      "top_cpu_usage": 186.0,
+      "top_memory_percent": 11.1,
+      "top_memory_res_kb": 648192.0,
+      "app_info": {
+        "package_name": "com.ss.android.ugc.aweme",
+        "app_name": "com.ss.android.ugc.aweme"
+      }
+    }
+  ]
+}

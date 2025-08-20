@@ -1,0 +1,25 @@
+[2026-04-19T12:43:19.020521] preparing instance instance_93d1547987704970a850702272361e2d
+device=192.168.31.99:5555
+[2026-04-19T12:43:19.035893] instance entered running state
+[cold_start_loop] loop=1 target=com.android.settings/.HWSettings status=ok
+[cold_start_loop] loop=1 wait_time_ms=343 total_time_ms=340 this_time_ms=None
+[cold_start_loop] loop=1 return_code=0 timed_out=False
+[cold_start_loop] loop=2 device unavailable, retrying adb connect for 192.168.31.99:5555
+[cold_start_loop] loop=2 reconnect return_code=0 stdout=connected to 192.168.31.99:5555 stderr=
+[cold_start_loop] loop=2 reconnect succeeded for 192.168.31.99:5555
+[cold_start_loop] loop=2 target=com.android.settings/.HWSettings status=ok
+[cold_start_loop] loop=2 wait_time_ms=348 total_time_ms=338 this_time_ms=None
+[cold_start_loop] loop=2 return_code=0 timed_out=False
+[cold_start_loop] loop=3 target=com.android.settings/.HWSettings status=ok
+[cold_start_loop] loop=3 wait_time_ms=327 total_time_ms=324 this_time_ms=None
+[cold_start_loop] loop=3 return_code=0 timed_out=False
+[cold_start_loop] loop=4 target=com.android.settings/.HWSettings status=ok
+[cold_start_loop] loop=4 wait_time_ms=354 total_time_ms=352 this_time_ms=None
+[cold_start_loop] loop=4 return_code=0 timed_out=False
+[cold_start_loop] loop=5 target=com.android.settings/.HWSettings status=ok
+[cold_start_loop] loop=5 wait_time_ms=322 total_time_ms=313 this_time_ms=None
+[cold_start_loop] loop=5 return_code=0 timed_out=False
+[cold_start_loop] loop=6 target=com.android.settings/.HWSettings status=ok
+[cold_start_loop] loop=6 wait_time_ms=361 total_time_ms=356 this_time_ms=None
+[cold_start_loop] loop=6 return_code=0 timed_out=False
+[2026-04-19T12:43:39.515737] execution finished with status success

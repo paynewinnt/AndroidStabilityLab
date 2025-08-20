@@ -1,0 +1,821 @@
+Drop box contents: 37 entries
+Max entries: 1000
+Low priority rate limit period: 2000 ms
+Low priority tags: {data_app_wtf, keymaster, system_server_wtf, system_app_strictmode, system_app_wtf, system_server_strictmode, data_app_strictmode, netstats}
+
+========================================
+2025-07-18 00:54:51 system_server_wtf (text, 963 bytes)
+Process: system_server
+Subject: SyncManager
+Build: HONOR/TFY-AN00/HNTFY-M:12/HONORTFY-AN00/6.1.0.181C00:user/release-keys
+
+android.util.Log$TerribleFailure: SYNC_OP_STATE_INVALID: disallowed by settings/network
+	at android.util.Log.wtf(Log.java:327)
+	at android.util.Slog.wtf(Slog.java:98)
+	at com.android.server.content.SyncManager$SyncHandler.logAccountError(SyncManager.java:3564)
+	at com.android.server.content.SyncManager$SyncHandler.computeSyncOpState(SyncManager.java:3541)
+	at com.android.server.content.SyncManager$SyncHandler.startSyncH(SyncManager.java:3243)
+	at com.android.server.content.SyncManager$SyncHandler.handleSyncMessage(SyncManager.java:2997)
+	at com.android.server.content.SyncManager$SyncHandler.handleMessage(SyncManager.java:2969)
+	at android.os.Handler.dispatchMessage(Handler.java:109)
+	at android.os.Looper.loopOnce(Looper.java:206)
+	at android.os.Looper.loop(Looper.java:296)
+	at android.os.HandlerThread.run(HandlerThread.java:67)
+
+========================================
+2025-07-18 01:19:51 system_server_wtf (text, 963 bytes)
+Process: system_server
+Subject: SyncManager
+Build: HONOR/TFY-AN00/HNTFY-M:12/HONORTFY-AN00/6.1.0.181C00:user/release-keys
+
+android.util.Log$TerribleFailure: SYNC_OP_STATE_INVALID: disallowed by settings/network
+	at android.util.Log.wtf(Log.java:327)
+	at android.util.Slog.wtf(Slog.java:98)
+	at com.android.server.content.SyncManager$SyncHandler.logAccountError(SyncManager.java:3564)
+	at com.android.server.content.SyncManager$SyncHandler.computeSyncOpState(SyncManager.java:3541)
+	at com.android.server.content.SyncManager$SyncHandler.startSyncH(SyncManager.java:3243)
+	at com.android.server.content.SyncManager$SyncHandler.handleSyncMessage(SyncManager.java:2997)
+	at com.android.server.content.SyncManager$SyncHandler.handleMessage(SyncManager.java:2969)
+	at android.os.Handler.dispatchMessage(Handler.java:109)
+	at android.os.Looper.loopOnce(Looper.java:206)
+	at android.os.Looper.loop(Looper.java:296)
+	at android.os.HandlerThread.run(HandlerThread.java:67)
+
+========================================
+2025-07-18 01:54:51 system_server_wtf (text, 963 bytes)
+Process: system_server
+Subject: SyncManager
+Build: HONOR/TFY-AN00/HNTFY-M:12/HONORTFY-AN00/6.1.0.181C00:user/release-keys
+
+android.util.Log$TerribleFailure: SYNC_OP_STATE_INVALID: disallowed by settings/network
+	at android.util.Log.wtf(Log.java:327)
+	at android.util.Slog.wtf(Slog.java:98)
+	at com.android.server.content.SyncManager$SyncHandler.logAccountError(SyncManager.java:3564)
+	at com.android.server.content.SyncManager$SyncHandler.computeSyncOpState(SyncManager.java:3541)
+	at com.android.server.content.SyncManager$SyncHandler.startSyncH(SyncManager.java:3243)
+	at com.android.server.content.SyncManager$SyncHandler.handleSyncMessage(SyncManager.java:2997)
+	at com.android.server.content.SyncManager$SyncHandler.handleMessage(SyncManager.java:2969)
+	at android.os.Handler.dispatchMessage(Handler.java:109)
+	at android.os.Looper.loopOnce(Looper.java:206)
+	at android.os.Looper.loop(Looper.java:296)
+	at android.os.HandlerThread.run(HandlerThread.java:67)
+
+========================================
+2025-07-18 02:59:51 system_server_wtf (text, 963 bytes)
+Process: system_server
+Subject: SyncManager
+Build: HONOR/TFY-AN00/HNTFY-M:12/HONORTFY-AN00/6.1.0.181C00:user/release-keys
+
+android.util.Log$TerribleFailure: SYNC_OP_STATE_INVALID: disallowed by settings/network
+	at android.util.Log.wtf(Log.java:327)
+	at android.util.Slog.wtf(Slog.java:98)
+	at com.android.server.content.SyncManager$SyncHandler.logAccountError(SyncManager.java:3564)
+	at com.android.server.content.SyncManager$SyncHandler.computeSyncOpState(SyncManager.java:3541)
+	at com.android.server.content.SyncManager$SyncHandler.startSyncH(SyncManager.java:3243)
+	at com.android.server.content.SyncManager$SyncHandler.handleSyncMessage(SyncManager.java:2997)
+	at com.android.server.content.SyncManager$SyncHandler.handleMessage(SyncManager.java:2969)
+	at android.os.Handler.dispatchMessage(Handler.java:109)
+	at android.os.Looper.loopOnce(Looper.java:206)
+	at android.os.Looper.loop(Looper.java:296)
+	at android.os.HandlerThread.run(HandlerThread.java:67)
+
+========================================
+2025-07-18 04:33:48 system_server_wtf (text, 963 bytes)
+Process: system_server
+Subject: SyncManager
+Build: HONOR/TFY-AN00/HNTFY-M:12/HONORTFY-AN00/6.1.0.181C00:user/release-keys
+
+android.util.Log$TerribleFailure: SYNC_OP_STATE_INVALID: disallowed by settings/network
+	at android.util.Log.wtf(Log.java:327)
+	at android.util.Slog.wtf(Slog.java:98)
+	at com.android.server.content.SyncManager$SyncHandler.logAccountError(SyncManager.java:3564)
+	at com.android.server.content.SyncManager$SyncHandler.computeSyncOpState(SyncManager.java:3541)
+	at com.android.server.content.SyncManager$SyncHandler.startSyncH(SyncManager.java:3243)
+	at com.android.server.content.SyncManager$SyncHandler.handleSyncMessage(SyncManager.java:2997)
+	at com.android.server.content.SyncManager$SyncHandler.handleMessage(SyncManager.java:2969)
+	at android.os.Handler.dispatchMessage(Handler.java:109)
+	at android.os.Looper.loopOnce(Looper.java:206)
+	at android.os.Looper.loop(Looper.java:296)
+	at android.os.HandlerThread.run(HandlerThread.java:67)
+
+========================================
+2025-07-18 23:38:04 system_server_wtf (text, 963 bytes)
+Process: system_server
+Subject: SyncManager
+Build: HONOR/TFY-AN00/HNTFY-M:12/HONORTFY-AN00/6.1.0.181C00:user/release-keys
+
+android.util.Log$TerribleFailure: SYNC_OP_STATE_INVALID: disallowed by settings/network
+	at android.util.Log.wtf(Log.java:327)
+	at android.util.Slog.wtf(Slog.java:98)
+	at com.android.server.content.SyncManager$SyncHandler.logAccountError(SyncManager.java:3564)
+	at com.android.server.content.SyncManager$SyncHandler.computeSyncOpState(SyncManager.java:3541)
+	at com.android.server.content.SyncManager$SyncHandler.startSyncH(SyncManager.java:3243)
+	at com.android.server.content.SyncManager$SyncHandler.handleSyncMessage(SyncManager.java:2997)
+	at com.android.server.content.SyncManager$SyncHandler.handleMessage(SyncManager.java:2969)
+	at android.os.Handler.dispatchMessage(Handler.java:109)
+	at android.os.Looper.loopOnce(Looper.java:206)
+	at android.os.Looper.loop(Looper.java:296)
+	at android.os.HandlerThread.run(HandlerThread.java:67)
+
+========================================
+2025-07-18 23:38:22 system_server_wtf (text, 945 bytes)
+Process: system_server
+Subject: SyncManager
+Build: HONOR/TFY-AN00/HNTFY-M:12/HONORTFY-AN00/6.1.0.181C00:user/release-keys
+
+android.util.Log$TerribleFailure: SYNC_OP_STATE_INVALID: NOT_SYNCABLE
+	at android.util.Log.wtf(Log.java:327)
+	at android.util.Slog.wtf(Slog.java:98)
+	at com.android.server.content.SyncManager$SyncHandler.logAccountError(SyncManager.java:3564)
+	at com.android.server.content.SyncManager$SyncHandler.computeSyncOpState(SyncManager.java:3522)
+	at com.android.server.content.SyncManager$SyncHandler.startSyncH(SyncManager.java:3243)
+	at com.android.server.content.SyncManager$SyncHandler.handleSyncMessage(SyncManager.java:2997)
+	at com.android.server.content.SyncManager$SyncHandler.handleMessage(SyncManager.java:2969)
+	at android.os.Handler.dispatchMessage(Handler.java:109)
+	at android.os.Looper.loopOnce(Looper.java:206)
+	at android.os.Looper.loop(Looper.java:296)
+	at android.os.HandlerThread.run(HandlerThread.java:67)
+
+========================================
+2025-07-19 00:27:20 system_server_wtf (text, 1033 bytes)
+Process: system_server
+Subject: ContentProviderHelper
+Build: HONOR/TFY-AN00/HNTFY-M:12/HONORTFY-AN00/6.1.0.181C00:user/release-keys
+
+android.util.Log$TerribleFailure: ProcessRecord{50fd39a 10349:com.hihonor.id:persistent/u0a105} was killed by AM but isn't really dead
+	at android.util.Log.wtf(Log.java:327)
+	at android.util.Slog.wtf(Slog.java:98)
+	at com.android.server.am.ContentProviderHelper.getContentProviderImpl(ContentProviderHelper.java:226)
+	at com.android.server.am.ContentProviderHelper.getContentProvider(ContentProviderHelper.java:129)
+	at com.android.server.am.ActivityManagerService.getContentProvider(ActivityManagerService.java:6749)
+	at android.app.IActivityManager$Stub.onTransact(IActivityManager.java:2481)
+	at com.android.server.am.ActivityManagerService.onTransact(ActivityManagerService.java:2740)
+	at com.android.server.am.HwActivityManagerService.onTransact(HwActivityManagerService.java:380)
+	at android.os.Binder.execTransactInternal(Binder.java:1186)
+	at android.os.Binder.execTransact(Binder.java:1150)
+
+========================================
+2025-07-19 00:58:46 system_app_crash (text, 1010 bytes)
+Process: com.huawei.hwid.core
+PID: 24057
+UID: 10031
+Flags: 0x30c83ec5
+Package: com.huawei.hwid v61504342 (6.15.4.342)
+Foreground: No
+Process-Runtime: 450896545
+Lifetime: 450896s
+Build: HONOR/TFY-AN00/HNTFY-M:12/HONORTFY-AN00/6.1.0.181C00:user/release-keys
+
+java.lang.IllegalStateException: Couldn't read row 23, col 1 from CursorWindow.  Make sure the Cursor is initialized correctly before accessing data from it.
+	at android.database.CursorWindow.nativeGetLong(Native Method)
+	at android.database.CursorWindow.getLong(CursorWindow.java:536)
+	at android.database.CursorWindow.getInt(CursorWindow.java:603)
+	at android.database.AbstractWindowedCursor.getInt(AbstractWindowedCursor.java:72)
+	at h2.n.a(PackageInfoDAO_Impl.java:142)
+	at com.huawei.hms.fwkit.common.l$b.run(Reporter.java:21)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1167)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:641)
+	at java.lang.Thread.run(Thread.java:930)
+-loghandler
+
+========================================
+2025-07-19 01:16:20 system_server_wtf (text, 2610 bytes)
+Process: system_server
+Subject: ProcBatteryStats
+Build: HONOR/TFY-AN00/HNTFY-M:12/HONORTFY-AN00/6.1.0.181C00:user/release-keys
+
+android.util.Log$TerribleFailure: Unable to find object for *job*/android/com.android.server.pm.BackgroundDexOptService mapsize=0 activeoverflow=null curoverflow=null
+	at android.util.Log.wtf(Log.java:327)
+	at android.util.Slog.wtf(Slog.java:98)
+	at com.android.server.pg.ProcBatteryStats$OverflowArrayMap.stopObject(ProcBatteryStats.java:905)
+	at com.android.server.pg.ProcBatteryStats.updateWlTimer(ProcBatteryStats.java:519)
+	at com.android.server.pg.ProcBatteryStats.processWakeLock(ProcBatteryStats.java:493)
+	at com.android.server.pg.PGManagerService$LocalService.noteStopWakeLock(PGManagerService.java:174)
+	at com.android.server.power.Notifier.onWakeLockReleased(Notifier.java:430)
+	at com.android.server.power.PowerManagerService.notifyWakeLockReleasedLocked(PowerManagerService.java:2076)
+	at com.android.server.power.PowerManagerService.removeWakeLockLocked(PowerManagerService.java:1934)
+	at com.android.server.power.PowerManagerService.releaseWakeLockInternal(PowerManagerService.java:1902)
+	at com.android.server.power.PowerManagerService$BinderService.releaseWakeLock(PowerManagerService.java:6390)
+	at android.os.PowerManager$WakeLock.release(PowerManager.java:3005)
+	at android.os.PowerManager$WakeLock.release(PowerManager.java:2975)
+	at com.android.server.job.JobServiceContext.closeAndCleanupJobLocked(JobServiceContext.java:985)
+	at com.android.server.job.JobServiceContext.handleFinishedLocked(JobServiceContext.java:798)
+	at com.android.server.job.JobServiceContext.doCallbackLocked(JobServiceContext.java:682)
+	at com.android.server.job.JobServiceContext.doCallback(JobServiceContext.java:663)
+	at com.android.server.job.JobServiceContext.doAcknowledgeStopMessage(JobServiceContext.java:452)
+	at com.android.server.job.JobServiceContext$JobCallback.acknowledgeStopMessage(JobServiceContext.java:189)
+	at android.app.job.JobServiceEngine$JobHandler.ackStopMessage(JobServiceEngine.java:178)
+	at android.app.job.JobServiceEngine$JobHandler.handleMessage(JobServiceEngine.java:131)
+	at android.os.Handler.dispatchMessage(Handler.java:109)
+	at android.os.Looper.loopOnce(Looper.java:206)
+	at android.os.Looper.loop(Looper.java:296)
+	at com.android.server.SystemServer.run(SystemServer.java:1003)
+	at com.android.server.SystemServer.main(SystemServer.java:678)
+	at java.lang.reflect.Method.invoke(Native Method)
+	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:569)
+	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:954)
+
+========================================
+2025-07-19 01:44:51 system_server_wtf (text, 963 bytes)
+Process: system_server
+Subject: SyncManager
+Build: HONOR/TFY-AN00/HNTFY-M:12/HONORTFY-AN00/6.1.0.181C00:user/release-keys
+
+android.util.Log$TerribleFailure: SYNC_OP_STATE_INVALID: disallowed by settings/network
+	at android.util.Log.wtf(Log.java:327)
+	at android.util.Slog.wtf(Slog.java:98)
+	at com.android.server.content.SyncManager$SyncHandler.logAccountError(SyncManager.java:3564)
+	at com.android.server.content.SyncManager$SyncHandler.computeSyncOpState(SyncManager.java:3541)
+	at com.android.server.content.SyncManager$SyncHandler.startSyncH(SyncManager.java:3243)
+	at com.android.server.content.SyncManager$SyncHandler.handleSyncMessage(SyncManager.java:2997)
+	at com.android.server.content.SyncManager$SyncHandler.handleMessage(SyncManager.java:2969)
+	at android.os.Handler.dispatchMessage(Handler.java:109)
+	at android.os.Looper.loopOnce(Looper.java:206)
+	at android.os.Looper.loop(Looper.java:296)
+	at android.os.HandlerThread.run(HandlerThread.java:67)
+
+========================================
+2025-07-19 02:22:09 system_server_wtf (text, 963 bytes)
+Process: system_server
+Subject: SyncManager
+Build: HONOR/TFY-AN00/HNTFY-M:12/HONORTFY-AN00/6.1.0.181C00:user/release-keys
+
+android.util.Log$TerribleFailure: SYNC_OP_STATE_INVALID: disallowed by settings/network
+	at android.util.Log.wtf(Log.java:327)
+	at android.util.Slog.wtf(Slog.java:98)
+	at com.android.server.content.SyncManager$SyncHandler.logAccountError(SyncManager.java:3564)
+	at com.android.server.content.SyncManager$SyncHandler.computeSyncOpState(SyncManager.java:3541)
+	at com.android.server.content.SyncManager$SyncHandler.startSyncH(SyncManager.java:3243)
+	at com.android.server.content.SyncManager$SyncHandler.handleSyncMessage(SyncManager.java:2997)
+	at com.android.server.content.SyncManager$SyncHandler.handleMessage(SyncManager.java:2969)
+	at android.os.Handler.dispatchMessage(Handler.java:109)
+	at android.os.Looper.loopOnce(Looper.java:206)
+	at android.os.Looper.loop(Looper.java:296)
+	at android.os.HandlerThread.run(HandlerThread.java:67)
+
+========================================
+2025-07-19 02:59:55 system_server_wtf (text, 963 bytes)
+Process: system_server
+Subject: SyncManager
+Build: HONOR/TFY-AN00/HNTFY-M:12/HONORTFY-AN00/6.1.0.181C00:user/release-keys
+
+android.util.Log$TerribleFailure: SYNC_OP_STATE_INVALID: disallowed by settings/network
+	at android.util.Log.wtf(Log.java:327)
+	at android.util.Slog.wtf(Slog.java:98)
+	at com.android.server.content.SyncManager$SyncHandler.logAccountError(SyncManager.java:3564)
+	at com.android.server.content.SyncManager$SyncHandler.computeSyncOpState(SyncManager.java:3541)
+	at com.android.server.content.SyncManager$SyncHandler.startSyncH(SyncManager.java:3243)
+	at com.android.server.content.SyncManager$SyncHandler.handleSyncMessage(SyncManager.java:2997)
+	at com.android.server.content.SyncManager$SyncHandler.handleMessage(SyncManager.java:2969)
+	at android.os.Handler.dispatchMessage(Handler.java:109)
+	at android.os.Looper.loopOnce(Looper.java:206)
+	at android.os.Looper.loop(Looper.java:296)
+	at android.os.HandlerThread.run(HandlerThread.java:67)
+
+========================================
+2025-07-19 03:43:39 system_server_wtf (text, 963 bytes)
+Process: system_server
+Subject: SyncManager
+Build: HONOR/TFY-AN00/HNTFY-M:12/HONORTFY-AN00/6.1.0.181C00:user/release-keys
+
+android.util.Log$TerribleFailure: SYNC_OP_STATE_INVALID: disallowed by settings/network
+	at android.util.Log.wtf(Log.java:327)
+	at android.util.Slog.wtf(Slog.java:98)
+	at com.android.server.content.SyncManager$SyncHandler.logAccountError(SyncManager.java:3564)
+	at com.android.server.content.SyncManager$SyncHandler.computeSyncOpState(SyncManager.java:3541)
+	at com.android.server.content.SyncManager$SyncHandler.startSyncH(SyncManager.java:3243)
+	at com.android.server.content.SyncManager$SyncHandler.handleSyncMessage(SyncManager.java:2997)
+	at com.android.server.content.SyncManager$SyncHandler.handleMessage(SyncManager.java:2969)
+	at android.os.Handler.dispatchMessage(Handler.java:109)
+	at android.os.Looper.loopOnce(Looper.java:206)
+	at android.os.Looper.loop(Looper.java:296)
+	at android.os.HandlerThread.run(HandlerThread.java:67)
+
+========================================
+2025-07-19 04:11:07 system_server_wtf (text, 963 bytes)
+Process: system_server
+Subject: SyncManager
+Build: HONOR/TFY-AN00/HNTFY-M:12/HONORTFY-AN00/6.1.0.181C00:user/release-keys
+
+android.util.Log$TerribleFailure: SYNC_OP_STATE_INVALID: disallowed by settings/network
+	at android.util.Log.wtf(Log.java:327)
+	at android.util.Slog.wtf(Slog.java:98)
+	at com.android.server.content.SyncManager$SyncHandler.logAccountError(SyncManager.java:3564)
+	at com.android.server.content.SyncManager$SyncHandler.computeSyncOpState(SyncManager.java:3541)
+	at com.android.server.content.SyncManager$SyncHandler.startSyncH(SyncManager.java:3243)
+	at com.android.server.content.SyncManager$SyncHandler.handleSyncMessage(SyncManager.java:2997)
+	at com.android.server.content.SyncManager$SyncHandler.handleMessage(SyncManager.java:2969)
+	at android.os.Handler.dispatchMessage(Handler.java:109)
+	at android.os.Looper.loopOnce(Looper.java:206)
+	at android.os.Looper.loop(Looper.java:296)
+	at android.os.HandlerThread.run(HandlerThread.java:67)
+
+========================================
+2025-07-19 04:52:47 system_server_wtf (text, 963 bytes)
+Process: system_server
+Subject: SyncManager
+Build: HONOR/TFY-AN00/HNTFY-M:12/HONORTFY-AN00/6.1.0.181C00:user/release-keys
+
+android.util.Log$TerribleFailure: SYNC_OP_STATE_INVALID: disallowed by settings/network
+	at android.util.Log.wtf(Log.java:327)
+	at android.util.Slog.wtf(Slog.java:98)
+	at com.android.server.content.SyncManager$SyncHandler.logAccountError(SyncManager.java:3564)
+	at com.android.server.content.SyncManager$SyncHandler.computeSyncOpState(SyncManager.java:3541)
+	at com.android.server.content.SyncManager$SyncHandler.startSyncH(SyncManager.java:3243)
+	at com.android.server.content.SyncManager$SyncHandler.handleSyncMessage(SyncManager.java:2997)
+	at com.android.server.content.SyncManager$SyncHandler.handleMessage(SyncManager.java:2969)
+	at android.os.Handler.dispatchMessage(Handler.java:109)
+	at android.os.Looper.loopOnce(Looper.java:206)
+	at android.os.Looper.loop(Looper.java:296)
+	at android.os.HandlerThread.run(HandlerThread.java:67)
+
+========================================
+2025-07-19 05:19:23 system_server_wtf (text, 963 bytes)
+Process: system_server
+Subject: SyncManager
+Build: HONOR/TFY-AN00/HNTFY-M:12/HONORTFY-AN00/6.1.0.181C00:user/release-keys
+
+android.util.Log$TerribleFailure: SYNC_OP_STATE_INVALID: disallowed by settings/network
+	at android.util.Log.wtf(Log.java:327)
+	at android.util.Slog.wtf(Slog.java:98)
+	at com.android.server.content.SyncManager$SyncHandler.logAccountError(SyncManager.java:3564)
+	at com.android.server.content.SyncManager$SyncHandler.computeSyncOpState(SyncManager.java:3541)
+	at com.android.server.content.SyncManager$SyncHandler.startSyncH(SyncManager.java:3243)
+	at com.android.server.content.SyncManager$SyncHandler.handleSyncMessage(SyncManager.java:2997)
+	at com.android.server.content.SyncManager$SyncHandler.handleMessage(SyncManager.java:2969)
+	at android.os.Handler.dispatchMessage(Handler.java:109)
+	at android.os.Looper.loopOnce(Looper.java:206)
+	at android.os.Looper.loop(Looper.java:296)
+	at android.os.HandlerThread.run(HandlerThread.java:67)
+
+========================================
+2025-07-19 05:59:54 system_server_wtf (text, 963 bytes)
+Process: system_server
+Subject: SyncManager
+Build: HONOR/TFY-AN00/HNTFY-M:12/HONORTFY-AN00/6.1.0.181C00:user/release-keys
+
+android.util.Log$TerribleFailure: SYNC_OP_STATE_INVALID: disallowed by settings/network
+	at android.util.Log.wtf(Log.java:327)
+	at android.util.Slog.wtf(Slog.java:98)
+	at com.android.server.content.SyncManager$SyncHandler.logAccountError(SyncManager.java:3564)
+	at com.android.server.content.SyncManager$SyncHandler.computeSyncOpState(SyncManager.java:3541)
+	at com.android.server.content.SyncManager$SyncHandler.startSyncH(SyncManager.java:3243)
+	at com.android.server.content.SyncManager$SyncHandler.handleSyncMessage(SyncManager.java:2997)
+	at com.android.server.content.SyncManager$SyncHandler.handleMessage(SyncManager.java:2969)
+	at android.os.Handler.dispatchMessage(Handler.java:109)
+	at android.os.Looper.loopOnce(Looper.java:206)
+	at android.os.Looper.loop(Looper.java:296)
+	at android.os.HandlerThread.run(HandlerThread.java:67)
+
+========================================
+2025-07-19 09:19:57 system_server_wtf (text, 1991 bytes)
+Process: system_server
+Subject: JobScheduler.Concurrency
+Build: HONOR/TFY-AN00/HNTFY-M:12/HONORTFY-AN00/6.1.0.181C00:user/release-keys
+
+android.util.Log$TerribleFailure: Running job didn't have an active PackageStats object
+	at android.util.Log.wtf(Log.java:327)
+	at android.util.Slog.wtf(Slog.java:98)
+	at com.android.server.job.JobConcurrencyManager.onJobCompletedLocked(JobConcurrencyManager.java:840)
+	at com.android.server.job.JobServiceContext.closeAndCleanupJobLocked(JobServiceContext.java:1003)
+	at com.android.server.job.JobServiceContext.executeRunnableJob(JobServiceContext.java:321)
+	at com.android.server.job.JobConcurrencyManager.startJobLocked(JobConcurrencyManager.java:813)
+	at com.android.server.job.JobConcurrencyManager.onJobCompletedLocked(JobConcurrencyManager.java:970)
+	at com.android.server.job.JobServiceContext.closeAndCleanupJobLocked(JobServiceContext.java:1003)
+	at com.android.server.job.JobServiceContext.executeRunnableJob(JobServiceContext.java:321)
+	at com.android.server.job.JobConcurrencyManager.startJobLocked(JobConcurrencyManager.java:813)
+	at com.android.server.job.JobConcurrencyManager.assignJobsToContextsInternalLocked(JobConcurrencyManager.java:710)
+	at com.android.server.job.JobConcurrencyManager.assignJobsToContextsLocked(JobConcurrencyManager.java:538)
+	at com.android.server.job.JobSchedulerService.maybeRunPendingJobsLocked(JobSchedulerService.java:2533)
+	at com.android.server.job.JobSchedulerService$JobHandler.handleMessage(JobSchedulerService.java:2104)
+	at android.os.Handler.dispatchMessage(Handler.java:109)
+	at android.os.Looper.loopOnce(Looper.java:206)
+	at android.os.Looper.loop(Looper.java:296)
+	at com.android.server.SystemServer.run(SystemServer.java:1003)
+	at com.android.server.SystemServer.main(SystemServer.java:678)
+	at java.lang.reflect.Method.invoke(Native Method)
+	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:569)
+	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:954)
+
+========================================
+2025-07-19 09:19:57 system_server_wtf (text, 2380 bytes)
+Process: system_server
+Subject: JobScheduler.Concurrency
+Build: HONOR/TFY-AN00/HNTFY-M:12/HONORTFY-AN00/6.1.0.181C00:user/release-keys
+
+android.util.Log$TerribleFailure: Running job didn't have an active PackageStats object
+	at android.util.Log.wtf(Log.java:327)
+	at android.util.Slog.wtf(Slog.java:98)
+	at com.android.server.job.JobConcurrencyManager.onJobCompletedLocked(JobConcurrencyManager.java:840)
+	at com.android.server.job.JobServiceContext.closeAndCleanupJobLocked(JobServiceContext.java:1003)
+	at com.android.server.job.JobServiceContext.executeRunnableJob(JobServiceContext.java:321)
+	at com.android.server.job.JobConcurrencyManager.startJobLocked(JobConcurrencyManager.java:813)
+	at com.android.server.job.JobConcurrencyManager.onJobCompletedLocked(JobConcurrencyManager.java:970)
+	at com.android.server.job.JobServiceContext.closeAndCleanupJobLocked(JobServiceContext.java:1003)
+	at com.android.server.job.JobServiceContext.executeRunnableJob(JobServiceContext.java:321)
+	at com.android.server.job.JobConcurrencyManager.startJobLocked(JobConcurrencyManager.java:813)
+	at com.android.server.job.JobConcurrencyManager.onJobCompletedLocked(JobConcurrencyManager.java:970)
+	at com.android.server.job.JobServiceContext.closeAndCleanupJobLocked(JobServiceContext.java:1003)
+	at com.android.server.job.JobServiceContext.executeRunnableJob(JobServiceContext.java:321)
+	at com.android.server.job.JobConcurrencyManager.startJobLocked(JobConcurrencyManager.java:813)
+	at com.android.server.job.JobConcurrencyManager.assignJobsToContextsInternalLocked(JobConcurrencyManager.java:710)
+	at com.android.server.job.JobConcurrencyManager.assignJobsToContextsLocked(JobConcurrencyManager.java:538)
+	at com.android.server.job.JobSchedulerService.maybeRunPendingJobsLocked(JobSchedulerService.java:2533)
+	at com.android.server.job.JobSchedulerService$JobHandler.handleMessage(JobSchedulerService.java:2104)
+	at android.os.Handler.dispatchMessage(Handler.java:109)
+	at android.os.Looper.loopOnce(Looper.java:206)
+	at android.os.Looper.loop(Looper.java:296)
+	at com.android.server.SystemServer.run(SystemServer.java:1003)
+	at com.android.server.SystemServer.main(SystemServer.java:678)
+	at java.lang.reflect.Method.invoke(Native Method)
+	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:569)
+	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:954)
+
+========================================
+2025-07-19 09:19:57 system_server_wtf (text, 2769 bytes)
+Process: system_server
+Subject: JobScheduler.Concurrency
+Build: HONOR/TFY-AN00/HNTFY-M:12/HONORTFY-AN00/6.1.0.181C00:user/release-keys
+
+android.util.Log$TerribleFailure: Running job didn't have an active PackageStats object
+	at android.util.Log.wtf(Log.java:327)
+	at android.util.Slog.wtf(Slog.java:98)
+	at com.android.server.job.JobConcurrencyManager.onJobCompletedLocked(JobConcurrencyManager.java:840)
+	at com.android.server.job.JobServiceContext.closeAndCleanupJobLocked(JobServiceContext.java:1003)
+	at com.android.server.job.JobServiceContext.executeRunnableJob(JobServiceContext.java:321)
+	at com.android.server.job.JobConcurrencyManager.startJobLocked(JobConcurrencyManager.java:813)
+	at com.android.server.job.JobConcurrencyManager.onJobCompletedLocked(JobConcurrencyManager.java:970)
+	at com.android.server.job.JobServiceContext.closeAndCleanupJobLocked(JobServiceContext.java:1003)
+	at com.android.server.job.JobServiceContext.executeRunnableJob(JobServiceContext.java:321)
+	at com.android.server.job.JobConcurrencyManager.startJobLocked(JobConcurrencyManager.java:813)
+	at com.android.server.job.JobConcurrencyManager.onJobCompletedLocked(JobConcurrencyManager.java:970)
+	at com.android.server.job.JobServiceContext.closeAndCleanupJobLocked(JobServiceContext.java:1003)
+	at com.android.server.job.JobServiceContext.executeRunnableJob(JobServiceContext.java:321)
+	at com.android.server.job.JobConcurrencyManager.startJobLocked(JobConcurrencyManager.java:813)
+	at com.android.server.job.JobConcurrencyManager.onJobCompletedLocked(JobConcurrencyManager.java:970)
+	at com.android.server.job.JobServiceContext.closeAndCleanupJobLocked(JobServiceContext.java:1003)
+	at com.android.server.job.JobServiceContext.executeRunnableJob(JobServiceContext.java:321)
+	at com.android.server.job.JobConcurrencyManager.startJobLocked(JobConcurrencyManager.java:813)
+	at com.android.server.job.JobConcurrencyManager.assignJobsToContextsInternalLocked(JobConcurrencyManager.java:710)
+	at com.android.server.job.JobConcurrencyManager.assignJobsToContextsLocked(JobConcurrencyManager.java:538)
+	at com.android.server.job.JobSchedulerService.maybeRunPendingJobsLocked(JobSchedulerService.java:2533)
+	at com.android.server.job.JobSchedulerService$JobHandler.handleMessage(JobSchedulerService.java:2104)
+	at android.os.Handler.dispatchMessage(Handler.java:109)
+	at android.os.Looper.loopOnce(Looper.java:206)
+	at android.os.Looper.loop(Looper.java:296)
+	at com.android.server.SystemServer.run(SystemServer.java:1003)
+	at com.android.server.SystemServer.main(SystemServer.java:678)
+	at java.lang.reflect.Method.invoke(Native Method)
+	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:569)
+	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:954)
+
+========================================
+2025-07-19 09:19:57 system_server_wtf (text, 3158 bytes)
+Process: system_server
+Subject: JobScheduler.Concurrency
+Build: HONOR/TFY-AN00/HNTFY-M:12/HONORTFY-AN00/6.1.0.181C00:user/release-keys
+
+android.util.Log$TerribleFailure: Running job didn't have an active PackageStats object
+	at android.util.Log.wtf(Log.java:327)
+	at android.util.Slog.wtf(Slog.java:98)
+	at com.android.server.job.JobConcurrencyManager.onJobCompletedLocked(JobConcurrencyManager.java:840)
+	at com.android.server.job.JobServiceContext.closeAndCleanupJobLocked(JobServiceContext.java:1003)
+	at com.android.server.job.JobServiceContext.executeRunnableJob(JobServiceContext.java:321)
+	at com.android.server.job.JobConcurrencyManager.startJobLocked(JobConcurrencyManager.java:813)
+	at com.android.server.job.JobConcurrencyManager.onJobCompletedLocked(JobConcurrencyManager.java:970)
+	at com.android.server.job.JobServiceContext.closeAndCleanupJobLocked(JobServiceContext.java:1003)
+	at com.android.server.job.JobServiceContext.executeRunnableJob(JobServiceContext.java:321)
+	at com.android.server.job.JobConcurrencyManager.startJobLocked(JobConcurrencyManager.java:813)
+	at com.android.server.job.JobConcurrencyManager.onJobCompletedLocked(JobConcurrencyManager.java:970)
+	at com.android.server.job.JobServiceContext.closeAndCleanupJobLocked(JobServiceContext.java:1003)
+	at com.android.server.job.JobServiceContext.executeRunnableJob(JobServiceContext.java:321)
+	at com.android.server.job.JobConcurrencyManager.startJobLocked(JobConcurrencyManager.java:813)
+	at com.android.server.job.JobConcurrencyManager.onJobCompletedLocked(JobConcurrencyManager.java:970)
+	at com.android.server.job.JobServiceContext.closeAndCleanupJobLocked(JobServiceContext.java:1003)
+	at com.android.server.job.JobServiceContext.executeRunnableJob(JobServiceContext.java:321)
+	at com.android.server.job.JobConcurrencyManager.startJobLocked(JobConcurrencyManager.java:813)
+	at com.android.server.job.JobConcurrencyManager.onJobCompletedLocked(JobConcurrencyManager.java:970)
+	at com.android.server.job.JobServiceContext.closeAndCleanupJobLocked(JobServiceContext.java:1003)
+	at com.android.server.job.JobServiceContext.executeRunnableJob(JobServiceContext.java:321)
+	at com.android.server.job.JobConcurrencyManager.startJobLocked(JobConcurrencyManager.java:813)
+	at com.android.server.job.JobConcurrencyManager.assignJobsToContextsInternalLocked(JobConcurrencyManager.java:710)
+	at com.android.server.job.JobConcurrencyManager.assignJobsToContextsLocked(JobConcurrencyManager.java:538)
+	at com.android.server.job.JobSchedulerService.maybeRunPendingJobsLocked(JobSchedulerService.java:2533)
+	at com.android.server.job.JobSchedulerService$JobHandler.handleMessage(JobSchedulerService.java:2104)
+	at android.os.Handler.dispatchMessage(Handler.java:109)
+	at android.os.Looper.loopOnce(Looper.java:206)
+	at android.os.Looper.loop(Looper.java:296)
+	at com.android.server.SystemServer.run(SystemServer.java:1003)
+	at com.android.server.SystemServer.main(SystemServer.java:678)
+	at java.lang.reflect.Method.invoke(Native Method)
+	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:569)
+	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:954)
+
+========================================
+2025-07-19 09:19:57 system_server_wtf (text, 1193 bytes)
+Process: system_server
+Subject: BatteryStatsImpl
+Build: HONOR/TFY-AN00/HNTFY-M:12/HONORTFY-AN00/6.1.0.181C00:user/release-keys
+
+android.util.Log$TerribleFailure: Unable to find object for com.microsoft.appmanager/com.microsoft.mmx.agents.EventAggregatorJob in uid 10113 mapsize=0 activeoverflow=null curoverflow=null lastCleanupTime=-8h3m37s311ms
+	at android.util.Log.wtf(Log.java:327)
+	at android.util.Slog.wtf(Slog.java:98)
+	at com.android.internal.os.BatteryStatsImpl$OverflowArrayMap.stopObject(BatteryStatsImpl.java:3141)
+	at com.android.internal.os.BatteryStatsImpl$Uid.noteStopJobLocked(BatteryStatsImpl.java:10779)
+	at com.android.internal.os.BatteryStatsImpl.noteJobFinishLocked(BatteryStatsImpl.java:4260)
+	at com.android.server.am.BatteryStatsService.lambda$noteJobFinish$17$BatteryStatsService(BatteryStatsService.java:925)
+	at com.android.server.am.BatteryStatsService$$ExternalSyntheticLambda84.run(Unknown Source:12)
+	at android.os.Handler.handleCallback(Handler.java:955)
+	at android.os.Handler.dispatchMessage(Handler.java:102)
+	at android.os.Looper.loopOnce(Looper.java:206)
+	at android.os.Looper.loop(Looper.java:296)
+	at android.os.HandlerThread.run(HandlerThread.java:67)
+
+========================================
+2025-07-20 01:58:54 system_server_wtf (text, 963 bytes)
+Process: system_server
+Subject: SyncManager
+Build: HONOR/TFY-AN00/HNTFY-M:12/HONORTFY-AN00/6.1.0.181C00:user/release-keys
+
+android.util.Log$TerribleFailure: SYNC_OP_STATE_INVALID: disallowed by settings/network
+	at android.util.Log.wtf(Log.java:327)
+	at android.util.Slog.wtf(Slog.java:98)
+	at com.android.server.content.SyncManager$SyncHandler.logAccountError(SyncManager.java:3564)
+	at com.android.server.content.SyncManager$SyncHandler.computeSyncOpState(SyncManager.java:3541)
+	at com.android.server.content.SyncManager$SyncHandler.startSyncH(SyncManager.java:3243)
+	at com.android.server.content.SyncManager$SyncHandler.handleSyncMessage(SyncManager.java:2997)
+	at com.android.server.content.SyncManager$SyncHandler.handleMessage(SyncManager.java:2969)
+	at android.os.Handler.dispatchMessage(Handler.java:109)
+	at android.os.Looper.loopOnce(Looper.java:206)
+	at android.os.Looper.loop(Looper.java:296)
+	at android.os.HandlerThread.run(HandlerThread.java:67)
+
+========================================
+2025-07-20 02:59:51 system_server_wtf (text, 963 bytes)
+Process: system_server
+Subject: SyncManager
+Build: HONOR/TFY-AN00/HNTFY-M:12/HONORTFY-AN00/6.1.0.181C00:user/release-keys
+
+android.util.Log$TerribleFailure: SYNC_OP_STATE_INVALID: disallowed by settings/network
+	at android.util.Log.wtf(Log.java:327)
+	at android.util.Slog.wtf(Slog.java:98)
+	at com.android.server.content.SyncManager$SyncHandler.logAccountError(SyncManager.java:3564)
+	at com.android.server.content.SyncManager$SyncHandler.computeSyncOpState(SyncManager.java:3541)
+	at com.android.server.content.SyncManager$SyncHandler.startSyncH(SyncManager.java:3243)
+	at com.android.server.content.SyncManager$SyncHandler.handleSyncMessage(SyncManager.java:2997)
+	at com.android.server.content.SyncManager$SyncHandler.handleMessage(SyncManager.java:2969)
+	at android.os.Handler.dispatchMessage(Handler.java:109)
+	at android.os.Looper.loopOnce(Looper.java:206)
+	at android.os.Looper.loop(Looper.java:296)
+	at android.os.HandlerThread.run(HandlerThread.java:67)
+
+========================================
+2025-07-20 03:39:55 system_server_wtf (text, 963 bytes)
+Process: system_server
+Subject: SyncManager
+Build: HONOR/TFY-AN00/HNTFY-M:12/HONORTFY-AN00/6.1.0.181C00:user/release-keys
+
+android.util.Log$TerribleFailure: SYNC_OP_STATE_INVALID: disallowed by settings/network
+	at android.util.Log.wtf(Log.java:327)
+	at android.util.Slog.wtf(Slog.java:98)
+	at com.android.server.content.SyncManager$SyncHandler.logAccountError(SyncManager.java:3564)
+	at com.android.server.content.SyncManager$SyncHandler.computeSyncOpState(SyncManager.java:3541)
+	at com.android.server.content.SyncManager$SyncHandler.startSyncH(SyncManager.java:3243)
+	at com.android.server.content.SyncManager$SyncHandler.handleSyncMessage(SyncManager.java:2997)
+	at com.android.server.content.SyncManager$SyncHandler.handleMessage(SyncManager.java:2969)
+	at android.os.Handler.dispatchMessage(Handler.java:109)
+	at android.os.Looper.loopOnce(Looper.java:206)
+	at android.os.Looper.loop(Looper.java:296)
+	at android.os.HandlerThread.run(HandlerThread.java:67)
+
+========================================
+2025-07-20 04:01:57 system_server_wtf (text, 963 bytes)
+Process: system_server
+Subject: SyncManager
+Build: HONOR/TFY-AN00/HNTFY-M:12/HONORTFY-AN00/6.1.0.181C00:user/release-keys
+
+android.util.Log$TerribleFailure: SYNC_OP_STATE_INVALID: disallowed by settings/network
+	at android.util.Log.wtf(Log.java:327)
+	at android.util.Slog.wtf(Slog.java:98)
+	at com.android.server.content.SyncManager$SyncHandler.logAccountError(SyncManager.java:3564)
+	at com.android.server.content.SyncManager$SyncHandler.computeSyncOpState(SyncManager.java:3541)
+	at com.android.server.content.SyncManager$SyncHandler.startSyncH(SyncManager.java:3243)
+	at com.android.server.content.SyncManager$SyncHandler.handleSyncMessage(SyncManager.java:2997)
+	at com.android.server.content.SyncManager$SyncHandler.handleMessage(SyncManager.java:2969)
+	at android.os.Handler.dispatchMessage(Handler.java:109)
+	at android.os.Looper.loopOnce(Looper.java:206)
+	at android.os.Looper.loop(Looper.java:296)
+	at android.os.HandlerThread.run(HandlerThread.java:67)
+
+========================================
+2025-07-20 04:49:05 system_server_wtf (text, 963 bytes)
+Process: system_server
+Subject: SyncManager
+Build: HONOR/TFY-AN00/HNTFY-M:12/HONORTFY-AN00/6.1.0.181C00:user/release-keys
+
+android.util.Log$TerribleFailure: SYNC_OP_STATE_INVALID: disallowed by settings/network
+	at android.util.Log.wtf(Log.java:327)
+	at android.util.Slog.wtf(Slog.java:98)
+	at com.android.server.content.SyncManager$SyncHandler.logAccountError(SyncManager.java:3564)
+	at com.android.server.content.SyncManager$SyncHandler.computeSyncOpState(SyncManager.java:3541)
+	at com.android.server.content.SyncManager$SyncHandler.startSyncH(SyncManager.java:3243)
+	at com.android.server.content.SyncManager$SyncHandler.handleSyncMessage(SyncManager.java:2997)
+	at com.android.server.content.SyncManager$SyncHandler.handleMessage(SyncManager.java:2969)
+	at android.os.Handler.dispatchMessage(Handler.java:109)
+	at android.os.Looper.loopOnce(Looper.java:206)
+	at android.os.Looper.loop(Looper.java:296)
+	at android.os.HandlerThread.run(HandlerThread.java:67)
+
+========================================
+2025-07-20 05:33:30 system_server_wtf (text, 963 bytes)
+Process: system_server
+Subject: SyncManager
+Build: HONOR/TFY-AN00/HNTFY-M:12/HONORTFY-AN00/6.1.0.181C00:user/release-keys
+
+android.util.Log$TerribleFailure: SYNC_OP_STATE_INVALID: disallowed by settings/network
+	at android.util.Log.wtf(Log.java:327)
+	at android.util.Slog.wtf(Slog.java:98)
+	at com.android.server.content.SyncManager$SyncHandler.logAccountError(SyncManager.java:3564)
+	at com.android.server.content.SyncManager$SyncHandler.computeSyncOpState(SyncManager.java:3541)
+	at com.android.server.content.SyncManager$SyncHandler.startSyncH(SyncManager.java:3243)
+	at com.android.server.content.SyncManager$SyncHandler.handleSyncMessage(SyncManager.java:2997)
+	at com.android.server.content.SyncManager$SyncHandler.handleMessage(SyncManager.java:2969)
+	at android.os.Handler.dispatchMessage(Handler.java:109)
+	at android.os.Looper.loopOnce(Looper.java:206)
+	at android.os.Looper.loop(Looper.java:296)
+	at android.os.HandlerThread.run(HandlerThread.java:67)
+
+========================================
+2025-07-20 05:54:54 system_server_wtf (text, 963 bytes)
+Process: system_server
+Subject: SyncManager
+Build: HONOR/TFY-AN00/HNTFY-M:12/HONORTFY-AN00/6.1.0.181C00:user/release-keys
+
+android.util.Log$TerribleFailure: SYNC_OP_STATE_INVALID: disallowed by settings/network
+	at android.util.Log.wtf(Log.java:327)
+	at android.util.Slog.wtf(Slog.java:98)
+	at com.android.server.content.SyncManager$SyncHandler.logAccountError(SyncManager.java:3564)
+	at com.android.server.content.SyncManager$SyncHandler.computeSyncOpState(SyncManager.java:3541)
+	at com.android.server.content.SyncManager$SyncHandler.startSyncH(SyncManager.java:3243)
+	at com.android.server.content.SyncManager$SyncHandler.handleSyncMessage(SyncManager.java:2997)
+	at com.android.server.content.SyncManager$SyncHandler.handleMessage(SyncManager.java:2969)
+	at android.os.Handler.dispatchMessage(Handler.java:109)
+	at android.os.Looper.loopOnce(Looper.java:206)
+	at android.os.Looper.loop(Looper.java:296)
+	at android.os.HandlerThread.run(HandlerThread.java:67)
+
+========================================
+2025-07-20 08:28:37 system_server_wtf (text, 1163 bytes)
+Process: system_server
+Subject: BatteryStatsImpl
+Build: HONOR/TFY-AN00/HNTFY-M:12/HONORTFY-AN00/6.1.0.181C00:user/release-keys
+
+android.util.Log$TerribleFailure: Unable to find object for com.microsoft.appmanager/com.microsoft.mmx.agents.EventAggregatorJob in uid 10113 mapsize=0 activeoverflow=null curoverflow=null
+	at android.util.Log.wtf(Log.java:327)
+	at android.util.Slog.wtf(Slog.java:98)
+	at com.android.internal.os.BatteryStatsImpl$OverflowArrayMap.stopObject(BatteryStatsImpl.java:3141)
+	at com.android.internal.os.BatteryStatsImpl$Uid.noteStopJobLocked(BatteryStatsImpl.java:10779)
+	at com.android.internal.os.BatteryStatsImpl.noteJobFinishLocked(BatteryStatsImpl.java:4260)
+	at com.android.server.am.BatteryStatsService.lambda$noteJobFinish$17$BatteryStatsService(BatteryStatsService.java:925)
+	at com.android.server.am.BatteryStatsService$$ExternalSyntheticLambda84.run(Unknown Source:12)
+	at android.os.Handler.handleCallback(Handler.java:955)
+	at android.os.Handler.dispatchMessage(Handler.java:102)
+	at android.os.Looper.loopOnce(Looper.java:206)
+	at android.os.Looper.loop(Looper.java:296)
+	at android.os.HandlerThread.run(HandlerThread.java:67)
+
+========================================
+2025-07-20 08:28:37 system_server_wtf (text, 1163 bytes)
+Process: system_server
+Subject: BatteryStatsImpl
+Build: HONOR/TFY-AN00/HNTFY-M:12/HONORTFY-AN00/6.1.0.181C00:user/release-keys
+
+android.util.Log$TerribleFailure: Unable to find object for com.microsoft.appmanager/com.microsoft.mmx.agents.EventAggregatorJob in uid 10113 mapsize=0 activeoverflow=null curoverflow=null
+	at android.util.Log.wtf(Log.java:327)
+	at android.util.Slog.wtf(Slog.java:98)
+	at com.android.internal.os.BatteryStatsImpl$OverflowArrayMap.stopObject(BatteryStatsImpl.java:3141)
+	at com.android.internal.os.BatteryStatsImpl$Uid.noteStopJobLocked(BatteryStatsImpl.java:10779)
+	at com.android.internal.os.BatteryStatsImpl.noteJobFinishLocked(BatteryStatsImpl.java:4260)
+	at com.android.server.am.BatteryStatsService.lambda$noteJobFinish$17$BatteryStatsService(BatteryStatsService.java:925)
+	at com.android.server.am.BatteryStatsService$$ExternalSyntheticLambda84.run(Unknown Source:12)
+	at android.os.Handler.handleCallback(Handler.java:955)
+	at android.os.Handler.dispatchMessage(Handler.java:102)
+	at android.os.Looper.loopOnce(Looper.java:206)
+	at android.os.Looper.loop(Looper.java:296)
+	at android.os.HandlerThread.run(HandlerThread.java:67)
+
+========================================
+2025-07-20 08:28:37 system_server_wtf (text, 1991 bytes)
+Process: system_server
+Subject: JobScheduler.Concurrency
+Build: HONOR/TFY-AN00/HNTFY-M:12/HONORTFY-AN00/6.1.0.181C00:user/release-keys
+
+android.util.Log$TerribleFailure: Running job didn't have an active PackageStats object
+	at android.util.Log.wtf(Log.java:327)
+	at android.util.Slog.wtf(Slog.java:98)
+	at com.android.server.job.JobConcurrencyManager.onJobCompletedLocked(JobConcurrencyManager.java:840)
+	at com.android.server.job.JobServiceContext.closeAndCleanupJobLocked(JobServiceContext.java:1003)
+	at com.android.server.job.JobServiceContext.executeRunnableJob(JobServiceContext.java:321)
+	at com.android.server.job.JobConcurrencyManager.startJobLocked(JobConcurrencyManager.java:813)
+	at com.android.server.job.JobConcurrencyManager.onJobCompletedLocked(JobConcurrencyManager.java:970)
+	at com.android.server.job.JobServiceContext.closeAndCleanupJobLocked(JobServiceContext.java:1003)
+	at com.android.server.job.JobServiceContext.executeRunnableJob(JobServiceContext.java:321)
+	at com.android.server.job.JobConcurrencyManager.startJobLocked(JobConcurrencyManager.java:813)
+	at com.android.server.job.JobConcurrencyManager.assignJobsToContextsInternalLocked(JobConcurrencyManager.java:710)
+	at com.android.server.job.JobConcurrencyManager.assignJobsToContextsLocked(JobConcurrencyManager.java:538)
+	at com.android.server.job.JobSchedulerService.maybeRunPendingJobsLocked(JobSchedulerService.java:2533)
+	at com.android.server.job.JobSchedulerService$JobHandler.handleMessage(JobSchedulerService.java:2104)
+	at android.os.Handler.dispatchMessage(Handler.java:109)
+	at android.os.Looper.loopOnce(Looper.java:206)
+	at android.os.Looper.loop(Looper.java:296)
+	at com.android.server.SystemServer.run(SystemServer.java:1003)
+	at com.android.server.SystemServer.main(SystemServer.java:678)
+	at java.lang.reflect.Method.invoke(Native Method)
+	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:569)
+	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:954)
+
+========================================
+2025-07-20 08:28:37 system_server_wtf (text, 1163 bytes)
+Process: system_server
+Subject: BatteryStatsImpl
+Build: HONOR/TFY-AN00/HNTFY-M:12/HONORTFY-AN00/6.1.0.181C00:user/release-keys
+
+android.util.Log$TerribleFailure: Unable to find object for com.microsoft.appmanager/com.microsoft.mmx.agents.EventAggregatorJob in uid 10113 mapsize=0 activeoverflow=null curoverflow=null
+	at android.util.Log.wtf(Log.java:327)
+	at android.util.Slog.wtf(Slog.java:98)
+	at com.android.internal.os.BatteryStatsImpl$OverflowArrayMap.stopObject(BatteryStatsImpl.java:3141)
+	at com.android.internal.os.BatteryStatsImpl$Uid.noteStopJobLocked(BatteryStatsImpl.java:10779)
+	at com.android.internal.os.BatteryStatsImpl.noteJobFinishLocked(BatteryStatsImpl.java:4260)
+	at com.android.server.am.BatteryStatsService.lambda$noteJobFinish$17$BatteryStatsService(BatteryStatsService.java:925)
+	at com.android.server.am.BatteryStatsService$$ExternalSyntheticLambda84.run(Unknown Source:12)
+	at android.os.Handler.handleCallback(Handler.java:955)
+	at android.os.Handler.dispatchMessage(Handler.java:102)
+	at android.os.Looper.loopOnce(Looper.java:206)
+	at android.os.Looper.loop(Looper.java:296)
+	at android.os.HandlerThread.run(HandlerThread.java:67)
+
+========================================
+2025-07-20 08:28:37 system_server_wtf (text, 2380 bytes)
+Process: system_server
+Subject: JobScheduler.Concurrency
+Build: HONOR/TFY-AN00/HNTFY-M:12/HONORTFY-AN00/6.1.0.181C00:user/release-keys
+
+android.util.Log$TerribleFailure: Running job didn't have an active PackageStats object
+	at android.util.Log.wtf(Log.java:327)
+	at android.util.Slog.wtf(Slog.java:98)
+	at com.android.server.job.JobConcurrencyManager.onJobCompletedLocked(JobConcurrencyManager.java:840)
+	at com.android.server.job.JobServiceContext.closeAndCleanupJobLocked(JobServiceContext.java:1003)
+	at com.android.server.job.JobServiceContext.executeRunnableJob(JobServiceContext.java:321)
+	at com.android.server.job.JobConcurrencyManager.startJobLocked(JobConcurrencyManager.java:813)
+	at com.android.server.job.JobConcurrencyManager.onJobCompletedLocked(JobConcurrencyManager.java:970)
+	at com.android.server.job.JobServiceContext.closeAndCleanupJobLocked(JobServiceContext.java:1003)
+	at com.android.server.job.JobServiceContext.executeRunnableJob(JobServiceContext.java:321)
+	at com.android.server.job.JobConcurrencyManager.startJobLocked(JobConcurrencyManager.java:813)
+	at com.android.server.job.JobConcurrencyManager.onJobCompletedLocked(JobConcurrencyManager.java:970)
+	at com.android.server.job.JobServiceContext.closeAndCleanupJobLocked(JobServiceContext.java:1003)
+	at com.android.server.job.JobServiceContext.executeRunnableJob(JobServiceContext.java:321)
+	at com.android.server.job.JobConcurrencyManager.startJobLocked(JobConcurrencyManager.java:813)
+	at com.android.server.job.JobConcurrencyManager.assignJobsToContextsInternalLocked(JobConcurrencyManager.java:710)
+	at com.android.server.job.JobConcurrencyManager.assignJobsToContextsLocked(JobConcurrencyManager.java:538)
+	at com.android.server.job.JobSchedulerService.maybeRunPendingJobsLocked(JobSchedulerService.java:2533)
+	at com.android.server.job.JobSchedulerService$JobHandler.handleMessage(JobSchedulerService.java:2104)
+	at android.os.Handler.dispatchMessage(Handler.java:109)
+	at android.os.Looper.loopOnce(Looper.java:206)
+	at android.os.Looper.loop(Looper.java:296)
+	at com.android.server.SystemServer.run(SystemServer.java:1003)
+	at com.android.server.SystemServer.main(SystemServer.java:678)
+	at java.lang.reflect.Method.invoke(Native Method)
+	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:569)
+	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:954)
+
+========================================
+2025-07-20 08:51:37 system_server_wtf (text, 945 bytes)
+Process: system_server
+Subject: SyncManager
+Build: HONOR/TFY-AN00/HNTFY-M:12/HONORTFY-AN00/6.1.0.181C00:user/release-keys
+
+android.util.Log$TerribleFailure: SYNC_OP_STATE_INVALID: NOT_SYNCABLE
+	at android.util.Log.wtf(Log.java:327)
+	at android.util.Slog.wtf(Slog.java:98)
+	at com.android.server.content.SyncManager$SyncHandler.logAccountError(SyncManager.java:3564)
+	at com.android.server.content.SyncManager$SyncHandler.computeSyncOpState(SyncManager.java:3522)
+	at com.android.server.content.SyncManager$SyncHandler.startSyncH(SyncManager.java:3243)
+	at com.android.server.content.SyncManager$SyncHandler.handleSyncMessage(SyncManager.java:2997)
+	at com.android.server.content.SyncManager$SyncHandler.handleMessage(SyncManager.java:2969)
+	at android.os.Handler.dispatchMessage(Handler.java:109)
+	at android.os.Looper.loopOnce(Looper.java:206)
+	at android.os.Looper.loop(Looper.java:296)
+	at android.os.HandlerThread.run(HandlerThread.java:67)
+
+========================================
+2025-07-20 09:14:29 system_server_wtf (text, 595 bytes)
+Process: system_server
+Subject: AlarmManager
+Build: HONOR/TFY-AN00/HNTFY-M:12/HONORTFY-AN00/6.1.0.181C00:user/release-keys
+
+android.util.Log$TerribleFailure: Attempt to decrement existing alarm count 0 by 1 for uid 1000
+	at android.util.Log.wtf(Log.java:327)
+	at android.util.Slog.wtf(Slog.java:98)
+	at com.android.server.alarm.AlarmManagerService.decrementAlarmCount(AlarmManagerService.java:5515)
+	at com.android.server.alarm.AlarmManagerService.deliverAlarmsLocked(AlarmManagerService.java:4316)
+	at com.android.server.alarm.AlarmManagerService$AlarmThread.run(AlarmManagerService.java:4614)

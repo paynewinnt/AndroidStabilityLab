@@ -1,0 +1,72 @@
+{
+  "device_offline_default": {
+    "case_id": "admission_case:device_offline_default:review_report_1",
+    "baseline_key": "device_offline_default",
+    "report_id": "review_report_1",
+    "final_decision": "unknown",
+    "error_code": "NO_QUALITY_GATE",
+    "revision": 288,
+    "status": "open",
+    "updated_at": "2025-07-23 18:00:00.000000"
+  },
+  "device_offline_audit_auto_smoke": {
+    "case_id": "admission_case:device_offline_audit_auto_smoke:review_report_missing_audit",
+    "baseline_key": "device_offline_audit_auto_smoke",
+    "report_id": "review_report_missing_audit",
+    "final_decision": "conditional_pass",
+    "error_code": "CONDITIONAL_PASS",
+    "revision": 57,
+    "status": "open",
+    "updated_at": null
+  },
+  "golden_suite_visibility_smoke": {
+    "case_id": "admission_case:golden_suite_visibility_smoke:review_report_22b7346274fd43009b876c39715355e9",
+    "baseline_key": "golden_suite_visibility_smoke",
+    "report_id": "review_report_22b7346274fd43009b876c39715355e9",
+    "final_decision": "conditional_pass",
+    "error_code": "CONDITIONAL_PASS",
+    "revision": 11,
+    "status": "open",
+    "updated_at": "2025-07-21 15:29:41.603979"
+  },
+  "device_offline_audit_retention_smoke": {
+    "case_id": "admission_case:device_offline_audit_retention_smoke:review_report_f0576b472d83419cb6bfb685a6c6ee7e",
+    "baseline_key": "device_offline_audit_retention_smoke",
+    "report_id": "review_report_f0576b472d83419cb6bfb685a6c6ee7e",
+    "final_decision": "conditional_pass",
+    "error_code": "CONDITIONAL_PASS",
+    "revision": 11,
+    "status": "open",
+    "updated_at": "2025-07-20 18:04:35.327194"
+  },
+  "device_offline_audit_index_smoke": {
+    "case_id": "admission_case:device_offline_audit_index_smoke:review_report_f0576b472d83419cb6bfb685a6c6ee7e",
+    "baseline_key": "device_offline_audit_index_smoke",
+    "report_id": "review_report_f0576b472d83419cb6bfb685a6c6ee7e",
+    "final_decision": "conditional_pass",
+    "error_code": "CONDITIONAL_PASS",
+    "revision": 11,
+    "status": "open",
+    "updated_at": "2025-07-20 17:59:15.093979"
+  },
+  "device_offline_audit_smoke": {
+    "case_id": "admission_case:device_offline_audit_smoke:review_report_4f2154c3b46a4fbdbaa2c56f52c2953e",
+    "baseline_key": "device_offline_audit_smoke",
+    "report_id": "review_report_4f2154c3b46a4fbdbaa2c56f52c2953e",
+    "final_decision": "conditional_pass",
+    "error_code": "CONDITIONAL_PASS",
+    "revision": 11,
+    "status": "open",
+    "updated_at": "2025-07-20 17:31:53.414910"
+  },
+  "device_offline_history_smoke": {
+    "case_id": "admission_case:device_offline_history_smoke:review_report_f0576b472d83419cb6bfb685a6c6ee7e",
+    "baseline_key": "device_offline_history_smoke",
+    "report_id": "review_report_f0576b472d83419cb6bfb685a6c6ee7e",
+    "final_decision": "conditional_pass",
+    "error_code": "CONDITIONAL_PASS",
+    "revision": 11,
+    "status": "open",
+    "updated_at": "2025-07-20 17:08:38.360545"
+  }
+}

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>Execution Summary</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; margin: 24px; color: #1f2328; }
+h1, h2 { margin-bottom: 12px; }
+section { margin-top: 24px; }
+ul { padding-left: 20px; }
+li { margin: 6px 0; }
+pre { background: #f6f8fa; padding: 12px; border-radius: 6px; overflow-x: auto; }
+code { font-family: 'SFMono-Regular', Menlo, monospace; }
+</style>
+</head>
+<body>
+<h1>Execution Summary</h1>
+<ul>
+<li><strong>task_id:</strong> task_1385ed1c97994b14a3757ac52f929db3</li>
+<li><strong>task_name:</strong> 前后台切换_20250725_114552</li>
+<li><strong>run_id:</strong> run_9896cfe0146144799f34efdf8bd4f08e</li>
+<li><strong>instance_id:</strong> instance_df2db714e0834c59847883ddf52db7a4</li>
+<li><strong>device_id:</strong> AFQJVB2211008014</li>
+<li><strong>status:</strong> success</li>
+<li><strong>monitoring_error:</strong> none</li>
+<li><strong>scenario_note:</strong> 前后台切换模板执行完成，共执行 2 轮。</li>
+</ul>
+<section>
+<h2>Monitoring Snapshot</h2>
+<pre><code>{
+  &quot;timestamp&quot;: &quot;2025-07-25T04:04:58.732723&quot;,
+  &quot;persisted&quot;: true,
+  &quot;system&quot;: {
+    &quot;cpu_usage&quot;: 10.0,
+    &quot;cpu_user&quot;: 6.7,
+    &quot;cpu_breakdown&quot;: {
+      &quot;total&quot;: 10.0,
+      &quot;user&quot;: 6.7,
+      &quot;kernel&quot;: 3.3,
+      &quot;iowait&quot;: 0.0,
+      &quot;softirq&quot;: 0.0
+    },
+    &quot;memory_system_total&quot;: 5700.15,
+    &quot;memory_system_available&quot;: 3240.84,
+    &quot;memory_usage_percent&quot;: 43.14,
+    &quot;memory_percent&quot;: 43.14,
+    &quot;memory_system_used&quot;: 2459.31,
+    &quot;battery_level&quot;: 100.0,
+    &quot;network_rx_total&quot;: 2677.15,
+    &quot;network_tx_total&quot;: 1201.57,
+    &quot;network&quot;: 0.0,
+    &quot;network_rx&quot;: 0.0,
+    &quot;network_tx&quot;: 0.0,
+    &quot;load_1min&quot;: 25.29,
+    &quot;load_5min&quot;: 23.61,
+    &quot;load_15min&quot;: 23.17,
+    &quot;perfetto_trace_size_bytes&quot;: 445654,
+    &quot;perfetto_duration_ms&quot;: 0
+  },
+  &quot;apps&quot;: [
+    {
+      &quot;app_package&quot;: &quot;com.hihonor.calculator&quot;,
+      &quot;cpu_usage&quot;: 0.0,
+      &quot;memory_pss&quot;: 43.86,
+      &quot;memory_java&quot;: 8.86,
+      &quot;memory_native&quot;: 14.8,
+      &quot;power_consumption&quot;: 3900.0,
+      &quot;wakelock_count&quot;: 1,
+      &quot;top_cpu_usage&quot;: 0.0,
+      &quot;top_memory_percent&quot;: 1.7,
+      &quot;top_memory_res_kb&quot;: 103424.0,
+      &quot;app_info&quot;: {
+        &quot;package_name&quot;: &quot;com.hihonor.calculator&quot;,
+        &quot;app_name&quot;: &quot;com.hihonor.calculator&quot;
+      },
+      &quot;package_name&quot;: &quot;com.hihonor.calculator&quot;
+    }
+  ],
+  &quot;metadata&quot;: {
+    &quot;backend&quot;: &quot;perfetto&quot;,
+    &quot;profile_name&quot;: &quot;perfetto&quot;,
+    &quot;trace_artifact_path&quot;: &quot;runtime/tasks/task_1385ed1c97994b14a3757ac52f929db3/runs/run_9896cfe0146144799f34efdf8bd4f08e/executions/instance_df2db714e0834c59847883ddf52db7a4/devices/AFQJVB2211008014/monitoring/task_1385ed1c97994b14a3757ac52f929db3_instance_df2db714e0834c59847883ddf52db7a4.perfetto-trace&quot;,
+    &quot;normalized_stats&quot;: {
+      &quot;trace_status&quot;: &quot;captured&quot;,
+      &quot;trace_size_bytes&quot;: 445654,
+      &quot;duration_ms&quot;: 0
+    },
+    &quot;best_effort_degraded&quot;: false,
+    &quot;perfetto&quot;: {
+      &quot;trace_status&quot;: &quot;captured&quot;,
+      &quot;captured_at&quot;: &quot;2025-07-25T04:04:58.732780&quot;,
+      &quot;local_trace_path&quot;: &quot;runtime/tasks/task_1385ed1c97994b14a3757ac52f929db3/runs/run_9896cfe0146144799f34efdf8bd4f08e/executions/instance_df2db714e0834c59847883ddf52db7a4/devices/AFQJVB2211008014/monitoring/task_1385ed1c97994b14a3757ac52f929db3_instance_df2db714e0834c59847883ddf52db7a4.perfetto-trace&quot;,
+      &quot;remote_trace_path&quot;: &quot;/data/local/tmp/task_1385ed1c97994b14a3757ac52f929db3_instance_df2db714e0834c59847883ddf52db7a4.perfetto-trace&quot;,
+      &quot;capture_mode&quot;: &quot;stdout_fallback&quot;,
+      &quot;trace_size_bytes&quot;: 445654,
+      &quot;duration_ms&quot;: 0,
+      &quot;config_path&quot;: &quot;&quot;,
+      &quot;stdout_tail&quot;: &quot;captured perfetto stdout&quot;,
+      &quot;stderr_tail&quot;: &quot;[974.999] perfetto_cmd.cc:940     Failed to open /data/local/tmp/task_1385ed1c97994b14a3757ac52f929db3_instance_df2db714e0834c59847883ddf52db7a4.perfetto-trace. If you get permission denied in /data/misc/perfetto-traces, the file might have been created by another user, try deleting it first. (errno: 13, Permission denied)\n&quot;,
+      &quot;best_effort_degraded&quot;: false,
+      &quot;degraded_reason&quot;: &quot;remote trace pull failed; captured trace from stdout fallback&quot;
+    },
+    &quot;artifacts&quot;: [
+      {
+        &quot;artifact_type&quot;: &quot;perfetto_trace&quot;,
+        &quot;file_path&quot;: &quot;runtime/tasks/task_1385ed1c97994b14a3757ac52f929db3/runs/run_9896cfe0146144799f34efdf8bd4f08e/executions/instance_df2db714e0834c59847883ddf52db7a4/devices/AFQJVB2211008014/monitoring/task_1385ed1c97994b14a3757ac52f929db3_instance_df2db714e0834c59847883ddf52db7a4.perfetto-trace&quot;,
+        &quot;capture_reason&quot;: &quot;perfetto trace sidecar&quot;,
+        &quot;capture_message&quot;: &quot;captured&quot;,
+        &quot;metadata&quot;: {
+          &quot;backend&quot;: &quot;perfetto&quot;,
+          &quot;remote_trace_path&quot;: &quot;/data/local/tmp/task_1385ed1c97994b14a3757ac52f929db3_instance_df2db714e0834c59847883ddf52db7a4.perfetto-trace&quot;,
+          &quot;trace_size_bytes&quot;: 445654
+        }
+      }
+    ]
+  }
+}</code></pre>
+</section>
+<section>
+<h2>Execution Attempts</h2>
+<ul>
+<li><strong>retry_count:</strong> 0</li>
+<li><strong>max_attempts:</strong> 1</li>
+<li><strong>strategy:</strong> classified</li>
+</ul>
+<ul>
+<li>attempt 1: status=success, exit_reason=completed, retryable=False, retry_category=completed, note=前后台切换模板执行完成，共执行 2 轮。</li>
+</ul>
+</section>
+<section>
+<h2>Scenario Result</h2>
+<pre><code>{
+  &quot;template_type&quot;: &quot;foreground_background_loop&quot;,
+  &quot;launch_target&quot;: &quot;com.hihonor.calculator/.Calculator&quot;,
+  &quot;loop_summary&quot;: {
+    &quot;configured_loops&quot;: 2,
+    &quot;completed_loops&quot;: 2,
+    &quot;iterations&quot;: [
+      {
+        &quot;loop_index&quot;: 1,
+        &quot;status&quot;: &quot;completed&quot;,
+        &quot;launch_attempts&quot;: 1,
+        &quot;background_attempts&quot;: 1,
+        &quot;recovered_after_disconnect&quot;: false
+      },
+      {
+        &quot;loop_index&quot;: 2,
+        &quot;status&quot;: &quot;completed&quot;,
+        &quot;launch_attempts&quot;: 1,
+        &quot;background_attempts&quot;: 1,
+        &quot;recovered_after_disconnect&quot;: false
+      }
+    ]
+  }
+}</code></pre>
+</section>
+</body>
+</html>

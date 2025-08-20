@@ -1,0 +1,96 @@
+{
+  "baseline_key": "device_offline_audit_index_smoke",
+  "current_audit_id": "baseline_audit_latest_device_offline_audit_index_smoke",
+  "current_report_id": "review_report_f0576b472d83419cb6bfb685a6c6ee7e",
+  "updated_at": "2025-07-20T09:59:15.094070",
+  "version_count": 3,
+  "versions": [
+    {
+      "revision_id": "baseline_rev_95cfa060e3fe4245baffcde4c7e217c1",
+      "action": "rollback",
+      "changed_at": "2025-07-20T09:59:15.093979",
+      "changed_by": "smoke_index",
+      "report_id": "review_report_f0576b472d83419cb6bfb685a6c6ee7e",
+      "report_name": "Rule Review Summary Smoke",
+      "audit_id": "baseline_audit_latest_device_offline_audit_index_smoke",
+      "summary": {
+        "baseline_key": "device_offline_audit_index_smoke",
+        "history_count": 3,
+        "action_counts": {
+          "set": 1,
+          "promote": 1,
+          "rollback": 1
+        },
+        "actor_counts": {
+          "smoke_index": 3
+        },
+        "distinct_report_count": 2,
+        "comparison_linked_event_count": 1,
+        "first_changed_at": "2025-07-20T09:59:07.665004",
+        "last_changed_at": "2025-07-20T09:59:15.093979",
+        "current_report_id": "review_report_f0576b472d83419cb6bfb685a6c6ee7e",
+        "current_report_name": "Rule Review Summary Smoke"
+      },
+      "detail_path": "runtime/analysis_review_report_baseline_audits/latest/device_offline_audit_index_smoke/versions/baseline_rev_95cfa060e3fe4245baffcde4c7e217c1/report.json",
+      "markdown_path": "runtime/analysis_review_report_baseline_audits/latest/device_offline_audit_index_smoke/versions/baseline_rev_95cfa060e3fe4245baffcde4c7e217c1/summary.md",
+      "html_path": "runtime/analysis_review_report_baseline_audits/latest/device_offline_audit_index_smoke/versions/baseline_rev_95cfa060e3fe4245baffcde4c7e217c1/report.html"
+    },
+    {
+      "revision_id": "baseline_rev_5651727bd55e4e259bc642c1ff768898",
+      "action": "promote",
+      "changed_at": "2025-07-20T09:59:11.682887",
+      "changed_by": "smoke_index",
+      "report_id": "review_report_4f2154c3b46a4fbdbaa2c56f52c2953e",
+      "report_name": "Rule Review Report Smoke",
+      "audit_id": "baseline_audit_latest_device_offline_audit_index_smoke",
+      "summary": {
+        "baseline_key": "device_offline_audit_index_smoke",
+        "history_count": 2,
+        "action_counts": {
+          "set": 1,
+          "promote": 1
+        },
+        "actor_counts": {
+          "smoke_index": 2
+        },
+        "distinct_report_count": 2,
+        "comparison_linked_event_count": 1,
+        "first_changed_at": "2025-07-20T09:59:07.665004",
+        "last_changed_at": "2025-07-20T09:59:11.682887",
+        "current_report_id": "review_report_4f2154c3b46a4fbdbaa2c56f52c2953e",
+        "current_report_name": "Rule Review Report Smoke"
+      },
+      "detail_path": "runtime/analysis_review_report_baseline_audits/latest/device_offline_audit_index_smoke/versions/baseline_rev_5651727bd55e4e259bc642c1ff768898/report.json",
+      "markdown_path": "runtime/analysis_review_report_baseline_audits/latest/device_offline_audit_index_smoke/versions/baseline_rev_5651727bd55e4e259bc642c1ff768898/summary.md",
+      "html_path": "runtime/analysis_review_report_baseline_audits/latest/device_offline_audit_index_smoke/versions/baseline_rev_5651727bd55e4e259bc642c1ff768898/report.html"
+    },
+    {
+      "revision_id": "baseline_rev_aacc9ce0d76a41679cbcc7ec1a3995de",
+      "action": "set",
+      "changed_at": "2025-07-20T09:59:07.665004",
+      "changed_by": "smoke_index",
+      "report_id": "review_report_f0576b472d83419cb6bfb685a6c6ee7e",
+      "report_name": "Rule Review Summary Smoke",
+      "audit_id": "baseline_audit_latest_device_offline_audit_index_smoke",
+      "summary": {
+        "baseline_key": "device_offline_audit_index_smoke",
+        "history_count": 1,
+        "action_counts": {
+          "set": 1
+        },
+        "actor_counts": {
+          "smoke_index": 1
+        },
+        "distinct_report_count": 1,
+        "comparison_linked_event_count": 0,
+        "first_changed_at": "2025-07-20T09:59:07.665004",
+        "last_changed_at": "2025-07-20T09:59:07.665004",
+        "current_report_id": "review_report_f0576b472d83419cb6bfb685a6c6ee7e",
+        "current_report_name": "Rule Review Summary Smoke"
+      },
+      "detail_path": "runtime/analysis_review_report_baseline_audits/latest/device_offline_audit_index_smoke/versions/baseline_rev_aacc9ce0d76a41679cbcc7ec1a3995de/report.json",
+      "markdown_path": "runtime/analysis_review_report_baseline_audits/latest/device_offline_audit_index_smoke/versions/baseline_rev_aacc9ce0d76a41679cbcc7ec1a3995de/summary.md",
+      "html_path": "runtime/analysis_review_report_baseline_audits/latest/device_offline_audit_index_smoke/versions/baseline_rev_aacc9ce0d76a41679cbcc7ec1a3995de/report.html"
+    }
+  ]
+}

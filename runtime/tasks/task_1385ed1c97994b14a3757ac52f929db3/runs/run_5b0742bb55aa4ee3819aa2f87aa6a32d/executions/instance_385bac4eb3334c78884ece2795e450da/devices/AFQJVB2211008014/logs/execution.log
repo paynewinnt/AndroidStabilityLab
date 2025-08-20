@@ -1,0 +1,8 @@
+[2026-04-25T03:59:37.821334] preparing instance instance_385bac4eb3334c78884ece2795e450da
+device=AFQJVB2211008014
+[2026-04-25T03:59:43.072619] instance entered running state
+[2026-04-25T03:59:43.072817] scenario attempt 1/1 started for instance instance_385bac4eb3334c78884ece2795e450da
+[2026-04-25T03:59:51.424122] execution failed: Object of type datetime is not JSON serializable
+[2026-04-25T03:59:51.561774] cleanup reason=exception cleanup after TypeError: Object of type datetime is not JSON serializable action=force_stop return_code=0 timed_out=False
+cleanup_stdout=
+cleanup_stderr=

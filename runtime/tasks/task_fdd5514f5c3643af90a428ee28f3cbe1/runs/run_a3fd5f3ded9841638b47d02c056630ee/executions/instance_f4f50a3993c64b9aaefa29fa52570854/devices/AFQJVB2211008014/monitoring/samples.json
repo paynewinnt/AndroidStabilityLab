@@ -1,0 +1,236 @@
+[
+  {
+    "timestamp": "2025-07-25T20:43:38.401821",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 6.1,
+      "cpu_user": 3.7,
+      "cpu_breakdown": {
+        "total": 6.1,
+        "user": 3.7,
+        "kernel": 2.3,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3459.41,
+      "memory_usage_percent": 39.31,
+      "memory_percent": 39.31,
+      "memory_system_used": 2240.74,
+      "battery_level": 100.0,
+      "network_rx_total": 71929.14,
+      "network_tx_total": 5437.46,
+      "network": 0.0,
+      "network_rx": 0.0,
+      "network_tx": 0.0,
+      "load_1min": 22.6,
+      "load_5min": 23.55,
+      "load_15min": 23.84
+    },
+    "apps": [
+      {
+        "app_package": "com.ss.android.ugc.aweme",
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "app_info": {
+          "package_name": "com.ss.android.ugc.aweme",
+          "app_name": "com.ss.android.ugc.aweme"
+        },
+        "package_name": "com.ss.android.ugc.aweme"
+      }
+    ],
+    "metadata": {
+      "backend": "legacy_adb",
+      "profile_name": "solox",
+      "warnings": [
+        "metrics backend 'solox' unavailable, falling back to legacy_adb: no process found"
+      ]
+    }
+  },
+  {
+    "timestamp": "2025-07-25T20:43:45.475516",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 7.5,
+      "cpu_user": 4.6,
+      "cpu_breakdown": {
+        "total": 7.5,
+        "user": 4.6,
+        "kernel": 2.7,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 3170.87,
+      "memory_usage_percent": 44.37,
+      "memory_percent": 44.37,
+      "memory_system_used": 2529.28,
+      "battery_level": 100.0,
+      "network_rx_total": 71929.14,
+      "network_tx_total": 5437.46,
+      "network_rx": 0,
+      "network_tx": 0,
+      "network": 0,
+      "load_1min": 22.6,
+      "load_5min": 23.55,
+      "load_15min": 23.84
+    },
+    "apps": [
+      {
+        "app_package": "com.ss.android.ugc.aweme",
+        "memory_pss": 776.14,
+        "memory_java": 133.96,
+        "memory_native": 160.29,
+        "frame_count": 73.0,
+        "jank_frames": 27.0,
+        "jank_percent": 36.99,
+        "gpu_p50_ms": 4.0,
+        "gpu_p90_ms": 6.0,
+        "gpu_p95_ms": 6.0,
+        "gpu_p99_ms": 7.0,
+        "fps": 4.8,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 244.0,
+        "top_memory_percent": 14.3,
+        "top_memory_res_kb": 839680.0,
+        "app_info": {
+          "package_name": "com.ss.android.ugc.aweme",
+          "app_name": "com.ss.android.ugc.aweme"
+        },
+        "package_name": "com.ss.android.ugc.aweme"
+      }
+    ],
+    "metadata": {
+      "backend": "legacy_adb",
+      "profile_name": "solox",
+      "warnings": [
+        "metrics backend 'solox' unavailable, falling back to legacy_adb: no process found"
+      ]
+    }
+  },
+  {
+    "timestamp": "2025-07-25T20:43:52.398810",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 7.5,
+      "cpu_user": 4.6,
+      "cpu_breakdown": {
+        "total": 7.5,
+        "user": 4.6,
+        "kernel": 2.7,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 2455.54,
+      "memory_usage_percent": 56.92,
+      "memory_percent": 56.92,
+      "memory_system_used": 3244.61,
+      "battery_level": 100.0,
+      "network_rx_total": 71929.14,
+      "network_tx_total": 5437.46,
+      "network_rx": 0,
+      "network_tx": 0,
+      "network": 0,
+      "load_1min": 22.6,
+      "load_5min": 23.55,
+      "load_15min": 23.84
+    },
+    "apps": [
+      {
+        "app_package": "com.ss.android.ugc.aweme",
+        "memory_pss": 955.63,
+        "memory_java": 170.09,
+        "memory_native": 177.43,
+        "frame_count": 211.0,
+        "jank_frames": 58.0,
+        "jank_percent": 27.49,
+        "gpu_p50_ms": 4.0,
+        "gpu_p90_ms": 6.0,
+        "gpu_p95_ms": 7.0,
+        "gpu_p99_ms": 8.0,
+        "fps": 3.7,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 289.0,
+        "top_memory_percent": 16.4,
+        "top_memory_res_kb": 962560.0,
+        "app_info": {
+          "package_name": "com.ss.android.ugc.aweme",
+          "app_name": "com.ss.android.ugc.aweme"
+        },
+        "package_name": "com.ss.android.ugc.aweme"
+      }
+    ],
+    "metadata": {
+      "backend": "legacy_adb",
+      "profile_name": "solox",
+      "warnings": [
+        "metrics backend 'solox' unavailable, falling back to legacy_adb: no process found"
+      ]
+    }
+  },
+  {
+    "timestamp": "2025-07-25T20:44:00.040205",
+    "persisted": true,
+    "system": {
+      "cpu_usage": 7.5,
+      "cpu_user": 4.6,
+      "cpu_breakdown": {
+        "total": 7.5,
+        "user": 4.6,
+        "kernel": 2.7,
+        "iowait": 0.0,
+        "softirq": 0.0
+      },
+      "memory_system_total": 5700.15,
+      "memory_system_available": 2418.73,
+      "memory_usage_percent": 57.57,
+      "memory_percent": 57.57,
+      "memory_system_used": 3281.42,
+      "battery_level": 100.0,
+      "network_rx_total": 71929.14,
+      "network_tx_total": 5437.46,
+      "network_rx": 0,
+      "network_tx": 0,
+      "network": 0,
+      "load_1min": 22.6,
+      "load_5min": 23.55,
+      "load_15min": 23.84
+    },
+    "apps": [
+      {
+        "app_package": "com.ss.android.ugc.aweme",
+        "memory_pss": 1004.44,
+        "memory_java": 192.02,
+        "memory_native": 221.96,
+        "frame_count": 396.0,
+        "jank_frames": 76.0,
+        "jank_percent": 19.19,
+        "gpu_p50_ms": 4.0,
+        "gpu_p90_ms": 6.0,
+        "gpu_p95_ms": 6.0,
+        "gpu_p99_ms": 8.0,
+        "fps": 2.4,
+        "power_consumption": 3900.0,
+        "wakelock_count": 1,
+        "top_cpu_usage": 25.0,
+        "top_memory_percent": 18.7,
+        "top_memory_res_kb": 1048576.0,
+        "app_info": {
+          "package_name": "com.ss.android.ugc.aweme",
+          "app_name": "com.ss.android.ugc.aweme"
+        },
+        "package_name": "com.ss.android.ugc.aweme"
+      }
+    ],
+    "metadata": {
+      "backend": "legacy_adb",
+      "profile_name": "solox",
+      "warnings": [
+        "metrics backend 'solox' unavailable, falling back to legacy_adb: no process found"
+      ]
+    }
+  }
+]

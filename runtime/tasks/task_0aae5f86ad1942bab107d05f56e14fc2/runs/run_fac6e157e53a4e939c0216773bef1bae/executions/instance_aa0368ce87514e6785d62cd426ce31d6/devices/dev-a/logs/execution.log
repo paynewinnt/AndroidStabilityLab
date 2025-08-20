@@ -1,0 +1,6 @@
+[2026-04-19T10:45:42.889632] preparing instance instance_aa0368ce87514e6785d62cd426ce31d6
+device=dev-a
+[2026-04-19T10:45:42.901158] instance entered running state
+[2026-04-19T10:45:42.917864] execution failed: 'str' object has no attribute 'value'
+[2026-04-19T10:46:05.143791] preparing instance instance_aa0368ce87514e6785d62cd426ce31d6
+device=dev-a

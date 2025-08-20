@@ -1,0 +1,12 @@
+[2026-04-25T03:46:46.004995] preparing instance instance_1c5e8a7d3ceb48209a0a2b7650c6ceec
+device=AFQJVB2211008014
+[2026-04-25T03:46:46.025540] instance entered running state
+[2026-04-25T03:46:46.025710] scenario attempt 1/1 started for instance instance_1c5e8a7d3ceb48209a0a2b7650c6ceec
+[2026-04-25T03:46:57.909181] cleanup reason=final scenario failure after 1 attempt(s) action=force_stop return_code=1 timed_out=False
+cleanup_stdout=
+cleanup_stderr=     : main.cpp:66 
+04-25 11:46:57.841 87311 16174221 F adb     : main.cpp:165 could not install *smartsocket* listener: Operation not permitted
+
+* failed to start daemon
+adb: cannot connect to daemon
+[2026-04-25T03:46:57.916885] execution finished with status failed

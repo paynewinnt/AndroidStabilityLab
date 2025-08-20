@@ -1,0 +1,3661 @@
+{
+  "contract_version": "asl.platform_health.v1",
+  "updated_at": "2026-04-29 22:24:30.536708",
+  "snapshots": [
+    {
+      "contract_version": "asl.platform_health.v1",
+      "generated_at": "2025-07-29 20:44:40.100525",
+      "ok": true,
+      "status": "degraded",
+      "severity": "warn",
+      "summary": {
+        "status": "degraded",
+        "severity": "warn",
+        "ok_count": 0,
+        "warn_count": 5,
+        "fail_count": 0,
+        "skipped_count": 0,
+        "check_count": 5
+      },
+      "checks": [
+        {
+          "name": "调度器心跳",
+          "category": "scheduler",
+          "status": "warn",
+          "summary": "runner 未运行或心跳不可用。",
+          "metrics": {
+            "runner_status": "stopped",
+            "heartbeat_age_seconds": 266614,
+            "cycle_count": 10,
+            "failed_rate": 0.0,
+            "offline_rate": 0.0,
+            "quarantined_device_count": 0
+          },
+          "details": {
+            "last_heartbeat_at": "2025-07-26 18:41:05.996211",
+            "started_at": "2025-07-26 17:40:33.508428",
+            "stopped_reason": "max_iterations_reached",
+            "lock_state": "released"
+          },
+          "recommended_action": "如心跳 stale，先确认旧 runner 进程是否仍存活，再重启后台巡检。"
+        },
+        {
+          "name": "ADB 与设备池",
+          "category": "device_adb",
+          "status": "warn",
+          "summary": "设备在线率偏低。",
+          "metrics": {
+            "device_count": 7,
+            "online_device_count": 1,
+            "schedulable_device_count": 1,
+            "quarantined_device_count": 0,
+            "device_online_rate": 0.1429,
+            "device_schedulable_rate": 0.1429
+          },
+          "details": {
+            "device_ids": [
+              "192.168.31.101:38431",
+              "192.168.31.101:38835",
+              "192.168.31.161:38393",
+              "192.168.31.99:5555",
+              "AFQJVB2211008014",
+              "adb-AYYHUT5909003601-gC7bZo._adb-tls-connect._tcp",
+              "dev-a"
+            ]
+          },
+          "recommended_action": "无可调度设备时，先在设备池刷新 ADB 或重新连接无线调试设备。"
+        },
+        {
+          "name": "任务与 Run 失败率",
+          "category": "execution",
+          "status": "warn",
+          "summary": "最近执行存在失败，需要查看 Run 详情。",
+          "metrics": {
+            "task_count": 31,
+            "run_count": 60,
+            "terminal_run_count": 56,
+            "failed_run_count": 18,
+            "run_failure_rate": 0.3214,
+            "instance_count": 64,
+            "failed_instance_count": 18,
+            "instance_failure_rate": 0.2812,
+            "adb_failure_count": 11,
+            "adb_failure_rate": 0.1719
+          },
+          "details": {},
+          "recommended_action": "失败率升高时，先按 Run 详情确认是设备离线、模板失败还是应用问题。"
+        },
+        {
+          "name": "证据与报告抓取",
+          "category": "artifact_report",
+          "status": "warn",
+          "summary": "存在证据抓取失败或报告缺失。",
+          "metrics": {
+            "instance_count": 64,
+            "artifact_count": 33,
+            "artifact_failed_count": 0,
+            "artifact_failure_rate": 0.0,
+            "report_missing_count": 10,
+            "report_missing_rate": 0.1562
+          },
+          "details": {},
+          "recommended_action": "报告缺失时优先查看 instance summary 和 artifact capture errors。"
+        },
+        {
+          "name": "集成 Outbox",
+          "category": "outbox",
+          "status": "warn",
+          "summary": "outbox 存在重试或死信事件。",
+          "metrics": {
+            "event_count": 95,
+            "pending_count": 80,
+            "retrying_count": 5,
+            "delivered_count": 10,
+            "dead_letter_count": 0,
+            "worker_status": "idle",
+            "worker_failed_count": 10
+          },
+          "details": {
+            "delivery_status_counts": {
+              "pending": 80,
+              "delivered": 10,
+              "retry_pending": 5
+            }
+          },
+          "recommended_action": "死信不应静默堆积；先查看 /integration 的 dead-letter 和 worker 日志。"
+        }
+      ],
+      "readiness": {
+        "ok": true,
+        "required_checks": [
+          "scheduler",
+          "device_adb",
+          "execution",
+          "artifact_report",
+          "outbox"
+        ],
+        "failed_checks": [],
+        "warning_checks": [
+          "scheduler",
+          "device_adb",
+          "execution",
+          "artifact_report",
+          "outbox"
+        ],
+        "skipped_checks": []
+      },
+      "trends": {
+        "history_count": 0
+      },
+      "links": {
+        "api": "/api/platform-health",
+        "doctor": "/doctor",
+        "runner": "/runner",
+        "ready": "/ready",
+        "health": "/health"
+      },
+      "history": [],
+      "storage": {
+        "snapshot_path": "runtime/platform_health/snapshots.json"
+      }
+    },
+    {
+      "contract_version": "asl.platform_health.v1",
+      "generated_at": "2025-07-29 21:41:20.644208",
+      "ok": true,
+      "status": "degraded",
+      "severity": "warn",
+      "summary": {
+        "status": "degraded",
+        "severity": "warn",
+        "ok_count": 0,
+        "warn_count": 5,
+        "fail_count": 0,
+        "skipped_count": 0,
+        "check_count": 5
+      },
+      "checks": [
+        {
+          "name": "调度器心跳",
+          "category": "scheduler",
+          "status": "warn",
+          "summary": "runner 未运行或心跳不可用。",
+          "metrics": {
+            "runner_status": "stopped",
+            "heartbeat_age_seconds": 270014,
+            "cycle_count": 10,
+            "failed_rate": 0.0,
+            "offline_rate": 0.0,
+            "quarantined_device_count": 0
+          },
+          "details": {
+            "last_heartbeat_at": "2025-07-26 18:41:05.996211",
+            "started_at": "2025-07-26 17:40:33.508428",
+            "stopped_reason": "max_iterations_reached",
+            "lock_state": "released"
+          },
+          "recommended_action": "如心跳 stale，先确认旧 runner 进程是否仍存活，再重启后台巡检。"
+        },
+        {
+          "name": "ADB 与设备池",
+          "category": "device_adb",
+          "status": "warn",
+          "summary": "设备在线率偏低。",
+          "metrics": {
+            "device_count": 7,
+            "online_device_count": 1,
+            "schedulable_device_count": 1,
+            "quarantined_device_count": 0,
+            "device_online_rate": 0.1429,
+            "device_schedulable_rate": 0.1429
+          },
+          "details": {
+            "device_ids": [
+              "192.168.31.101:38431",
+              "192.168.31.101:38835",
+              "192.168.31.161:38393",
+              "192.168.31.99:5555",
+              "AFQJVB2211008014",
+              "adb-AYYHUT5909003601-gC7bZo._adb-tls-connect._tcp",
+              "dev-a"
+            ]
+          },
+          "recommended_action": "无可调度设备时，先在设备池刷新 ADB 或重新连接无线调试设备。"
+        },
+        {
+          "name": "任务与 Run 失败率",
+          "category": "execution",
+          "status": "warn",
+          "summary": "最近执行存在失败，需要查看 Run 详情。",
+          "metrics": {
+            "task_count": 31,
+            "run_count": 60,
+            "terminal_run_count": 56,
+            "failed_run_count": 18,
+            "run_failure_rate": 0.3214,
+            "instance_count": 64,
+            "failed_instance_count": 18,
+            "instance_failure_rate": 0.2812,
+            "adb_failure_count": 11,
+            "adb_failure_rate": 0.1719
+          },
+          "details": {},
+          "recommended_action": "失败率升高时，先按 Run 详情确认是设备离线、模板失败还是应用问题。"
+        },
+        {
+          "name": "证据与报告抓取",
+          "category": "artifact_report",
+          "status": "warn",
+          "summary": "存在证据抓取失败或报告缺失。",
+          "metrics": {
+            "instance_count": 64,
+            "artifact_count": 33,
+            "artifact_failed_count": 0,
+            "artifact_failure_rate": 0.0,
+            "report_missing_count": 10,
+            "report_missing_rate": 0.1562
+          },
+          "details": {},
+          "recommended_action": "报告缺失时优先查看 instance summary 和 artifact capture errors。"
+        },
+        {
+          "name": "集成 Outbox",
+          "category": "outbox",
+          "status": "warn",
+          "summary": "outbox 存在重试或死信事件。",
+          "metrics": {
+            "event_count": 95,
+            "pending_count": 80,
+            "retrying_count": 5,
+            "delivered_count": 10,
+            "dead_letter_count": 0,
+            "worker_status": "idle",
+            "worker_failed_count": 10
+          },
+          "details": {
+            "delivery_status_counts": {
+              "pending": 80,
+              "delivered": 10,
+              "retry_pending": 5
+            }
+          },
+          "recommended_action": "死信不应静默堆积；先查看 /integration 的 dead-letter 和 worker 日志。"
+        }
+      ],
+      "readiness": {
+        "ok": true,
+        "required_checks": [
+          "scheduler",
+          "device_adb",
+          "execution",
+          "artifact_report",
+          "outbox"
+        ],
+        "failed_checks": [],
+        "warning_checks": [
+          "scheduler",
+          "device_adb",
+          "execution",
+          "artifact_report",
+          "outbox"
+        ],
+        "skipped_checks": []
+      },
+      "trends": {
+        "history_count": 1,
+        "last_status": "degraded",
+        "last_generated_at": "2025-07-29 20:44:40.100525"
+      },
+      "links": {
+        "api": "/api/platform-health",
+        "doctor": "/doctor",
+        "runner": "/runner",
+        "ready": "/ready",
+        "health": "/health"
+      },
+      "history": [],
+      "storage": {
+        "snapshot_path": "runtime/platform_health/snapshots.json"
+      }
+    },
+    {
+      "contract_version": "asl.platform_health.v1",
+      "generated_at": "2025-07-29 21:41:22.992255",
+      "ok": true,
+      "status": "degraded",
+      "severity": "warn",
+      "summary": {
+        "status": "degraded",
+        "severity": "warn",
+        "ok_count": 0,
+        "warn_count": 5,
+        "fail_count": 0,
+        "skipped_count": 0,
+        "check_count": 5
+      },
+      "checks": [
+        {
+          "name": "调度器心跳",
+          "category": "scheduler",
+          "status": "warn",
+          "summary": "runner 未运行或心跳不可用。",
+          "metrics": {
+            "runner_status": "stopped",
+            "heartbeat_age_seconds": 270016,
+            "cycle_count": 10,
+            "failed_rate": 0.0,
+            "offline_rate": 0.0,
+            "quarantined_device_count": 0
+          },
+          "details": {
+            "last_heartbeat_at": "2025-07-26 18:41:05.996211",
+            "started_at": "2025-07-26 17:40:33.508428",
+            "stopped_reason": "max_iterations_reached",
+            "lock_state": "released"
+          },
+          "recommended_action": "如心跳 stale，先确认旧 runner 进程是否仍存活，再重启后台巡检。"
+        },
+        {
+          "name": "ADB 与设备池",
+          "category": "device_adb",
+          "status": "warn",
+          "summary": "设备在线率偏低。",
+          "metrics": {
+            "device_count": 7,
+            "online_device_count": 1,
+            "schedulable_device_count": 1,
+            "quarantined_device_count": 0,
+            "device_online_rate": 0.1429,
+            "device_schedulable_rate": 0.1429
+          },
+          "details": {
+            "device_ids": [
+              "192.168.31.101:38431",
+              "192.168.31.101:38835",
+              "192.168.31.161:38393",
+              "192.168.31.99:5555",
+              "AFQJVB2211008014",
+              "adb-AYYHUT5909003601-gC7bZo._adb-tls-connect._tcp",
+              "dev-a"
+            ]
+          },
+          "recommended_action": "无可调度设备时，先在设备池刷新 ADB 或重新连接无线调试设备。"
+        },
+        {
+          "name": "任务与 Run 失败率",
+          "category": "execution",
+          "status": "warn",
+          "summary": "最近执行存在失败，需要查看 Run 详情。",
+          "metrics": {
+            "task_count": 31,
+            "run_count": 60,
+            "terminal_run_count": 56,
+            "failed_run_count": 18,
+            "run_failure_rate": 0.3214,
+            "instance_count": 64,
+            "failed_instance_count": 18,
+            "instance_failure_rate": 0.2812,
+            "adb_failure_count": 11,
+            "adb_failure_rate": 0.1719
+          },
+          "details": {},
+          "recommended_action": "失败率升高时，先按 Run 详情确认是设备离线、模板失败还是应用问题。"
+        },
+        {
+          "name": "证据与报告抓取",
+          "category": "artifact_report",
+          "status": "warn",
+          "summary": "存在证据抓取失败或报告缺失。",
+          "metrics": {
+            "instance_count": 64,
+            "artifact_count": 33,
+            "artifact_failed_count": 0,
+            "artifact_failure_rate": 0.0,
+            "report_missing_count": 10,
+            "report_missing_rate": 0.1562
+          },
+          "details": {},
+          "recommended_action": "报告缺失时优先查看 instance summary 和 artifact capture errors。"
+        },
+        {
+          "name": "集成 Outbox",
+          "category": "outbox",
+          "status": "warn",
+          "summary": "outbox 存在重试或死信事件。",
+          "metrics": {
+            "event_count": 95,
+            "pending_count": 80,
+            "retrying_count": 5,
+            "delivered_count": 10,
+            "dead_letter_count": 0,
+            "worker_status": "idle",
+            "worker_failed_count": 10
+          },
+          "details": {
+            "delivery_status_counts": {
+              "pending": 80,
+              "delivered": 10,
+              "retry_pending": 5
+            }
+          },
+          "recommended_action": "死信不应静默堆积；先查看 /integration 的 dead-letter 和 worker 日志。"
+        }
+      ],
+      "readiness": {
+        "ok": true,
+        "required_checks": [
+          "scheduler",
+          "device_adb",
+          "execution",
+          "artifact_report",
+          "outbox"
+        ],
+        "failed_checks": [],
+        "warning_checks": [
+          "scheduler",
+          "device_adb",
+          "execution",
+          "artifact_report",
+          "outbox"
+        ],
+        "skipped_checks": []
+      },
+      "trends": {
+        "history_count": 2,
+        "last_status": "degraded",
+        "last_generated_at": "2025-07-29 21:41:20.644208"
+      },
+      "links": {
+        "api": "/api/platform-health",
+        "doctor": "/doctor",
+        "runner": "/runner",
+        "ready": "/ready",
+        "health": "/health"
+      },
+      "history": [],
+      "storage": {
+        "snapshot_path": "runtime/platform_health/snapshots.json"
+      }
+    },
+    {
+      "contract_version": "asl.platform_health.v1",
+      "generated_at": "2025-07-29 21:41:24.634006",
+      "ok": true,
+      "status": "degraded",
+      "severity": "warn",
+      "summary": {
+        "status": "degraded",
+        "severity": "warn",
+        "ok_count": 0,
+        "warn_count": 5,
+        "fail_count": 0,
+        "skipped_count": 0,
+        "check_count": 5
+      },
+      "checks": [
+        {
+          "name": "调度器心跳",
+          "category": "scheduler",
+          "status": "warn",
+          "summary": "runner 未运行或心跳不可用。",
+          "metrics": {
+            "runner_status": "stopped",
+            "heartbeat_age_seconds": 270018,
+            "cycle_count": 10,
+            "failed_rate": 0.0,
+            "offline_rate": 0.0,
+            "quarantined_device_count": 0
+          },
+          "details": {
+            "last_heartbeat_at": "2025-07-26 18:41:05.996211",
+            "started_at": "2025-07-26 17:40:33.508428",
+            "stopped_reason": "max_iterations_reached",
+            "lock_state": "released"
+          },
+          "recommended_action": "如心跳 stale，先确认旧 runner 进程是否仍存活，再重启后台巡检。"
+        },
+        {
+          "name": "ADB 与设备池",
+          "category": "device_adb",
+          "status": "warn",
+          "summary": "设备在线率偏低。",
+          "metrics": {
+            "device_count": 7,
+            "online_device_count": 1,
+            "schedulable_device_count": 1,
+            "quarantined_device_count": 0,
+            "device_online_rate": 0.1429,
+            "device_schedulable_rate": 0.1429
+          },
+          "details": {
+            "device_ids": [
+              "192.168.31.101:38431",
+              "192.168.31.101:38835",
+              "192.168.31.161:38393",
+              "192.168.31.99:5555",
+              "AFQJVB2211008014",
+              "adb-AYYHUT5909003601-gC7bZo._adb-tls-connect._tcp",
+              "dev-a"
+            ]
+          },
+          "recommended_action": "无可调度设备时，先在设备池刷新 ADB 或重新连接无线调试设备。"
+        },
+        {
+          "name": "任务与 Run 失败率",
+          "category": "execution",
+          "status": "warn",
+          "summary": "最近执行存在失败，需要查看 Run 详情。",
+          "metrics": {
+            "task_count": 31,
+            "run_count": 60,
+            "terminal_run_count": 56,
+            "failed_run_count": 18,
+            "run_failure_rate": 0.3214,
+            "instance_count": 64,
+            "failed_instance_count": 18,
+            "instance_failure_rate": 0.2812,
+            "adb_failure_count": 11,
+            "adb_failure_rate": 0.1719
+          },
+          "details": {},
+          "recommended_action": "失败率升高时，先按 Run 详情确认是设备离线、模板失败还是应用问题。"
+        },
+        {
+          "name": "证据与报告抓取",
+          "category": "artifact_report",
+          "status": "warn",
+          "summary": "存在证据抓取失败或报告缺失。",
+          "metrics": {
+            "instance_count": 64,
+            "artifact_count": 33,
+            "artifact_failed_count": 0,
+            "artifact_failure_rate": 0.0,
+            "report_missing_count": 10,
+            "report_missing_rate": 0.1562
+          },
+          "details": {},
+          "recommended_action": "报告缺失时优先查看 instance summary 和 artifact capture errors。"
+        },
+        {
+          "name": "集成 Outbox",
+          "category": "outbox",
+          "status": "warn",
+          "summary": "outbox 存在重试或死信事件。",
+          "metrics": {
+            "event_count": 96,
+            "pending_count": 81,
+            "retrying_count": 5,
+            "delivered_count": 10,
+            "dead_letter_count": 0,
+            "worker_status": "idle",
+            "worker_failed_count": 10
+          },
+          "details": {
+            "delivery_status_counts": {
+              "pending": 81,
+              "delivered": 10,
+              "retry_pending": 5
+            }
+          },
+          "recommended_action": "死信不应静默堆积；先查看 /integration 的 dead-letter 和 worker 日志。"
+        }
+      ],
+      "readiness": {
+        "ok": true,
+        "required_checks": [
+          "scheduler",
+          "device_adb",
+          "execution",
+          "artifact_report",
+          "outbox"
+        ],
+        "failed_checks": [],
+        "warning_checks": [
+          "scheduler",
+          "device_adb",
+          "execution",
+          "artifact_report",
+          "outbox"
+        ],
+        "skipped_checks": []
+      },
+      "trends": {
+        "history_count": 3,
+        "last_status": "degraded",
+        "last_generated_at": "2025-07-29 21:41:22.992255"
+      },
+      "links": {
+        "api": "/api/platform-health",
+        "doctor": "/doctor",
+        "runner": "/runner",
+        "ready": "/ready",
+        "health": "/health"
+      },
+      "history": [],
+      "storage": {
+        "snapshot_path": "runtime/platform_health/snapshots.json"
+      }
+    },
+    {
+      "contract_version": "asl.platform_health.v1",
+      "generated_at": "2025-07-29 21:41:25.838307",
+      "ok": true,
+      "status": "degraded",
+      "severity": "warn",
+      "summary": {
+        "status": "degraded",
+        "severity": "warn",
+        "ok_count": 0,
+        "warn_count": 5,
+        "fail_count": 0,
+        "skipped_count": 0,
+        "check_count": 5
+      },
+      "checks": [
+        {
+          "name": "调度器心跳",
+          "category": "scheduler",
+          "status": "warn",
+          "summary": "runner 未运行或心跳不可用。",
+          "metrics": {
+            "runner_status": "stopped",
+            "heartbeat_age_seconds": 270019,
+            "cycle_count": 10,
+            "failed_rate": 0.0,
+            "offline_rate": 0.0,
+            "quarantined_device_count": 0
+          },
+          "details": {
+            "last_heartbeat_at": "2025-07-26 18:41:05.996211",
+            "started_at": "2025-07-26 17:40:33.508428",
+            "stopped_reason": "max_iterations_reached",
+            "lock_state": "released"
+          },
+          "recommended_action": "如心跳 stale，先确认旧 runner 进程是否仍存活，再重启后台巡检。"
+        },
+        {
+          "name": "ADB 与设备池",
+          "category": "device_adb",
+          "status": "warn",
+          "summary": "设备在线率偏低。",
+          "metrics": {
+            "device_count": 7,
+            "online_device_count": 1,
+            "schedulable_device_count": 1,
+            "quarantined_device_count": 0,
+            "device_online_rate": 0.1429,
+            "device_schedulable_rate": 0.1429
+          },
+          "details": {
+            "device_ids": [
+              "192.168.31.101:38431",
+              "192.168.31.101:38835",
+              "192.168.31.161:38393",
+              "192.168.31.99:5555",
+              "AFQJVB2211008014",
+              "adb-AYYHUT5909003601-gC7bZo._adb-tls-connect._tcp",
+              "dev-a"
+            ]
+          },
+          "recommended_action": "无可调度设备时，先在设备池刷新 ADB 或重新连接无线调试设备。"
+        },
+        {
+          "name": "任务与 Run 失败率",
+          "category": "execution",
+          "status": "warn",
+          "summary": "最近执行存在失败，需要查看 Run 详情。",
+          "metrics": {
+            "task_count": 31,
+            "run_count": 60,
+            "terminal_run_count": 56,
+            "failed_run_count": 18,
+            "run_failure_rate": 0.3214,
+            "instance_count": 64,
+            "failed_instance_count": 18,
+            "instance_failure_rate": 0.2812,
+            "adb_failure_count": 11,
+            "adb_failure_rate": 0.1719
+          },
+          "details": {},
+          "recommended_action": "失败率升高时，先按 Run 详情确认是设备离线、模板失败还是应用问题。"
+        },
+        {
+          "name": "证据与报告抓取",
+          "category": "artifact_report",
+          "status": "warn",
+          "summary": "存在证据抓取失败或报告缺失。",
+          "metrics": {
+            "instance_count": 64,
+            "artifact_count": 33,
+            "artifact_failed_count": 0,
+            "artifact_failure_rate": 0.0,
+            "report_missing_count": 10,
+            "report_missing_rate": 0.1562
+          },
+          "details": {},
+          "recommended_action": "报告缺失时优先查看 instance summary 和 artifact capture errors。"
+        },
+        {
+          "name": "集成 Outbox",
+          "category": "outbox",
+          "status": "warn",
+          "summary": "outbox 存在重试或死信事件。",
+          "metrics": {
+            "event_count": 96,
+            "pending_count": 81,
+            "retrying_count": 5,
+            "delivered_count": 10,
+            "dead_letter_count": 0,
+            "worker_status": "idle",
+            "worker_failed_count": 10
+          },
+          "details": {
+            "delivery_status_counts": {
+              "pending": 81,
+              "delivered": 10,
+              "retry_pending": 5
+            }
+          },
+          "recommended_action": "死信不应静默堆积；先查看 /integration 的 dead-letter 和 worker 日志。"
+        }
+      ],
+      "readiness": {
+        "ok": true,
+        "required_checks": [
+          "scheduler",
+          "device_adb",
+          "execution",
+          "artifact_report",
+          "outbox"
+        ],
+        "failed_checks": [],
+        "warning_checks": [
+          "scheduler",
+          "device_adb",
+          "execution",
+          "artifact_report",
+          "outbox"
+        ],
+        "skipped_checks": []
+      },
+      "trends": {
+        "history_count": 4,
+        "last_status": "degraded",
+        "last_generated_at": "2025-07-29 21:41:24.634006"
+      },
+      "links": {
+        "api": "/api/platform-health",
+        "doctor": "/doctor",
+        "runner": "/runner",
+        "ready": "/ready",
+        "health": "/health"
+      },
+      "history": [],
+      "storage": {
+        "snapshot_path": "runtime/platform_health/snapshots.json"
+      }
+    },
+    {
+      "contract_version": "asl.platform_health.v1",
+      "generated_at": "2025-07-29 21:41:28.879476",
+      "ok": true,
+      "status": "degraded",
+      "severity": "warn",
+      "summary": {
+        "status": "degraded",
+        "severity": "warn",
+        "ok_count": 0,
+        "warn_count": 5,
+        "fail_count": 0,
+        "skipped_count": 0,
+        "check_count": 5
+      },
+      "checks": [
+        {
+          "name": "调度器心跳",
+          "category": "scheduler",
+          "status": "warn",
+          "summary": "runner 未运行或心跳不可用。",
+          "metrics": {
+            "runner_status": "stopped",
+            "heartbeat_age_seconds": 270022,
+            "cycle_count": 10,
+            "failed_rate": 0.0,
+            "offline_rate": 0.0,
+            "quarantined_device_count": 0
+          },
+          "details": {
+            "last_heartbeat_at": "2025-07-26 18:41:05.996211",
+            "started_at": "2025-07-26 17:40:33.508428",
+            "stopped_reason": "max_iterations_reached",
+            "lock_state": "released"
+          },
+          "recommended_action": "如心跳 stale，先确认旧 runner 进程是否仍存活，再重启后台巡检。"
+        },
+        {
+          "name": "ADB 与设备池",
+          "category": "device_adb",
+          "status": "warn",
+          "summary": "设备在线率偏低。",
+          "metrics": {
+            "device_count": 7,
+            "online_device_count": 1,
+            "schedulable_device_count": 1,
+            "quarantined_device_count": 0,
+            "device_online_rate": 0.1429,
+            "device_schedulable_rate": 0.1429
+          },
+          "details": {
+            "device_ids": [
+              "192.168.31.101:38431",
+              "192.168.31.101:38835",
+              "192.168.31.161:38393",
+              "192.168.31.99:5555",
+              "AFQJVB2211008014",
+              "adb-AYYHUT5909003601-gC7bZo._adb-tls-connect._tcp",
+              "dev-a"
+            ]
+          },
+          "recommended_action": "无可调度设备时，先在设备池刷新 ADB 或重新连接无线调试设备。"
+        },
+        {
+          "name": "任务与 Run 失败率",
+          "category": "execution",
+          "status": "warn",
+          "summary": "最近执行存在失败，需要查看 Run 详情。",
+          "metrics": {
+            "task_count": 31,
+            "run_count": 60,
+            "terminal_run_count": 56,
+            "failed_run_count": 18,
+            "run_failure_rate": 0.3214,
+            "instance_count": 64,
+            "failed_instance_count": 18,
+            "instance_failure_rate": 0.2812,
+            "adb_failure_count": 11,
+            "adb_failure_rate": 0.1719
+          },
+          "details": {},
+          "recommended_action": "失败率升高时，先按 Run 详情确认是设备离线、模板失败还是应用问题。"
+        },
+        {
+          "name": "证据与报告抓取",
+          "category": "artifact_report",
+          "status": "warn",
+          "summary": "存在证据抓取失败或报告缺失。",
+          "metrics": {
+            "instance_count": 64,
+            "artifact_count": 33,
+            "artifact_failed_count": 0,
+            "artifact_failure_rate": 0.0,
+            "report_missing_count": 10,
+            "report_missing_rate": 0.1562
+          },
+          "details": {},
+          "recommended_action": "报告缺失时优先查看 instance summary 和 artifact capture errors。"
+        },
+        {
+          "name": "集成 Outbox",
+          "category": "outbox",
+          "status": "warn",
+          "summary": "outbox 存在重试或死信事件。",
+          "metrics": {
+            "event_count": 96,
+            "pending_count": 81,
+            "retrying_count": 5,
+            "delivered_count": 10,
+            "dead_letter_count": 0,
+            "worker_status": "idle",
+            "worker_failed_count": 10
+          },
+          "details": {
+            "delivery_status_counts": {
+              "pending": 81,
+              "delivered": 10,
+              "retry_pending": 5
+            }
+          },
+          "recommended_action": "死信不应静默堆积；先查看 /integration 的 dead-letter 和 worker 日志。"
+        }
+      ],
+      "readiness": {
+        "ok": true,
+        "required_checks": [
+          "scheduler",
+          "device_adb",
+          "execution",
+          "artifact_report",
+          "outbox"
+        ],
+        "failed_checks": [],
+        "warning_checks": [
+          "scheduler",
+          "device_adb",
+          "execution",
+          "artifact_report",
+          "outbox"
+        ],
+        "skipped_checks": []
+      },
+      "trends": {
+        "history_count": 5,
+        "last_status": "degraded",
+        "last_generated_at": "2025-07-29 21:41:25.838307"
+      },
+      "links": {
+        "api": "/api/platform-health",
+        "doctor": "/doctor",
+        "runner": "/runner",
+        "ready": "/ready",
+        "health": "/health"
+      },
+      "history": [],
+      "storage": {
+        "snapshot_path": "runtime/platform_health/snapshots.json"
+      }
+    },
+    {
+      "contract_version": "asl.platform_health.v1",
+      "generated_at": "2025-07-29 21:41:29.683517",
+      "ok": true,
+      "status": "degraded",
+      "severity": "warn",
+      "summary": {
+        "status": "degraded",
+        "severity": "warn",
+        "ok_count": 0,
+        "warn_count": 5,
+        "fail_count": 0,
+        "skipped_count": 0,
+        "check_count": 5
+      },
+      "checks": [
+        {
+          "name": "调度器心跳",
+          "category": "scheduler",
+          "status": "warn",
+          "summary": "runner 未运行或心跳不可用。",
+          "metrics": {
+            "runner_status": "stopped",
+            "heartbeat_age_seconds": 270023,
+            "cycle_count": 10,
+            "failed_rate": 0.0,
+            "offline_rate": 0.0,
+            "quarantined_device_count": 0
+          },
+          "details": {
+            "last_heartbeat_at": "2025-07-26 18:41:05.996211",
+            "started_at": "2025-07-26 17:40:33.508428",
+            "stopped_reason": "max_iterations_reached",
+            "lock_state": "released"
+          },
+          "recommended_action": "如心跳 stale，先确认旧 runner 进程是否仍存活，再重启后台巡检。"
+        },
+        {
+          "name": "ADB 与设备池",
+          "category": "device_adb",
+          "status": "warn",
+          "summary": "设备在线率偏低。",
+          "metrics": {
+            "device_count": 7,
+            "online_device_count": 1,
+            "schedulable_device_count": 1,
+            "quarantined_device_count": 0,
+            "device_online_rate": 0.1429,
+            "device_schedulable_rate": 0.1429
+          },
+          "details": {
+            "device_ids": [
+              "192.168.31.101:38431",
+              "192.168.31.101:38835",
+              "192.168.31.161:38393",
+              "192.168.31.99:5555",
+              "AFQJVB2211008014",
+              "adb-AYYHUT5909003601-gC7bZo._adb-tls-connect._tcp",
+              "dev-a"
+            ]
+          },
+          "recommended_action": "无可调度设备时，先在设备池刷新 ADB 或重新连接无线调试设备。"
+        },
+        {
+          "name": "任务与 Run 失败率",
+          "category": "execution",
+          "status": "warn",
+          "summary": "最近执行存在失败，需要查看 Run 详情。",
+          "metrics": {
+            "task_count": 31,
+            "run_count": 60,
+            "terminal_run_count": 56,
+            "failed_run_count": 18,
+            "run_failure_rate": 0.3214,
+            "instance_count": 64,
+            "failed_instance_count": 18,
+            "instance_failure_rate": 0.2812,
+            "adb_failure_count": 11,
+            "adb_failure_rate": 0.1719
+          },
+          "details": {},
+          "recommended_action": "失败率升高时，先按 Run 详情确认是设备离线、模板失败还是应用问题。"
+        },
+        {
+          "name": "证据与报告抓取",
+          "category": "artifact_report",
+          "status": "warn",
+          "summary": "存在证据抓取失败或报告缺失。",
+          "metrics": {
+            "instance_count": 64,
+            "artifact_count": 33,
+            "artifact_failed_count": 0,
+            "artifact_failure_rate": 0.0,
+            "report_missing_count": 10,
+            "report_missing_rate": 0.1562
+          },
+          "details": {},
+          "recommended_action": "报告缺失时优先查看 instance summary 和 artifact capture errors。"
+        },
+        {
+          "name": "集成 Outbox",
+          "category": "outbox",
+          "status": "warn",
+          "summary": "outbox 存在重试或死信事件。",
+          "metrics": {
+            "event_count": 96,
+            "pending_count": 81,
+            "retrying_count": 5,
+            "delivered_count": 10,
+            "dead_letter_count": 0,
+            "worker_status": "idle",
+            "worker_failed_count": 10
+          },
+          "details": {
+            "delivery_status_counts": {
+              "pending": 81,
+              "delivered": 10,
+              "retry_pending": 5
+            }
+          },
+          "recommended_action": "死信不应静默堆积；先查看 /integration 的 dead-letter 和 worker 日志。"
+        }
+      ],
+      "readiness": {
+        "ok": true,
+        "required_checks": [
+          "scheduler",
+          "device_adb",
+          "execution",
+          "artifact_report",
+          "outbox"
+        ],
+        "failed_checks": [],
+        "warning_checks": [
+          "scheduler",
+          "device_adb",
+          "execution",
+          "artifact_report",
+          "outbox"
+        ],
+        "skipped_checks": []
+      },
+      "trends": {
+        "history_count": 6,
+        "last_status": "degraded",
+        "last_generated_at": "2025-07-29 21:41:28.879476"
+      },
+      "links": {
+        "api": "/api/platform-health",
+        "doctor": "/doctor",
+        "runner": "/runner",
+        "ready": "/ready",
+        "health": "/health"
+      },
+      "history": [],
+      "storage": {
+        "snapshot_path": "runtime/platform_health/snapshots.json"
+      }
+    },
+    {
+      "contract_version": "asl.platform_health.v1",
+      "generated_at": "2025-07-29 21:41:31.004682",
+      "ok": true,
+      "status": "degraded",
+      "severity": "warn",
+      "summary": {
+        "status": "degraded",
+        "severity": "warn",
+        "ok_count": 0,
+        "warn_count": 5,
+        "fail_count": 0,
+        "skipped_count": 0,
+        "check_count": 5
+      },
+      "checks": [
+        {
+          "name": "调度器心跳",
+          "category": "scheduler",
+          "status": "warn",
+          "summary": "runner 未运行或心跳不可用。",
+          "metrics": {
+            "runner_status": "stopped",
+            "heartbeat_age_seconds": 270024,
+            "cycle_count": 10,
+            "failed_rate": 0.0,
+            "offline_rate": 0.0,
+            "quarantined_device_count": 0
+          },
+          "details": {
+            "last_heartbeat_at": "2025-07-26 18:41:05.996211",
+            "started_at": "2025-07-26 17:40:33.508428",
+            "stopped_reason": "max_iterations_reached",
+            "lock_state": "released"
+          },
+          "recommended_action": "如心跳 stale，先确认旧 runner 进程是否仍存活，再重启后台巡检。"
+        },
+        {
+          "name": "ADB 与设备池",
+          "category": "device_adb",
+          "status": "warn",
+          "summary": "设备在线率偏低。",
+          "metrics": {
+            "device_count": 7,
+            "online_device_count": 1,
+            "schedulable_device_count": 1,
+            "quarantined_device_count": 0,
+            "device_online_rate": 0.1429,
+            "device_schedulable_rate": 0.1429
+          },
+          "details": {
+            "device_ids": [
+              "192.168.31.101:38431",
+              "192.168.31.101:38835",
+              "192.168.31.161:38393",
+              "192.168.31.99:5555",
+              "AFQJVB2211008014",
+              "adb-AYYHUT5909003601-gC7bZo._adb-tls-connect._tcp",
+              "dev-a"
+            ]
+          },
+          "recommended_action": "无可调度设备时，先在设备池刷新 ADB 或重新连接无线调试设备。"
+        },
+        {
+          "name": "任务与 Run 失败率",
+          "category": "execution",
+          "status": "warn",
+          "summary": "最近执行存在失败，需要查看 Run 详情。",
+          "metrics": {
+            "task_count": 31,
+            "run_count": 60,
+            "terminal_run_count": 56,
+            "failed_run_count": 18,
+            "run_failure_rate": 0.3214,
+            "instance_count": 64,
+            "failed_instance_count": 18,
+            "instance_failure_rate": 0.2812,
+            "adb_failure_count": 11,
+            "adb_failure_rate": 0.1719
+          },
+          "details": {},
+          "recommended_action": "失败率升高时，先按 Run 详情确认是设备离线、模板失败还是应用问题。"
+        },
+        {
+          "name": "证据与报告抓取",
+          "category": "artifact_report",
+          "status": "warn",
+          "summary": "存在证据抓取失败或报告缺失。",
+          "metrics": {
+            "instance_count": 64,
+            "artifact_count": 33,
+            "artifact_failed_count": 0,
+            "artifact_failure_rate": 0.0,
+            "report_missing_count": 10,
+            "report_missing_rate": 0.1562
+          },
+          "details": {},
+          "recommended_action": "报告缺失时优先查看 instance summary 和 artifact capture errors。"
+        },
+        {
+          "name": "集成 Outbox",
+          "category": "outbox",
+          "status": "warn",
+          "summary": "outbox 存在重试或死信事件。",
+          "metrics": {
+            "event_count": 96,
+            "pending_count": 81,
+            "retrying_count": 5,
+            "delivered_count": 10,
+            "dead_letter_count": 0,
+            "worker_status": "idle",
+            "worker_failed_count": 10
+          },
+          "details": {
+            "delivery_status_counts": {
+              "pending": 81,
+              "delivered": 10,
+              "retry_pending": 5
+            }
+          },
+          "recommended_action": "死信不应静默堆积；先查看 /integration 的 dead-letter 和 worker 日志。"
+        }
+      ],
+      "readiness": {
+        "ok": true,
+        "required_checks": [
+          "scheduler",
+          "device_adb",
+          "execution",
+          "artifact_report",
+          "outbox"
+        ],
+        "failed_checks": [],
+        "warning_checks": [
+          "scheduler",
+          "device_adb",
+          "execution",
+          "artifact_report",
+          "outbox"
+        ],
+        "skipped_checks": []
+      },
+      "trends": {
+        "history_count": 7,
+        "last_status": "degraded",
+        "last_generated_at": "2025-07-29 21:41:29.683517"
+      },
+      "links": {
+        "api": "/api/platform-health",
+        "doctor": "/doctor",
+        "runner": "/runner",
+        "ready": "/ready",
+        "health": "/health"
+      },
+      "history": [],
+      "storage": {
+        "snapshot_path": "runtime/platform_health/snapshots.json"
+      }
+    },
+    {
+      "contract_version": "asl.platform_health.v1",
+      "generated_at": "2025-07-29 21:41:40.875256",
+      "ok": true,
+      "status": "degraded",
+      "severity": "warn",
+      "summary": {
+        "status": "degraded",
+        "severity": "warn",
+        "ok_count": 0,
+        "warn_count": 5,
+        "fail_count": 0,
+        "skipped_count": 0,
+        "check_count": 5
+      },
+      "checks": [
+        {
+          "name": "调度器心跳",
+          "category": "scheduler",
+          "status": "warn",
+          "summary": "runner 未运行或心跳不可用。",
+          "metrics": {
+            "runner_status": "stopped",
+            "heartbeat_age_seconds": 270034,
+            "cycle_count": 10,
+            "failed_rate": 0.0,
+            "offline_rate": 0.0,
+            "quarantined_device_count": 0
+          },
+          "details": {
+            "last_heartbeat_at": "2025-07-26 18:41:05.996211",
+            "started_at": "2025-07-26 17:40:33.508428",
+            "stopped_reason": "max_iterations_reached",
+            "lock_state": "released"
+          },
+          "recommended_action": "如心跳 stale，先确认旧 runner 进程是否仍存活，再重启后台巡检。"
+        },
+        {
+          "name": "ADB 与设备池",
+          "category": "device_adb",
+          "status": "warn",
+          "summary": "设备在线率偏低。",
+          "metrics": {
+            "device_count": 7,
+            "online_device_count": 1,
+            "schedulable_device_count": 1,
+            "quarantined_device_count": 0,
+            "device_online_rate": 0.1429,
+            "device_schedulable_rate": 0.1429
+          },
+          "details": {
+            "device_ids": [
+              "192.168.31.101:38431",
+              "192.168.31.101:38835",
+              "192.168.31.161:38393",
+              "192.168.31.99:5555",
+              "AFQJVB2211008014",
+              "adb-AYYHUT5909003601-gC7bZo._adb-tls-connect._tcp",
+              "dev-a"
+            ]
+          },
+          "recommended_action": "无可调度设备时，先在设备池刷新 ADB 或重新连接无线调试设备。"
+        },
+        {
+          "name": "任务与 Run 失败率",
+          "category": "execution",
+          "status": "warn",
+          "summary": "最近执行存在失败，需要查看 Run 详情。",
+          "metrics": {
+            "task_count": 31,
+            "run_count": 60,
+            "terminal_run_count": 56,
+            "failed_run_count": 18,
+            "run_failure_rate": 0.3214,
+            "instance_count": 64,
+            "failed_instance_count": 18,
+            "instance_failure_rate": 0.2812,
+            "adb_failure_count": 11,
+            "adb_failure_rate": 0.1719
+          },
+          "details": {},
+          "recommended_action": "失败率升高时，先按 Run 详情确认是设备离线、模板失败还是应用问题。"
+        },
+        {
+          "name": "证据与报告抓取",
+          "category": "artifact_report",
+          "status": "warn",
+          "summary": "存在证据抓取失败或报告缺失。",
+          "metrics": {
+            "instance_count": 64,
+            "artifact_count": 33,
+            "artifact_failed_count": 0,
+            "artifact_failure_rate": 0.0,
+            "report_missing_count": 10,
+            "report_missing_rate": 0.1562
+          },
+          "details": {},
+          "recommended_action": "报告缺失时优先查看 instance summary 和 artifact capture errors。"
+        },
+        {
+          "name": "集成 Outbox",
+          "category": "outbox",
+          "status": "warn",
+          "summary": "outbox 存在重试或死信事件。",
+          "metrics": {
+            "event_count": 96,
+            "pending_count": 81,
+            "retrying_count": 5,
+            "delivered_count": 10,
+            "dead_letter_count": 0,
+            "worker_status": "idle",
+            "worker_failed_count": 10
+          },
+          "details": {
+            "delivery_status_counts": {
+              "pending": 81,
+              "delivered": 10,
+              "retry_pending": 5
+            }
+          },
+          "recommended_action": "死信不应静默堆积；先查看 /integration 的 dead-letter 和 worker 日志。"
+        }
+      ],
+      "readiness": {
+        "ok": true,
+        "required_checks": [
+          "scheduler",
+          "device_adb",
+          "execution",
+          "artifact_report",
+          "outbox"
+        ],
+        "failed_checks": [],
+        "warning_checks": [
+          "scheduler",
+          "device_adb",
+          "execution",
+          "artifact_report",
+          "outbox"
+        ],
+        "skipped_checks": []
+      },
+      "trends": {
+        "history_count": 8,
+        "last_status": "degraded",
+        "last_generated_at": "2025-07-29 21:41:31.004682"
+      },
+      "links": {
+        "api": "/api/platform-health",
+        "doctor": "/doctor",
+        "runner": "/runner",
+        "ready": "/ready",
+        "health": "/health"
+      },
+      "history": [],
+      "storage": {
+        "snapshot_path": "runtime/platform_health/snapshots.json"
+      }
+    },
+    {
+      "contract_version": "asl.platform_health.v1",
+      "generated_at": "2025-07-29 21:41:43.027957",
+      "ok": true,
+      "status": "degraded",
+      "severity": "warn",
+      "summary": {
+        "status": "degraded",
+        "severity": "warn",
+        "ok_count": 0,
+        "warn_count": 5,
+        "fail_count": 0,
+        "skipped_count": 0,
+        "check_count": 5
+      },
+      "checks": [
+        {
+          "name": "调度器心跳",
+          "category": "scheduler",
+          "status": "warn",
+          "summary": "runner 未运行或心跳不可用。",
+          "metrics": {
+            "runner_status": "stopped",
+            "heartbeat_age_seconds": 270036,
+            "cycle_count": 10,
+            "failed_rate": 0.0,
+            "offline_rate": 0.0,
+            "quarantined_device_count": 0
+          },
+          "details": {
+            "last_heartbeat_at": "2025-07-26 18:41:05.996211",
+            "started_at": "2025-07-26 17:40:33.508428",
+            "stopped_reason": "max_iterations_reached",
+            "lock_state": "released"
+          },
+          "recommended_action": "如心跳 stale，先确认旧 runner 进程是否仍存活，再重启后台巡检。"
+        },
+        {
+          "name": "ADB 与设备池",
+          "category": "device_adb",
+          "status": "warn",
+          "summary": "设备在线率偏低。",
+          "metrics": {
+            "device_count": 7,
+            "online_device_count": 1,
+            "schedulable_device_count": 1,
+            "quarantined_device_count": 0,
+            "device_online_rate": 0.1429,
+            "device_schedulable_rate": 0.1429
+          },
+          "details": {
+            "device_ids": [
+              "192.168.31.101:38431",
+              "192.168.31.101:38835",
+              "192.168.31.161:38393",
+              "192.168.31.99:5555",
+              "AFQJVB2211008014",
+              "adb-AYYHUT5909003601-gC7bZo._adb-tls-connect._tcp",
+              "dev-a"
+            ]
+          },
+          "recommended_action": "无可调度设备时，先在设备池刷新 ADB 或重新连接无线调试设备。"
+        },
+        {
+          "name": "任务与 Run 失败率",
+          "category": "execution",
+          "status": "warn",
+          "summary": "最近执行存在失败，需要查看 Run 详情。",
+          "metrics": {
+            "task_count": 31,
+            "run_count": 60,
+            "terminal_run_count": 56,
+            "failed_run_count": 18,
+            "run_failure_rate": 0.3214,
+            "instance_count": 64,
+            "failed_instance_count": 18,
+            "instance_failure_rate": 0.2812,
+            "adb_failure_count": 11,
+            "adb_failure_rate": 0.1719
+          },
+          "details": {},
+          "recommended_action": "失败率升高时，先按 Run 详情确认是设备离线、模板失败还是应用问题。"
+        },
+        {
+          "name": "证据与报告抓取",
+          "category": "artifact_report",
+          "status": "warn",
+          "summary": "存在证据抓取失败或报告缺失。",
+          "metrics": {
+            "instance_count": 64,
+            "artifact_count": 33,
+            "artifact_failed_count": 0,
+            "artifact_failure_rate": 0.0,
+            "report_missing_count": 10,
+            "report_missing_rate": 0.1562
+          },
+          "details": {},
+          "recommended_action": "报告缺失时优先查看 instance summary 和 artifact capture errors。"
+        },
+        {
+          "name": "集成 Outbox",
+          "category": "outbox",
+          "status": "warn",
+          "summary": "outbox 存在重试或死信事件。",
+          "metrics": {
+            "event_count": 96,
+            "pending_count": 81,
+            "retrying_count": 5,
+            "delivered_count": 10,
+            "dead_letter_count": 0,
+            "worker_status": "idle",
+            "worker_failed_count": 10
+          },
+          "details": {
+            "delivery_status_counts": {
+              "pending": 81,
+              "delivered": 10,
+              "retry_pending": 5
+            }
+          },
+          "recommended_action": "死信不应静默堆积；先查看 /integration 的 dead-letter 和 worker 日志。"
+        }
+      ],
+      "readiness": {
+        "ok": true,
+        "required_checks": [
+          "scheduler",
+          "device_adb",
+          "execution",
+          "artifact_report",
+          "outbox"
+        ],
+        "failed_checks": [],
+        "warning_checks": [
+          "scheduler",
+          "device_adb",
+          "execution",
+          "artifact_report",
+          "outbox"
+        ],
+        "skipped_checks": []
+      },
+      "trends": {
+        "history_count": 9,
+        "last_status": "degraded",
+        "last_generated_at": "2025-07-29 21:41:40.875256"
+      },
+      "links": {
+        "api": "/api/platform-health",
+        "doctor": "/doctor",
+        "runner": "/runner",
+        "ready": "/ready",
+        "health": "/health"
+      },
+      "history": [],
+      "storage": {
+        "snapshot_path": "runtime/platform_health/snapshots.json"
+      }
+    },
+    {
+      "contract_version": "asl.platform_health.v1",
+      "generated_at": "2025-07-29 21:41:59.293886",
+      "ok": true,
+      "status": "degraded",
+      "severity": "warn",
+      "summary": {
+        "status": "degraded",
+        "severity": "warn",
+        "ok_count": 0,
+        "warn_count": 5,
+        "fail_count": 0,
+        "skipped_count": 0,
+        "check_count": 5
+      },
+      "checks": [
+        {
+          "name": "调度器心跳",
+          "category": "scheduler",
+          "status": "warn",
+          "summary": "runner 未运行或心跳不可用。",
+          "metrics": {
+            "runner_status": "stopped",
+            "heartbeat_age_seconds": 270053,
+            "cycle_count": 10,
+            "failed_rate": 0.0,
+            "offline_rate": 0.0,
+            "quarantined_device_count": 0
+          },
+          "details": {
+            "last_heartbeat_at": "2025-07-26 18:41:05.996211",
+            "started_at": "2025-07-26 17:40:33.508428",
+            "stopped_reason": "max_iterations_reached",
+            "lock_state": "released"
+          },
+          "recommended_action": "如心跳 stale，先确认旧 runner 进程是否仍存活，再重启后台巡检。"
+        },
+        {
+          "name": "ADB 与设备池",
+          "category": "device_adb",
+          "status": "warn",
+          "summary": "设备在线率偏低。",
+          "metrics": {
+            "device_count": 7,
+            "online_device_count": 1,
+            "schedulable_device_count": 1,
+            "quarantined_device_count": 0,
+            "device_online_rate": 0.1429,
+            "device_schedulable_rate": 0.1429
+          },
+          "details": {
+            "device_ids": [
+              "192.168.31.101:38431",
+              "192.168.31.101:38835",
+              "192.168.31.161:38393",
+              "192.168.31.99:5555",
+              "AFQJVB2211008014",
+              "adb-AYYHUT5909003601-gC7bZo._adb-tls-connect._tcp",
+              "dev-a"
+            ]
+          },
+          "recommended_action": "无可调度设备时，先在设备池刷新 ADB 或重新连接无线调试设备。"
+        },
+        {
+          "name": "任务与 Run 失败率",
+          "category": "execution",
+          "status": "warn",
+          "summary": "最近执行存在失败，需要查看 Run 详情。",
+          "metrics": {
+            "task_count": 31,
+            "run_count": 60,
+            "terminal_run_count": 56,
+            "failed_run_count": 18,
+            "run_failure_rate": 0.3214,
+            "instance_count": 64,
+            "failed_instance_count": 18,
+            "instance_failure_rate": 0.2812,
+            "adb_failure_count": 11,
+            "adb_failure_rate": 0.1719
+          },
+          "details": {},
+          "recommended_action": "失败率升高时，先按 Run 详情确认是设备离线、模板失败还是应用问题。"
+        },
+        {
+          "name": "证据与报告抓取",
+          "category": "artifact_report",
+          "status": "warn",
+          "summary": "存在证据抓取失败或报告缺失。",
+          "metrics": {
+            "instance_count": 64,
+            "artifact_count": 33,
+            "artifact_failed_count": 0,
+            "artifact_failure_rate": 0.0,
+            "report_missing_count": 10,
+            "report_missing_rate": 0.1562
+          },
+          "details": {},
+          "recommended_action": "报告缺失时优先查看 instance summary 和 artifact capture errors。"
+        },
+        {
+          "name": "集成 Outbox",
+          "category": "outbox",
+          "status": "warn",
+          "summary": "outbox 存在重试或死信事件。",
+          "metrics": {
+            "event_count": 97,
+            "pending_count": 82,
+            "retrying_count": 5,
+            "delivered_count": 10,
+            "dead_letter_count": 0,
+            "worker_status": "idle",
+            "worker_failed_count": 10
+          },
+          "details": {
+            "delivery_status_counts": {
+              "pending": 82,
+              "delivered": 10,
+              "retry_pending": 5
+            }
+          },
+          "recommended_action": "死信不应静默堆积；先查看 /integration 的 dead-letter 和 worker 日志。"
+        }
+      ],
+      "readiness": {
+        "ok": true,
+        "required_checks": [
+          "scheduler",
+          "device_adb",
+          "execution",
+          "artifact_report",
+          "outbox"
+        ],
+        "failed_checks": [],
+        "warning_checks": [
+          "scheduler",
+          "device_adb",
+          "execution",
+          "artifact_report",
+          "outbox"
+        ],
+        "skipped_checks": []
+      },
+      "trends": {
+        "history_count": 10,
+        "last_status": "degraded",
+        "last_generated_at": "2025-07-29 21:41:43.027957"
+      },
+      "links": {
+        "api": "/api/platform-health",
+        "doctor": "/doctor",
+        "runner": "/runner",
+        "ready": "/ready",
+        "health": "/health"
+      },
+      "history": [],
+      "storage": {
+        "snapshot_path": "runtime/platform_health/snapshots.json"
+      }
+    },
+    {
+      "contract_version": "asl.platform_health.v1",
+      "generated_at": "2025-07-29 21:43:42.408884",
+      "ok": true,
+      "status": "degraded",
+      "severity": "warn",
+      "summary": {
+        "status": "degraded",
+        "severity": "warn",
+        "ok_count": 0,
+        "warn_count": 5,
+        "fail_count": 0,
+        "skipped_count": 0,
+        "check_count": 5
+      },
+      "checks": [
+        {
+          "name": "调度器心跳",
+          "category": "scheduler",
+          "status": "warn",
+          "summary": "runner 未运行或心跳不可用。",
+          "metrics": {
+            "runner_status": "stopped",
+            "heartbeat_age_seconds": 270156,
+            "cycle_count": 10,
+            "failed_rate": 0.0,
+            "offline_rate": 0.0,
+            "quarantined_device_count": 0
+          },
+          "details": {
+            "last_heartbeat_at": "2025-07-26 18:41:05.996211",
+            "started_at": "2025-07-26 17:40:33.508428",
+            "stopped_reason": "max_iterations_reached",
+            "lock_state": "released"
+          },
+          "recommended_action": "如心跳 stale，先确认旧 runner 进程是否仍存活，再重启后台巡检。"
+        },
+        {
+          "name": "ADB 与设备池",
+          "category": "device_adb",
+          "status": "warn",
+          "summary": "设备在线率偏低。",
+          "metrics": {
+            "device_count": 7,
+            "online_device_count": 1,
+            "schedulable_device_count": 1,
+            "quarantined_device_count": 0,
+            "device_online_rate": 0.1429,
+            "device_schedulable_rate": 0.1429
+          },
+          "details": {
+            "device_ids": [
+              "192.168.31.101:38431",
+              "192.168.31.101:38835",
+              "192.168.31.161:38393",
+              "192.168.31.99:5555",
+              "AFQJVB2211008014",
+              "adb-AYYHUT5909003601-gC7bZo._adb-tls-connect._tcp",
+              "dev-a"
+            ]
+          },
+          "recommended_action": "无可调度设备时，先在设备池刷新 ADB 或重新连接无线调试设备。"
+        },
+        {
+          "name": "任务与 Run 失败率",
+          "category": "execution",
+          "status": "warn",
+          "summary": "最近执行存在失败，需要查看 Run 详情。",
+          "metrics": {
+            "task_count": 31,
+            "run_count": 60,
+            "terminal_run_count": 56,
+            "failed_run_count": 18,
+            "run_failure_rate": 0.3214,
+            "instance_count": 64,
+            "failed_instance_count": 18,
+            "instance_failure_rate": 0.2812,
+            "adb_failure_count": 11,
+            "adb_failure_rate": 0.1719
+          },
+          "details": {},
+          "recommended_action": "失败率升高时，先按 Run 详情确认是设备离线、模板失败还是应用问题。"
+        },
+        {
+          "name": "证据与报告抓取",
+          "category": "artifact_report",
+          "status": "warn",
+          "summary": "存在证据抓取失败或报告缺失。",
+          "metrics": {
+            "instance_count": 64,
+            "artifact_count": 33,
+            "artifact_failed_count": 0,
+            "artifact_failure_rate": 0.0,
+            "report_missing_count": 10,
+            "report_missing_rate": 0.1562
+          },
+          "details": {},
+          "recommended_action": "报告缺失时优先查看 instance summary 和 artifact capture errors。"
+        },
+        {
+          "name": "集成 Outbox",
+          "category": "outbox",
+          "status": "warn",
+          "summary": "outbox 存在重试或死信事件。",
+          "metrics": {
+            "event_count": 97,
+            "pending_count": 82,
+            "retrying_count": 5,
+            "delivered_count": 10,
+            "dead_letter_count": 0,
+            "worker_status": "idle",
+            "worker_failed_count": 10
+          },
+          "details": {
+            "delivery_status_counts": {
+              "pending": 82,
+              "delivered": 10,
+              "retry_pending": 5
+            }
+          },
+          "recommended_action": "死信不应静默堆积；先查看 /integration 的 dead-letter 和 worker 日志。"
+        }
+      ],
+      "readiness": {
+        "ok": true,
+        "required_checks": [
+          "scheduler",
+          "device_adb",
+          "execution",
+          "artifact_report",
+          "outbox"
+        ],
+        "failed_checks": [],
+        "warning_checks": [
+          "scheduler",
+          "device_adb",
+          "execution",
+          "artifact_report",
+          "outbox"
+        ],
+        "skipped_checks": []
+      },
+      "trends": {
+        "history_count": 11,
+        "last_status": "degraded",
+        "last_generated_at": "2025-07-29 21:41:59.293886"
+      },
+      "links": {
+        "api": "/api/platform-health",
+        "doctor": "/doctor",
+        "runner": "/runner",
+        "ready": "/ready",
+        "health": "/health"
+      },
+      "history": [],
+      "storage": {
+        "snapshot_path": "runtime/platform_health/snapshots.json"
+      }
+    },
+    {
+      "contract_version": "asl.platform_health.v1",
+      "generated_at": "2025-07-29 21:43:46.209533",
+      "ok": true,
+      "status": "degraded",
+      "severity": "warn",
+      "summary": {
+        "status": "degraded",
+        "severity": "warn",
+        "ok_count": 0,
+        "warn_count": 5,
+        "fail_count": 0,
+        "skipped_count": 0,
+        "check_count": 5
+      },
+      "checks": [
+        {
+          "name": "调度器心跳",
+          "category": "scheduler",
+          "status": "warn",
+          "summary": "runner 未运行或心跳不可用。",
+          "metrics": {
+            "runner_status": "stopped",
+            "heartbeat_age_seconds": 270160,
+            "cycle_count": 10,
+            "failed_rate": 0.0,
+            "offline_rate": 0.0,
+            "quarantined_device_count": 0
+          },
+          "details": {
+            "last_heartbeat_at": "2025-07-26 18:41:05.996211",
+            "started_at": "2025-07-26 17:40:33.508428",
+            "stopped_reason": "max_iterations_reached",
+            "lock_state": "released"
+          },
+          "recommended_action": "如心跳 stale，先确认旧 runner 进程是否仍存活，再重启后台巡检。"
+        },
+        {
+          "name": "ADB 与设备池",
+          "category": "device_adb",
+          "status": "warn",
+          "summary": "设备在线率偏低。",
+          "metrics": {
+            "device_count": 7,
+            "online_device_count": 1,
+            "schedulable_device_count": 1,
+            "quarantined_device_count": 0,
+            "device_online_rate": 0.1429,
+            "device_schedulable_rate": 0.1429
+          },
+          "details": {
+            "device_ids": [
+              "192.168.31.101:38431",
+              "192.168.31.101:38835",
+              "192.168.31.161:38393",
+              "192.168.31.99:5555",
+              "AFQJVB2211008014",
+              "adb-AYYHUT5909003601-gC7bZo._adb-tls-connect._tcp",
+              "dev-a"
+            ]
+          },
+          "recommended_action": "无可调度设备时，先在设备池刷新 ADB 或重新连接无线调试设备。"
+        },
+        {
+          "name": "任务与 Run 失败率",
+          "category": "execution",
+          "status": "warn",
+          "summary": "最近执行存在失败，需要查看 Run 详情。",
+          "metrics": {
+            "task_count": 31,
+            "run_count": 60,
+            "terminal_run_count": 56,
+            "failed_run_count": 18,
+            "run_failure_rate": 0.3214,
+            "instance_count": 64,
+            "failed_instance_count": 18,
+            "instance_failure_rate": 0.2812,
+            "adb_failure_count": 11,
+            "adb_failure_rate": 0.1719
+          },
+          "details": {},
+          "recommended_action": "失败率升高时，先按 Run 详情确认是设备离线、模板失败还是应用问题。"
+        },
+        {
+          "name": "证据与报告抓取",
+          "category": "artifact_report",
+          "status": "warn",
+          "summary": "存在证据抓取失败或报告缺失。",
+          "metrics": {
+            "instance_count": 64,
+            "artifact_count": 33,
+            "artifact_failed_count": 0,
+            "artifact_failure_rate": 0.0,
+            "report_missing_count": 10,
+            "report_missing_rate": 0.1562
+          },
+          "details": {},
+          "recommended_action": "报告缺失时优先查看 instance summary 和 artifact capture errors。"
+        },
+        {
+          "name": "集成 Outbox",
+          "category": "outbox",
+          "status": "warn",
+          "summary": "outbox 存在重试或死信事件。",
+          "metrics": {
+            "event_count": 97,
+            "pending_count": 82,
+            "retrying_count": 5,
+            "delivered_count": 10,
+            "dead_letter_count": 0,
+            "worker_status": "idle",
+            "worker_failed_count": 10
+          },
+          "details": {
+            "delivery_status_counts": {
+              "pending": 82,
+              "delivered": 10,
+              "retry_pending": 5
+            }
+          },
+          "recommended_action": "死信不应静默堆积；先查看 /integration 的 dead-letter 和 worker 日志。"
+        }
+      ],
+      "readiness": {
+        "ok": true,
+        "required_checks": [
+          "scheduler",
+          "device_adb",
+          "execution",
+          "artifact_report",
+          "outbox"
+        ],
+        "failed_checks": [],
+        "warning_checks": [
+          "scheduler",
+          "device_adb",
+          "execution",
+          "artifact_report",
+          "outbox"
+        ],
+        "skipped_checks": []
+      },
+      "trends": {
+        "history_count": 12,
+        "last_status": "degraded",
+        "last_generated_at": "2025-07-29 21:43:42.408884"
+      },
+      "links": {
+        "api": "/api/platform-health",
+        "doctor": "/doctor",
+        "runner": "/runner",
+        "ready": "/ready",
+        "health": "/health"
+      },
+      "history": [],
+      "storage": {
+        "snapshot_path": "runtime/platform_health/snapshots.json"
+      }
+    },
+    {
+      "contract_version": "asl.platform_health.v1",
+      "generated_at": "2025-07-29 21:43:46.776834",
+      "ok": true,
+      "status": "degraded",
+      "severity": "warn",
+      "summary": {
+        "status": "degraded",
+        "severity": "warn",
+        "ok_count": 0,
+        "warn_count": 5,
+        "fail_count": 0,
+        "skipped_count": 0,
+        "check_count": 5
+      },
+      "checks": [
+        {
+          "name": "调度器心跳",
+          "category": "scheduler",
+          "status": "warn",
+          "summary": "runner 未运行或心跳不可用。",
+          "metrics": {
+            "runner_status": "stopped",
+            "heartbeat_age_seconds": 270160,
+            "cycle_count": 10,
+            "failed_rate": 0.0,
+            "offline_rate": 0.0,
+            "quarantined_device_count": 0
+          },
+          "details": {
+            "last_heartbeat_at": "2025-07-26 18:41:05.996211",
+            "started_at": "2025-07-26 17:40:33.508428",
+            "stopped_reason": "max_iterations_reached",
+            "lock_state": "released"
+          },
+          "recommended_action": "如心跳 stale，先确认旧 runner 进程是否仍存活，再重启后台巡检。"
+        },
+        {
+          "name": "ADB 与设备池",
+          "category": "device_adb",
+          "status": "warn",
+          "summary": "设备在线率偏低。",
+          "metrics": {
+            "device_count": 7,
+            "online_device_count": 1,
+            "schedulable_device_count": 1,
+            "quarantined_device_count": 0,
+            "device_online_rate": 0.1429,
+            "device_schedulable_rate": 0.1429
+          },
+          "details": {
+            "device_ids": [
+              "192.168.31.101:38431",
+              "192.168.31.101:38835",
+              "192.168.31.161:38393",
+              "192.168.31.99:5555",
+              "AFQJVB2211008014",
+              "adb-AYYHUT5909003601-gC7bZo._adb-tls-connect._tcp",
+              "dev-a"
+            ]
+          },
+          "recommended_action": "无可调度设备时，先在设备池刷新 ADB 或重新连接无线调试设备。"
+        },
+        {
+          "name": "任务与 Run 失败率",
+          "category": "execution",
+          "status": "warn",
+          "summary": "最近执行存在失败，需要查看 Run 详情。",
+          "metrics": {
+            "task_count": 31,
+            "run_count": 60,
+            "terminal_run_count": 56,
+            "failed_run_count": 18,
+            "run_failure_rate": 0.3214,
+            "instance_count": 64,
+            "failed_instance_count": 18,
+            "instance_failure_rate": 0.2812,
+            "adb_failure_count": 11,
+            "adb_failure_rate": 0.1719
+          },
+          "details": {},
+          "recommended_action": "失败率升高时，先按 Run 详情确认是设备离线、模板失败还是应用问题。"
+        },
+        {
+          "name": "证据与报告抓取",
+          "category": "artifact_report",
+          "status": "warn",
+          "summary": "存在证据抓取失败或报告缺失。",
+          "metrics": {
+            "instance_count": 64,
+            "artifact_count": 33,
+            "artifact_failed_count": 0,
+            "artifact_failure_rate": 0.0,
+            "report_missing_count": 10,
+            "report_missing_rate": 0.1562
+          },
+          "details": {},
+          "recommended_action": "报告缺失时优先查看 instance summary 和 artifact capture errors。"
+        },
+        {
+          "name": "集成 Outbox",
+          "category": "outbox",
+          "status": "warn",
+          "summary": "outbox 存在重试或死信事件。",
+          "metrics": {
+            "event_count": 97,
+            "pending_count": 82,
+            "retrying_count": 5,
+            "delivered_count": 10,
+            "dead_letter_count": 0,
+            "worker_status": "idle",
+            "worker_failed_count": 10
+          },
+          "details": {
+            "delivery_status_counts": {
+              "pending": 82,
+              "delivered": 10,
+              "retry_pending": 5
+            }
+          },
+          "recommended_action": "死信不应静默堆积；先查看 /integration 的 dead-letter 和 worker 日志。"
+        }
+      ],
+      "readiness": {
+        "ok": true,
+        "required_checks": [
+          "scheduler",
+          "device_adb",
+          "execution",
+          "artifact_report",
+          "outbox"
+        ],
+        "failed_checks": [],
+        "warning_checks": [
+          "scheduler",
+          "device_adb",
+          "execution",
+          "artifact_report",
+          "outbox"
+        ],
+        "skipped_checks": []
+      },
+      "trends": {
+        "history_count": 13,
+        "last_status": "degraded",
+        "last_generated_at": "2025-07-29 21:43:46.209533"
+      },
+      "links": {
+        "api": "/api/platform-health",
+        "doctor": "/doctor",
+        "runner": "/runner",
+        "ready": "/ready",
+        "health": "/health"
+      },
+      "history": [],
+      "storage": {
+        "snapshot_path": "runtime/platform_health/snapshots.json"
+      }
+    },
+    {
+      "contract_version": "asl.platform_health.v1",
+      "generated_at": "2025-07-29 21:43:52.387562",
+      "ok": true,
+      "status": "degraded",
+      "severity": "warn",
+      "summary": {
+        "status": "degraded",
+        "severity": "warn",
+        "ok_count": 0,
+        "warn_count": 5,
+        "fail_count": 0,
+        "skipped_count": 0,
+        "check_count": 5
+      },
+      "checks": [
+        {
+          "name": "调度器心跳",
+          "category": "scheduler",
+          "status": "warn",
+          "summary": "runner 未运行或心跳不可用。",
+          "metrics": {
+            "runner_status": "stopped",
+            "heartbeat_age_seconds": 270166,
+            "cycle_count": 10,
+            "failed_rate": 0.0,
+            "offline_rate": 0.0,
+            "quarantined_device_count": 0
+          },
+          "details": {
+            "last_heartbeat_at": "2025-07-26 18:41:05.996211",
+            "started_at": "2025-07-26 17:40:33.508428",
+            "stopped_reason": "max_iterations_reached",
+            "lock_state": "released"
+          },
+          "recommended_action": "如心跳 stale，先确认旧 runner 进程是否仍存活，再重启后台巡检。"
+        },
+        {
+          "name": "ADB 与设备池",
+          "category": "device_adb",
+          "status": "warn",
+          "summary": "设备在线率偏低。",
+          "metrics": {
+            "device_count": 7,
+            "online_device_count": 1,
+            "schedulable_device_count": 1,
+            "quarantined_device_count": 0,
+            "device_online_rate": 0.1429,
+            "device_schedulable_rate": 0.1429
+          },
+          "details": {
+            "device_ids": [
+              "192.168.31.101:38431",
+              "192.168.31.101:38835",
+              "192.168.31.161:38393",
+              "192.168.31.99:5555",
+              "AFQJVB2211008014",
+              "adb-AYYHUT5909003601-gC7bZo._adb-tls-connect._tcp",
+              "dev-a"
+            ]
+          },
+          "recommended_action": "无可调度设备时，先在设备池刷新 ADB 或重新连接无线调试设备。"
+        },
+        {
+          "name": "任务与 Run 失败率",
+          "category": "execution",
+          "status": "warn",
+          "summary": "最近执行存在失败，需要查看 Run 详情。",
+          "metrics": {
+            "task_count": 31,
+            "run_count": 60,
+            "terminal_run_count": 56,
+            "failed_run_count": 18,
+            "run_failure_rate": 0.3214,
+            "instance_count": 64,
+            "failed_instance_count": 18,
+            "instance_failure_rate": 0.2812,
+            "adb_failure_count": 11,
+            "adb_failure_rate": 0.1719
+          },
+          "details": {},
+          "recommended_action": "失败率升高时，先按 Run 详情确认是设备离线、模板失败还是应用问题。"
+        },
+        {
+          "name": "证据与报告抓取",
+          "category": "artifact_report",
+          "status": "warn",
+          "summary": "存在证据抓取失败或报告缺失。",
+          "metrics": {
+            "instance_count": 64,
+            "artifact_count": 33,
+            "artifact_failed_count": 0,
+            "artifact_failure_rate": 0.0,
+            "report_missing_count": 10,
+            "report_missing_rate": 0.1562
+          },
+          "details": {},
+          "recommended_action": "报告缺失时优先查看 instance summary 和 artifact capture errors。"
+        },
+        {
+          "name": "集成 Outbox",
+          "category": "outbox",
+          "status": "warn",
+          "summary": "outbox 存在重试或死信事件。",
+          "metrics": {
+            "event_count": 97,
+            "pending_count": 82,
+            "retrying_count": 5,
+            "delivered_count": 10,
+            "dead_letter_count": 0,
+            "worker_status": "idle",
+            "worker_failed_count": 10
+          },
+          "details": {
+            "delivery_status_counts": {
+              "pending": 82,
+              "delivered": 10,
+              "retry_pending": 5
+            }
+          },
+          "recommended_action": "死信不应静默堆积；先查看 /integration 的 dead-letter 和 worker 日志。"
+        }
+      ],
+      "readiness": {
+        "ok": true,
+        "required_checks": [
+          "scheduler",
+          "device_adb",
+          "execution",
+          "artifact_report",
+          "outbox"
+        ],
+        "failed_checks": [],
+        "warning_checks": [
+          "scheduler",
+          "device_adb",
+          "execution",
+          "artifact_report",
+          "outbox"
+        ],
+        "skipped_checks": []
+      },
+      "trends": {
+        "history_count": 14,
+        "last_status": "degraded",
+        "last_generated_at": "2025-07-29 21:43:46.776834"
+      },
+      "links": {
+        "api": "/api/platform-health",
+        "doctor": "/doctor",
+        "runner": "/runner",
+        "ready": "/ready",
+        "health": "/health"
+      },
+      "history": [],
+      "storage": {
+        "snapshot_path": "runtime/platform_health/snapshots.json"
+      }
+    },
+    {
+      "contract_version": "asl.platform_health.v1",
+      "generated_at": "2025-07-29 21:43:52.799470",
+      "ok": true,
+      "status": "degraded",
+      "severity": "warn",
+      "summary": {
+        "status": "degraded",
+        "severity": "warn",
+        "ok_count": 0,
+        "warn_count": 5,
+        "fail_count": 0,
+        "skipped_count": 0,
+        "check_count": 5
+      },
+      "checks": [
+        {
+          "name": "调度器心跳",
+          "category": "scheduler",
+          "status": "warn",
+          "summary": "runner 未运行或心跳不可用。",
+          "metrics": {
+            "runner_status": "stopped",
+            "heartbeat_age_seconds": 270166,
+            "cycle_count": 10,
+            "failed_rate": 0.0,
+            "offline_rate": 0.0,
+            "quarantined_device_count": 0
+          },
+          "details": {
+            "last_heartbeat_at": "2025-07-26 18:41:05.996211",
+            "started_at": "2025-07-26 17:40:33.508428",
+            "stopped_reason": "max_iterations_reached",
+            "lock_state": "released"
+          },
+          "recommended_action": "如心跳 stale，先确认旧 runner 进程是否仍存活，再重启后台巡检。"
+        },
+        {
+          "name": "ADB 与设备池",
+          "category": "device_adb",
+          "status": "warn",
+          "summary": "设备在线率偏低。",
+          "metrics": {
+            "device_count": 7,
+            "online_device_count": 1,
+            "schedulable_device_count": 1,
+            "quarantined_device_count": 0,
+            "device_online_rate": 0.1429,
+            "device_schedulable_rate": 0.1429
+          },
+          "details": {
+            "device_ids": [
+              "192.168.31.101:38431",
+              "192.168.31.101:38835",
+              "192.168.31.161:38393",
+              "192.168.31.99:5555",
+              "AFQJVB2211008014",
+              "adb-AYYHUT5909003601-gC7bZo._adb-tls-connect._tcp",
+              "dev-a"
+            ]
+          },
+          "recommended_action": "无可调度设备时，先在设备池刷新 ADB 或重新连接无线调试设备。"
+        },
+        {
+          "name": "任务与 Run 失败率",
+          "category": "execution",
+          "status": "warn",
+          "summary": "最近执行存在失败，需要查看 Run 详情。",
+          "metrics": {
+            "task_count": 31,
+            "run_count": 60,
+            "terminal_run_count": 56,
+            "failed_run_count": 18,
+            "run_failure_rate": 0.3214,
+            "instance_count": 64,
+            "failed_instance_count": 18,
+            "instance_failure_rate": 0.2812,
+            "adb_failure_count": 11,
+            "adb_failure_rate": 0.1719
+          },
+          "details": {},
+          "recommended_action": "失败率升高时，先按 Run 详情确认是设备离线、模板失败还是应用问题。"
+        },
+        {
+          "name": "证据与报告抓取",
+          "category": "artifact_report",
+          "status": "warn",
+          "summary": "存在证据抓取失败或报告缺失。",
+          "metrics": {
+            "instance_count": 64,
+            "artifact_count": 33,
+            "artifact_failed_count": 0,
+            "artifact_failure_rate": 0.0,
+            "report_missing_count": 10,
+            "report_missing_rate": 0.1562
+          },
+          "details": {},
+          "recommended_action": "报告缺失时优先查看 instance summary 和 artifact capture errors。"
+        },
+        {
+          "name": "集成 Outbox",
+          "category": "outbox",
+          "status": "warn",
+          "summary": "outbox 存在重试或死信事件。",
+          "metrics": {
+            "event_count": 97,
+            "pending_count": 82,
+            "retrying_count": 5,
+            "delivered_count": 10,
+            "dead_letter_count": 0,
+            "worker_status": "idle",
+            "worker_failed_count": 10
+          },
+          "details": {
+            "delivery_status_counts": {
+              "pending": 82,
+              "delivered": 10,
+              "retry_pending": 5
+            }
+          },
+          "recommended_action": "死信不应静默堆积；先查看 /integration 的 dead-letter 和 worker 日志。"
+        }
+      ],
+      "readiness": {
+        "ok": true,
+        "required_checks": [
+          "scheduler",
+          "device_adb",
+          "execution",
+          "artifact_report",
+          "outbox"
+        ],
+        "failed_checks": [],
+        "warning_checks": [
+          "scheduler",
+          "device_adb",
+          "execution",
+          "artifact_report",
+          "outbox"
+        ],
+        "skipped_checks": []
+      },
+      "trends": {
+        "history_count": 15,
+        "last_status": "degraded",
+        "last_generated_at": "2025-07-29 21:43:52.387562"
+      },
+      "links": {
+        "api": "/api/platform-health",
+        "doctor": "/doctor",
+        "runner": "/runner",
+        "ready": "/ready",
+        "health": "/health"
+      },
+      "history": [],
+      "storage": {
+        "snapshot_path": "runtime/platform_health/snapshots.json"
+      }
+    },
+    {
+      "contract_version": "asl.platform_health.v1",
+      "generated_at": "2025-07-29 21:45:41.963458",
+      "ok": true,
+      "status": "degraded",
+      "severity": "warn",
+      "summary": {
+        "status": "degraded",
+        "severity": "warn",
+        "ok_count": 0,
+        "warn_count": 5,
+        "fail_count": 0,
+        "skipped_count": 0,
+        "check_count": 5
+      },
+      "checks": [
+        {
+          "name": "调度器心跳",
+          "category": "scheduler",
+          "status": "warn",
+          "summary": "runner 未运行或心跳不可用。",
+          "metrics": {
+            "runner_status": "stopped",
+            "heartbeat_age_seconds": 23943875,
+            "cycle_count": 10,
+            "failed_rate": 0.0,
+            "offline_rate": 0.0,
+            "quarantined_device_count": 0
+          },
+          "details": {
+            "last_heartbeat_at": "2025-07-26 18:41:05.996211",
+            "started_at": "2025-07-26 17:40:33.508428",
+            "stopped_reason": "max_iterations_reached",
+            "lock_state": "released"
+          },
+          "recommended_action": "如心跳 stale，先确认旧 runner 进程是否仍存活，再重启后台巡检。"
+        },
+        {
+          "name": "ADB 与设备池",
+          "category": "device_adb",
+          "status": "warn",
+          "summary": "设备在线率偏低。",
+          "metrics": {
+            "device_count": 7,
+            "online_device_count": 1,
+            "schedulable_device_count": 1,
+            "quarantined_device_count": 0,
+            "device_online_rate": 0.1429,
+            "device_schedulable_rate": 0.1429
+          },
+          "details": {
+            "device_ids": [
+              "192.168.31.101:38431",
+              "192.168.31.101:38835",
+              "192.168.31.161:38393",
+              "192.168.31.99:5555",
+              "AFQJVB2211008014",
+              "adb-AYYHUT5909003601-gC7bZo._adb-tls-connect._tcp",
+              "dev-a"
+            ]
+          },
+          "recommended_action": "无可调度设备时，先在设备池刷新 ADB 或重新连接无线调试设备。"
+        },
+        {
+          "name": "任务与 Run 失败率",
+          "category": "execution",
+          "status": "warn",
+          "summary": "最近执行存在失败，需要查看 Run 详情。",
+          "metrics": {
+            "task_count": 31,
+            "run_count": 60,
+            "terminal_run_count": 56,
+            "failed_run_count": 18,
+            "run_failure_rate": 0.3214,
+            "instance_count": 64,
+            "failed_instance_count": 18,
+            "instance_failure_rate": 0.2812,
+            "adb_failure_count": 11,
+            "adb_failure_rate": 0.1719
+          },
+          "details": {},
+          "recommended_action": "失败率升高时，先按 Run 详情确认是设备离线、模板失败还是应用问题。"
+        },
+        {
+          "name": "证据与报告抓取",
+          "category": "artifact_report",
+          "status": "warn",
+          "summary": "存在证据抓取失败或报告缺失。",
+          "metrics": {
+            "instance_count": 64,
+            "artifact_count": 33,
+            "artifact_failed_count": 0,
+            "artifact_failure_rate": 0.0,
+            "report_missing_count": 10,
+            "report_missing_rate": 0.1562
+          },
+          "details": {},
+          "recommended_action": "报告缺失时优先查看 instance summary 和 artifact capture errors。"
+        },
+        {
+          "name": "集成 Outbox",
+          "category": "outbox",
+          "status": "warn",
+          "summary": "outbox 存在重试或死信事件。",
+          "metrics": {
+            "event_count": 97,
+            "pending_count": 82,
+            "retrying_count": 5,
+            "delivered_count": 10,
+            "dead_letter_count": 0,
+            "worker_status": "idle",
+            "worker_failed_count": 10
+          },
+          "details": {
+            "delivery_status_counts": {
+              "pending": 82,
+              "delivered": 10,
+              "retry_pending": 5
+            }
+          },
+          "recommended_action": "死信不应静默堆积；先查看 /integration 的 dead-letter 和 worker 日志。"
+        }
+      ],
+      "readiness": {
+        "ok": true,
+        "required_checks": [
+          "scheduler",
+          "device_adb",
+          "execution",
+          "artifact_report",
+          "outbox"
+        ],
+        "failed_checks": [],
+        "warning_checks": [
+          "scheduler",
+          "device_adb",
+          "execution",
+          "artifact_report",
+          "outbox"
+        ],
+        "skipped_checks": []
+      },
+      "trends": {
+        "history_count": 16,
+        "last_status": "degraded",
+        "last_generated_at": "2025-07-29 21:43:52.799470"
+      },
+      "links": {
+        "api": "/api/platform-health",
+        "doctor": "/doctor",
+        "runner": "/runner",
+        "ready": "/ready",
+        "health": "/health"
+      },
+      "history": [],
+      "storage": {
+        "snapshot_path": "runtime/platform_health/snapshots.json"
+      }
+    },
+    {
+      "contract_version": "asl.platform_health.v1",
+      "generated_at": "2025-07-29 21:45:55.165799",
+      "ok": true,
+      "status": "degraded",
+      "severity": "warn",
+      "summary": {
+        "status": "degraded",
+        "severity": "warn",
+        "ok_count": 0,
+        "warn_count": 5,
+        "fail_count": 0,
+        "skipped_count": 0,
+        "check_count": 5
+      },
+      "checks": [
+        {
+          "name": "调度器心跳",
+          "category": "scheduler",
+          "status": "warn",
+          "summary": "runner 未运行或心跳不可用。",
+          "metrics": {
+            "runner_status": "stopped",
+            "heartbeat_age_seconds": 23943889,
+            "cycle_count": 10,
+            "failed_rate": 0.0,
+            "offline_rate": 0.0,
+            "quarantined_device_count": 0
+          },
+          "details": {
+            "last_heartbeat_at": "2025-07-26 18:41:05.996211",
+            "started_at": "2025-07-26 17:40:33.508428",
+            "stopped_reason": "max_iterations_reached",
+            "lock_state": "released"
+          },
+          "recommended_action": "如心跳 stale，先确认旧 runner 进程是否仍存活，再重启后台巡检。"
+        },
+        {
+          "name": "ADB 与设备池",
+          "category": "device_adb",
+          "status": "warn",
+          "summary": "设备在线率偏低。",
+          "metrics": {
+            "device_count": 7,
+            "online_device_count": 1,
+            "schedulable_device_count": 1,
+            "quarantined_device_count": 0,
+            "device_online_rate": 0.1429,
+            "device_schedulable_rate": 0.1429
+          },
+          "details": {
+            "device_ids": [
+              "192.168.31.101:38431",
+              "192.168.31.101:38835",
+              "192.168.31.161:38393",
+              "192.168.31.99:5555",
+              "AFQJVB2211008014",
+              "adb-AYYHUT5909003601-gC7bZo._adb-tls-connect._tcp",
+              "dev-a"
+            ]
+          },
+          "recommended_action": "无可调度设备时，先在设备池刷新 ADB 或重新连接无线调试设备。"
+        },
+        {
+          "name": "任务与 Run 失败率",
+          "category": "execution",
+          "status": "warn",
+          "summary": "最近执行存在失败，需要查看 Run 详情。",
+          "metrics": {
+            "task_count": 31,
+            "run_count": 60,
+            "terminal_run_count": 56,
+            "failed_run_count": 18,
+            "run_failure_rate": 0.3214,
+            "instance_count": 64,
+            "failed_instance_count": 18,
+            "instance_failure_rate": 0.2812,
+            "adb_failure_count": 11,
+            "adb_failure_rate": 0.1719
+          },
+          "details": {},
+          "recommended_action": "失败率升高时，先按 Run 详情确认是设备离线、模板失败还是应用问题。"
+        },
+        {
+          "name": "证据与报告抓取",
+          "category": "artifact_report",
+          "status": "warn",
+          "summary": "存在证据抓取失败或报告缺失。",
+          "metrics": {
+            "instance_count": 64,
+            "artifact_count": 33,
+            "artifact_failed_count": 0,
+            "artifact_failure_rate": 0.0,
+            "report_missing_count": 10,
+            "report_missing_rate": 0.1562
+          },
+          "details": {},
+          "recommended_action": "报告缺失时优先查看 instance summary 和 artifact capture errors。"
+        },
+        {
+          "name": "集成 Outbox",
+          "category": "outbox",
+          "status": "warn",
+          "summary": "outbox 存在重试或死信事件。",
+          "metrics": {
+            "event_count": 97,
+            "pending_count": 82,
+            "retrying_count": 5,
+            "delivered_count": 10,
+            "dead_letter_count": 0,
+            "worker_status": "idle",
+            "worker_failed_count": 10
+          },
+          "details": {
+            "delivery_status_counts": {
+              "pending": 82,
+              "delivered": 10,
+              "retry_pending": 5
+            }
+          },
+          "recommended_action": "死信不应静默堆积；先查看 /integration 的 dead-letter 和 worker 日志。"
+        }
+      ],
+      "readiness": {
+        "ok": true,
+        "required_checks": [
+          "scheduler",
+          "device_adb",
+          "execution",
+          "artifact_report",
+          "outbox"
+        ],
+        "failed_checks": [],
+        "warning_checks": [
+          "scheduler",
+          "device_adb",
+          "execution",
+          "artifact_report",
+          "outbox"
+        ],
+        "skipped_checks": []
+      },
+      "trends": {
+        "history_count": 17,
+        "last_status": "degraded",
+        "last_generated_at": "2025-07-29 21:45:41.963458"
+      },
+      "links": {
+        "api": "/api/platform-health",
+        "doctor": "/doctor",
+        "runner": "/runner",
+        "ready": "/ready",
+        "health": "/health"
+      },
+      "history": [],
+      "storage": {
+        "snapshot_path": "runtime/platform_health/snapshots.json"
+      }
+    },
+    {
+      "contract_version": "asl.platform_health.v1",
+      "generated_at": "2025-07-29 21:46:04.103405",
+      "ok": true,
+      "status": "degraded",
+      "severity": "warn",
+      "summary": {
+        "status": "degraded",
+        "severity": "warn",
+        "ok_count": 0,
+        "warn_count": 5,
+        "fail_count": 0,
+        "skipped_count": 0,
+        "check_count": 5
+      },
+      "checks": [
+        {
+          "name": "调度器心跳",
+          "category": "scheduler",
+          "status": "warn",
+          "summary": "runner 未运行或心跳不可用。",
+          "metrics": {
+            "runner_status": "stopped",
+            "heartbeat_age_seconds": 23943898,
+            "cycle_count": 10,
+            "failed_rate": 0.0,
+            "offline_rate": 0.0,
+            "quarantined_device_count": 0
+          },
+          "details": {
+            "last_heartbeat_at": "2025-07-26 18:41:05.996211",
+            "started_at": "2025-07-26 17:40:33.508428",
+            "stopped_reason": "max_iterations_reached",
+            "lock_state": "released"
+          },
+          "recommended_action": "如心跳 stale，先确认旧 runner 进程是否仍存活，再重启后台巡检。"
+        },
+        {
+          "name": "ADB 与设备池",
+          "category": "device_adb",
+          "status": "warn",
+          "summary": "设备在线率偏低。",
+          "metrics": {
+            "device_count": 7,
+            "online_device_count": 1,
+            "schedulable_device_count": 1,
+            "quarantined_device_count": 0,
+            "device_online_rate": 0.1429,
+            "device_schedulable_rate": 0.1429
+          },
+          "details": {
+            "device_ids": [
+              "192.168.31.101:38431",
+              "192.168.31.101:38835",
+              "192.168.31.161:38393",
+              "192.168.31.99:5555",
+              "AFQJVB2211008014",
+              "adb-AYYHUT5909003601-gC7bZo._adb-tls-connect._tcp",
+              "dev-a"
+            ]
+          },
+          "recommended_action": "无可调度设备时，先在设备池刷新 ADB 或重新连接无线调试设备。"
+        },
+        {
+          "name": "任务与 Run 失败率",
+          "category": "execution",
+          "status": "warn",
+          "summary": "最近执行存在失败，需要查看 Run 详情。",
+          "metrics": {
+            "task_count": 31,
+            "run_count": 60,
+            "terminal_run_count": 56,
+            "failed_run_count": 18,
+            "run_failure_rate": 0.3214,
+            "instance_count": 64,
+            "failed_instance_count": 18,
+            "instance_failure_rate": 0.2812,
+            "adb_failure_count": 11,
+            "adb_failure_rate": 0.1719
+          },
+          "details": {},
+          "recommended_action": "失败率升高时，先按 Run 详情确认是设备离线、模板失败还是应用问题。"
+        },
+        {
+          "name": "证据与报告抓取",
+          "category": "artifact_report",
+          "status": "warn",
+          "summary": "存在证据抓取失败或报告缺失。",
+          "metrics": {
+            "instance_count": 64,
+            "artifact_count": 33,
+            "artifact_failed_count": 0,
+            "artifact_failure_rate": 0.0,
+            "report_missing_count": 10,
+            "report_missing_rate": 0.1562
+          },
+          "details": {},
+          "recommended_action": "报告缺失时优先查看 instance summary 和 artifact capture errors。"
+        },
+        {
+          "name": "集成 Outbox",
+          "category": "outbox",
+          "status": "warn",
+          "summary": "outbox 存在重试或死信事件。",
+          "metrics": {
+            "event_count": 97,
+            "pending_count": 82,
+            "retrying_count": 5,
+            "delivered_count": 10,
+            "dead_letter_count": 0,
+            "worker_status": "idle",
+            "worker_failed_count": 10
+          },
+          "details": {
+            "delivery_status_counts": {
+              "pending": 82,
+              "delivered": 10,
+              "retry_pending": 5
+            }
+          },
+          "recommended_action": "死信不应静默堆积；先查看 /integration 的 dead-letter 和 worker 日志。"
+        }
+      ],
+      "readiness": {
+        "ok": true,
+        "required_checks": [
+          "scheduler",
+          "device_adb",
+          "execution",
+          "artifact_report",
+          "outbox"
+        ],
+        "failed_checks": [],
+        "warning_checks": [
+          "scheduler",
+          "device_adb",
+          "execution",
+          "artifact_report",
+          "outbox"
+        ],
+        "skipped_checks": []
+      },
+      "trends": {
+        "history_count": 18,
+        "last_status": "degraded",
+        "last_generated_at": "2025-07-29 21:45:55.165799"
+      },
+      "links": {
+        "api": "/api/platform-health",
+        "doctor": "/doctor",
+        "runner": "/runner",
+        "ready": "/ready",
+        "health": "/health"
+      },
+      "history": [],
+      "storage": {
+        "snapshot_path": "runtime/platform_health/snapshots.json"
+      }
+    },
+    {
+      "contract_version": "asl.platform_health.v1",
+      "generated_at": "2026-04-29 22:24:16.808861",
+      "ok": true,
+      "status": "degraded",
+      "severity": "warn",
+      "summary": {
+        "status": "degraded",
+        "severity": "warn",
+        "ok_count": 0,
+        "warn_count": 5,
+        "fail_count": 0,
+        "skipped_count": 0,
+        "check_count": 5
+      },
+      "checks": [
+        {
+          "name": "调度器心跳",
+          "category": "scheduler",
+          "status": "warn",
+          "summary": "runner 未运行或心跳不可用。",
+          "metrics": {
+            "runner_status": "stopped",
+            "heartbeat_age_seconds": 23946190,
+            "cycle_count": 10,
+            "failed_rate": 0.0,
+            "offline_rate": 0.0,
+            "quarantined_device_count": 0
+          },
+          "details": {
+            "last_heartbeat_at": "2025-07-26 18:41:05.996211",
+            "started_at": "2025-07-26 17:40:33.508428",
+            "stopped_reason": "max_iterations_reached",
+            "lock_state": "released"
+          },
+          "recommended_action": "如心跳 stale，先确认旧 runner 进程是否仍存活，再重启后台巡检。"
+        },
+        {
+          "name": "ADB 与设备池",
+          "category": "device_adb",
+          "status": "warn",
+          "summary": "设备在线率偏低。",
+          "metrics": {
+            "device_count": 7,
+            "online_device_count": 1,
+            "schedulable_device_count": 1,
+            "quarantined_device_count": 0,
+            "device_online_rate": 0.1429,
+            "device_schedulable_rate": 0.1429
+          },
+          "details": {
+            "device_ids": [
+              "192.168.31.101:38431",
+              "192.168.31.101:38835",
+              "192.168.31.161:38393",
+              "192.168.31.99:5555",
+              "AFQJVB2211008014",
+              "adb-AYYHUT5909003601-gC7bZo._adb-tls-connect._tcp",
+              "dev-a"
+            ]
+          },
+          "recommended_action": "无可调度设备时，先在设备池刷新 ADB 或重新连接无线调试设备。"
+        },
+        {
+          "name": "任务与 Run 失败率",
+          "category": "execution",
+          "status": "warn",
+          "summary": "最近执行存在失败，需要查看 Run 详情。",
+          "metrics": {
+            "task_count": 31,
+            "run_count": 60,
+            "terminal_run_count": 56,
+            "failed_run_count": 18,
+            "run_failure_rate": 0.3214,
+            "instance_count": 64,
+            "failed_instance_count": 18,
+            "instance_failure_rate": 0.2812,
+            "adb_failure_count": 11,
+            "adb_failure_rate": 0.1719
+          },
+          "details": {},
+          "recommended_action": "失败率升高时，先按 Run 详情确认是设备离线、模板失败还是应用问题。"
+        },
+        {
+          "name": "证据与报告抓取",
+          "category": "artifact_report",
+          "status": "warn",
+          "summary": "存在证据抓取失败或报告缺失。",
+          "metrics": {
+            "instance_count": 64,
+            "artifact_count": 33,
+            "artifact_failed_count": 0,
+            "artifact_failure_rate": 0.0,
+            "report_missing_count": 10,
+            "report_missing_rate": 0.1562
+          },
+          "details": {},
+          "recommended_action": "报告缺失时优先查看 instance summary 和 artifact capture errors。"
+        },
+        {
+          "name": "集成 Outbox",
+          "category": "outbox",
+          "status": "warn",
+          "summary": "outbox 存在重试或死信事件。",
+          "metrics": {
+            "event_count": 97,
+            "pending_count": 82,
+            "retrying_count": 5,
+            "delivered_count": 10,
+            "dead_letter_count": 0,
+            "worker_status": "idle",
+            "worker_failed_count": 10
+          },
+          "details": {
+            "delivery_status_counts": {
+              "pending": 82,
+              "delivered": 10,
+              "retry_pending": 5
+            }
+          },
+          "recommended_action": "死信不应静默堆积；先查看 /integration 的 dead-letter 和 worker 日志。"
+        }
+      ],
+      "readiness": {
+        "ok": true,
+        "required_checks": [
+          "scheduler",
+          "device_adb",
+          "execution",
+          "artifact_report",
+          "outbox"
+        ],
+        "failed_checks": [],
+        "warning_checks": [
+          "scheduler",
+          "device_adb",
+          "execution",
+          "artifact_report",
+          "outbox"
+        ],
+        "skipped_checks": []
+      },
+      "trends": {
+        "history_count": 19,
+        "last_status": "degraded",
+        "last_generated_at": "2025-07-29 21:46:04.103405"
+      },
+      "links": {
+        "api": "/api/platform-health",
+        "doctor": "/doctor",
+        "runner": "/runner",
+        "ready": "/ready",
+        "health": "/health"
+      },
+      "history": [],
+      "storage": {
+        "snapshot_path": "runtime/platform_health/snapshots.json"
+      }
+    },
+    {
+      "contract_version": "asl.platform_health.v1",
+      "generated_at": "2026-04-29 22:24:18.683656",
+      "ok": true,
+      "status": "degraded",
+      "severity": "warn",
+      "summary": {
+        "status": "degraded",
+        "severity": "warn",
+        "ok_count": 0,
+        "warn_count": 5,
+        "fail_count": 0,
+        "skipped_count": 0,
+        "check_count": 5
+      },
+      "checks": [
+        {
+          "name": "调度器心跳",
+          "category": "scheduler",
+          "status": "warn",
+          "summary": "runner 未运行或心跳不可用。",
+          "metrics": {
+            "runner_status": "stopped",
+            "heartbeat_age_seconds": 23946192,
+            "cycle_count": 10,
+            "failed_rate": 0.0,
+            "offline_rate": 0.0,
+            "quarantined_device_count": 0
+          },
+          "details": {
+            "last_heartbeat_at": "2025-07-26 18:41:05.996211",
+            "started_at": "2025-07-26 17:40:33.508428",
+            "stopped_reason": "max_iterations_reached",
+            "lock_state": "released"
+          },
+          "recommended_action": "如心跳 stale，先确认旧 runner 进程是否仍存活，再重启后台巡检。"
+        },
+        {
+          "name": "ADB 与设备池",
+          "category": "device_adb",
+          "status": "warn",
+          "summary": "设备在线率偏低。",
+          "metrics": {
+            "device_count": 7,
+            "online_device_count": 1,
+            "schedulable_device_count": 1,
+            "quarantined_device_count": 0,
+            "device_online_rate": 0.1429,
+            "device_schedulable_rate": 0.1429
+          },
+          "details": {
+            "device_ids": [
+              "192.168.31.101:38431",
+              "192.168.31.101:38835",
+              "192.168.31.161:38393",
+              "192.168.31.99:5555",
+              "AFQJVB2211008014",
+              "adb-AYYHUT5909003601-gC7bZo._adb-tls-connect._tcp",
+              "dev-a"
+            ]
+          },
+          "recommended_action": "无可调度设备时，先在设备池刷新 ADB 或重新连接无线调试设备。"
+        },
+        {
+          "name": "任务与 Run 失败率",
+          "category": "execution",
+          "status": "warn",
+          "summary": "最近执行存在失败，需要查看 Run 详情。",
+          "metrics": {
+            "task_count": 31,
+            "run_count": 60,
+            "terminal_run_count": 56,
+            "failed_run_count": 18,
+            "run_failure_rate": 0.3214,
+            "instance_count": 64,
+            "failed_instance_count": 18,
+            "instance_failure_rate": 0.2812,
+            "adb_failure_count": 11,
+            "adb_failure_rate": 0.1719
+          },
+          "details": {},
+          "recommended_action": "失败率升高时，先按 Run 详情确认是设备离线、模板失败还是应用问题。"
+        },
+        {
+          "name": "证据与报告抓取",
+          "category": "artifact_report",
+          "status": "warn",
+          "summary": "存在证据抓取失败或报告缺失。",
+          "metrics": {
+            "instance_count": 64,
+            "artifact_count": 33,
+            "artifact_failed_count": 0,
+            "artifact_failure_rate": 0.0,
+            "report_missing_count": 10,
+            "report_missing_rate": 0.1562
+          },
+          "details": {},
+          "recommended_action": "报告缺失时优先查看 instance summary 和 artifact capture errors。"
+        },
+        {
+          "name": "集成 Outbox",
+          "category": "outbox",
+          "status": "warn",
+          "summary": "outbox 存在重试或死信事件。",
+          "metrics": {
+            "event_count": 98,
+            "pending_count": 83,
+            "retrying_count": 5,
+            "delivered_count": 10,
+            "dead_letter_count": 0,
+            "worker_status": "idle",
+            "worker_failed_count": 10
+          },
+          "details": {
+            "delivery_status_counts": {
+              "pending": 83,
+              "delivered": 10,
+              "retry_pending": 5
+            }
+          },
+          "recommended_action": "死信不应静默堆积；先查看 /integration 的 dead-letter 和 worker 日志。"
+        }
+      ],
+      "readiness": {
+        "ok": true,
+        "required_checks": [
+          "scheduler",
+          "device_adb",
+          "execution",
+          "artifact_report",
+          "outbox"
+        ],
+        "failed_checks": [],
+        "warning_checks": [
+          "scheduler",
+          "device_adb",
+          "execution",
+          "artifact_report",
+          "outbox"
+        ],
+        "skipped_checks": []
+      },
+      "trends": {
+        "history_count": 20,
+        "last_status": "degraded",
+        "last_generated_at": "2026-04-29 22:24:16.808861"
+      },
+      "links": {
+        "api": "/api/platform-health",
+        "doctor": "/doctor",
+        "runner": "/runner",
+        "ready": "/ready",
+        "health": "/health"
+      },
+      "history": [],
+      "storage": {
+        "snapshot_path": "runtime/platform_health/snapshots.json"
+      }
+    },
+    {
+      "contract_version": "asl.platform_health.v1",
+      "generated_at": "2026-04-29 22:24:18.882241",
+      "ok": true,
+      "status": "degraded",
+      "severity": "warn",
+      "summary": {
+        "status": "degraded",
+        "severity": "warn",
+        "ok_count": 0,
+        "warn_count": 5,
+        "fail_count": 0,
+        "skipped_count": 0,
+        "check_count": 5
+      },
+      "checks": [
+        {
+          "name": "调度器心跳",
+          "category": "scheduler",
+          "status": "warn",
+          "summary": "runner 未运行或心跳不可用。",
+          "metrics": {
+            "runner_status": "stopped",
+            "heartbeat_age_seconds": 23946192,
+            "cycle_count": 10,
+            "failed_rate": 0.0,
+            "offline_rate": 0.0,
+            "quarantined_device_count": 0
+          },
+          "details": {
+            "last_heartbeat_at": "2025-07-26 18:41:05.996211",
+            "started_at": "2025-07-26 17:40:33.508428",
+            "stopped_reason": "max_iterations_reached",
+            "lock_state": "released"
+          },
+          "recommended_action": "如心跳 stale，先确认旧 runner 进程是否仍存活，再重启后台巡检。"
+        },
+        {
+          "name": "ADB 与设备池",
+          "category": "device_adb",
+          "status": "warn",
+          "summary": "设备在线率偏低。",
+          "metrics": {
+            "device_count": 7,
+            "online_device_count": 1,
+            "schedulable_device_count": 1,
+            "quarantined_device_count": 0,
+            "device_online_rate": 0.1429,
+            "device_schedulable_rate": 0.1429
+          },
+          "details": {
+            "device_ids": [
+              "192.168.31.101:38431",
+              "192.168.31.101:38835",
+              "192.168.31.161:38393",
+              "192.168.31.99:5555",
+              "AFQJVB2211008014",
+              "adb-AYYHUT5909003601-gC7bZo._adb-tls-connect._tcp",
+              "dev-a"
+            ]
+          },
+          "recommended_action": "无可调度设备时，先在设备池刷新 ADB 或重新连接无线调试设备。"
+        },
+        {
+          "name": "任务与 Run 失败率",
+          "category": "execution",
+          "status": "warn",
+          "summary": "最近执行存在失败，需要查看 Run 详情。",
+          "metrics": {
+            "task_count": 31,
+            "run_count": 60,
+            "terminal_run_count": 56,
+            "failed_run_count": 18,
+            "run_failure_rate": 0.3214,
+            "instance_count": 64,
+            "failed_instance_count": 18,
+            "instance_failure_rate": 0.2812,
+            "adb_failure_count": 11,
+            "adb_failure_rate": 0.1719
+          },
+          "details": {},
+          "recommended_action": "失败率升高时，先按 Run 详情确认是设备离线、模板失败还是应用问题。"
+        },
+        {
+          "name": "证据与报告抓取",
+          "category": "artifact_report",
+          "status": "warn",
+          "summary": "存在证据抓取失败或报告缺失。",
+          "metrics": {
+            "instance_count": 64,
+            "artifact_count": 33,
+            "artifact_failed_count": 0,
+            "artifact_failure_rate": 0.0,
+            "report_missing_count": 10,
+            "report_missing_rate": 0.1562
+          },
+          "details": {},
+          "recommended_action": "报告缺失时优先查看 instance summary 和 artifact capture errors。"
+        },
+        {
+          "name": "集成 Outbox",
+          "category": "outbox",
+          "status": "warn",
+          "summary": "outbox 存在重试或死信事件。",
+          "metrics": {
+            "event_count": 98,
+            "pending_count": 83,
+            "retrying_count": 5,
+            "delivered_count": 10,
+            "dead_letter_count": 0,
+            "worker_status": "idle",
+            "worker_failed_count": 10
+          },
+          "details": {
+            "delivery_status_counts": {
+              "pending": 83,
+              "delivered": 10,
+              "retry_pending": 5
+            }
+          },
+          "recommended_action": "死信不应静默堆积；先查看 /integration 的 dead-letter 和 worker 日志。"
+        }
+      ],
+      "readiness": {
+        "ok": true,
+        "required_checks": [
+          "scheduler",
+          "device_adb",
+          "execution",
+          "artifact_report",
+          "outbox"
+        ],
+        "failed_checks": [],
+        "warning_checks": [
+          "scheduler",
+          "device_adb",
+          "execution",
+          "artifact_report",
+          "outbox"
+        ],
+        "skipped_checks": []
+      },
+      "trends": {
+        "history_count": 21,
+        "last_status": "degraded",
+        "last_generated_at": "2026-04-29 22:24:18.683656"
+      },
+      "links": {
+        "api": "/api/platform-health",
+        "doctor": "/doctor",
+        "runner": "/runner",
+        "ready": "/ready",
+        "health": "/health"
+      },
+      "history": [],
+      "storage": {
+        "snapshot_path": "runtime/platform_health/snapshots.json"
+      }
+    },
+    {
+      "contract_version": "asl.platform_health.v1",
+      "generated_at": "2026-04-29 22:24:30.536708",
+      "ok": true,
+      "status": "degraded",
+      "severity": "warn",
+      "summary": {
+        "status": "degraded",
+        "severity": "warn",
+        "ok_count": 0,
+        "warn_count": 5,
+        "fail_count": 0,
+        "skipped_count": 0,
+        "check_count": 5
+      },
+      "checks": [
+        {
+          "name": "调度器心跳",
+          "category": "scheduler",
+          "status": "warn",
+          "summary": "runner 未运行或心跳不可用。",
+          "metrics": {
+            "runner_status": "stopped",
+            "heartbeat_age_seconds": 23946204,
+            "cycle_count": 10,
+            "failed_rate": 0.0,
+            "offline_rate": 0.0,
+            "quarantined_device_count": 0
+          },
+          "details": {
+            "last_heartbeat_at": "2025-07-26 18:41:05.996211",
+            "started_at": "2025-07-26 17:40:33.508428",
+            "stopped_reason": "max_iterations_reached",
+            "lock_state": "released"
+          },
+          "recommended_action": "如心跳 stale，先确认旧 runner 进程是否仍存活，再重启后台巡检。"
+        },
+        {
+          "name": "ADB 与设备池",
+          "category": "device_adb",
+          "status": "warn",
+          "summary": "设备在线率偏低。",
+          "metrics": {
+            "device_count": 7,
+            "online_device_count": 1,
+            "schedulable_device_count": 1,
+            "quarantined_device_count": 0,
+            "device_online_rate": 0.1429,
+            "device_schedulable_rate": 0.1429
+          },
+          "details": {
+            "device_ids": [
+              "192.168.31.101:38431",
+              "192.168.31.101:38835",
+              "192.168.31.161:38393",
+              "192.168.31.99:5555",
+              "AFQJVB2211008014",
+              "adb-AYYHUT5909003601-gC7bZo._adb-tls-connect._tcp",
+              "dev-a"
+            ]
+          },
+          "recommended_action": "无可调度设备时，先在设备池刷新 ADB 或重新连接无线调试设备。"
+        },
+        {
+          "name": "任务与 Run 失败率",
+          "category": "execution",
+          "status": "warn",
+          "summary": "最近执行存在失败，需要查看 Run 详情。",
+          "metrics": {
+            "task_count": 31,
+            "run_count": 60,
+            "terminal_run_count": 56,
+            "failed_run_count": 18,
+            "run_failure_rate": 0.3214,
+            "instance_count": 64,
+            "failed_instance_count": 18,
+            "instance_failure_rate": 0.2812,
+            "adb_failure_count": 11,
+            "adb_failure_rate": 0.1719
+          },
+          "details": {},
+          "recommended_action": "失败率升高时，先按 Run 详情确认是设备离线、模板失败还是应用问题。"
+        },
+        {
+          "name": "证据与报告抓取",
+          "category": "artifact_report",
+          "status": "warn",
+          "summary": "存在证据抓取失败或报告缺失。",
+          "metrics": {
+            "instance_count": 64,
+            "artifact_count": 33,
+            "artifact_failed_count": 0,
+            "artifact_failure_rate": 0.0,
+            "report_missing_count": 10,
+            "report_missing_rate": 0.1562
+          },
+          "details": {},
+          "recommended_action": "报告缺失时优先查看 instance summary 和 artifact capture errors。"
+        },
+        {
+          "name": "集成 Outbox",
+          "category": "outbox",
+          "status": "warn",
+          "summary": "outbox 存在重试或死信事件。",
+          "metrics": {
+            "event_count": 98,
+            "pending_count": 83,
+            "retrying_count": 5,
+            "delivered_count": 10,
+            "dead_letter_count": 0,
+            "worker_status": "idle",
+            "worker_failed_count": 10
+          },
+          "details": {
+            "delivery_status_counts": {
+              "pending": 83,
+              "delivered": 10,
+              "retry_pending": 5
+            }
+          },
+          "recommended_action": "死信不应静默堆积；先查看 /integration 的 dead-letter 和 worker 日志。"
+        }
+      ],
+      "readiness": {
+        "ok": true,
+        "required_checks": [
+          "scheduler",
+          "device_adb",
+          "execution",
+          "artifact_report",
+          "outbox"
+        ],
+        "failed_checks": [],
+        "warning_checks": [
+          "scheduler",
+          "device_adb",
+          "execution",
+          "artifact_report",
+          "outbox"
+        ],
+        "skipped_checks": []
+      },
+      "trends": {
+        "history_count": 22,
+        "last_status": "degraded",
+        "last_generated_at": "2026-04-29 22:24:18.882241"
+      },
+      "links": {
+        "api": "/api/platform-health",
+        "doctor": "/doctor",
+        "runner": "/runner",
+        "ready": "/ready",
+        "health": "/health"
+      },
+      "history": [],
+      "storage": {
+        "snapshot_path": "runtime/platform_health/snapshots.json"
+      }
+    }
+  ]
+}

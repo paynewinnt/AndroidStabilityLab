@@ -1,0 +1,7 @@
+[2026-04-19T15:25:23.630686] preparing instance instance_d2df6fd095d54dc988faae1025284fbe
+device=192.168.31.99:5555
+[2026-04-19T15:25:23.645248] instance entered running state
+[2026-04-19T15:25:23.645367] scenario attempt 1/1 started for instance instance_d2df6fd095d54dc988faae1025284fbe
+[cold_start_loop] loop=1 attempt=1 target=com.hihonor.calculator/.Calculator status=ok
+[cold_start_loop] loop=1 attempt=1 wait_time_ms=253 total_time_ms=250 this_time_ms=None
+[cold_start_loop] loop=1 attempt=1 return_code=0 timed_out=False
