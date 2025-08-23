@@ -28,8 +28,8 @@ class AppSelectorWidget(QWidget):
         """初始化UI"""
         layout = QVBoxLayout(self)
         
-        # 创建标题
-        self.create_header(layout)
+        # 不再创建标题
+        # self.create_header(layout)
         
         # 创建主内容区域
         main_layout = QHBoxLayout()
@@ -194,10 +194,31 @@ class AppSelectorWidget(QWidget):
         preset_layout.addLayout(preset_select_layout)
         
         preset_buttons_layout = QHBoxLayout()
+        button_style = """
+            QPushButton {
+                background-color: white;
+                color: #333333;
+                border: 1px solid #dee2e6;
+                padding: 8px 16px;
+                border-radius: 6px;
+                font-weight: 500;
+                min-width: 100px;
+            }
+            QPushButton:hover {
+                background-color: #f8f9fa;
+                border-color: #4a90e2;
+            }
+            QPushButton:pressed {
+                background-color: #e9ecef;
+            }
+        """
+        
         self.save_preset_btn = QPushButton("保存配置")
         self.save_preset_btn.clicked.connect(self.save_preset)
+        self.save_preset_btn.setStyleSheet(button_style)
         self.load_preset_btn = QPushButton("加载配置")
         self.load_preset_btn.clicked.connect(self.load_preset)
+        self.load_preset_btn.setStyleSheet(button_style)
         preset_buttons_layout.addWidget(self.save_preset_btn)
         preset_buttons_layout.addWidget(self.load_preset_btn)
         preset_layout.addLayout(preset_buttons_layout)
@@ -214,6 +235,24 @@ class AppSelectorWidget(QWidget):
         
         self.refresh_btn = QPushButton("刷新应用列表")
         self.refresh_btn.clicked.connect(self.refresh_apps)
+        self.refresh_btn.setStyleSheet("""
+            QPushButton {
+                background-color: white;
+                color: #333333;
+                border: 1px solid #dee2e6;
+                padding: 8px 16px;
+                border-radius: 6px;
+                font-weight: 500;
+                min-width: 100px;
+            }
+            QPushButton:hover {
+                background-color: #f8f9fa;
+                border-color: #4a90e2;
+            }
+            QPushButton:pressed {
+                background-color: #e9ecef;
+            }
+        """)
         button_layout.addWidget(self.refresh_btn)
         
         button_layout.addStretch()
@@ -320,15 +359,6 @@ class AppSelectorWidget(QWidget):
                 padding: 4px;
             }
             
-            QCheckBox::indicator {
-                width: 16px;
-                height: 16px;
-            }
-            
-            QCheckBox::indicator:checked {
-                background-color: #2196F3;
-                border: 1px solid #2196F3;
-            }
             
             QPushButton {
                 border: 1px solid #cccccc;

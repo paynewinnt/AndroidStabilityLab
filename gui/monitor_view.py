@@ -249,7 +249,7 @@ DataCollectionWorker = OptimizedDataCollectionWorker
 
 class MetricDisplayWidget(QWidget):
     """Single metric display component"""
-    def __init__(self, title, unit="", color="#2196F3"):
+    def __init__(self, title, unit="", color="black"):
         super().__init__()
         self.title = title
         self.unit = unit
@@ -281,7 +281,7 @@ class MetricDisplayWidget(QWidget):
         self.current_label = QLabel("0" + self.unit)
         self.current_label.setFont(QFont("Arial", 13, QFont.Bold))  # 恢复较大字体，高度160px足够显示
         self.current_label.setAlignment(Qt.AlignCenter)
-        self.current_label.setStyleSheet(f"color: {self.color}; padding: 0px;")  # 去除padding节省空间
+        self.current_label.setStyleSheet("color: #2c3e50; padding: 0px; font-weight: 600;")  # 去除padding节省空间
         layout.addWidget(self.current_label)
         
         # Statistics in horizontal layout - 水平布局节省垂直空间
@@ -307,7 +307,7 @@ class MetricDisplayWidget(QWidget):
         
         self.max_label = QLabel("0" + self.unit)
         self.max_label.setFont(font_small)
-        self.max_label.setStyleSheet("color: #f44336;")
+        self.max_label.setStyleSheet("color: #e74c3c; font-weight: 500;")
         self.max_label.setMinimumWidth(43)  # 设置数值显示的最小宽度
         max_layout.addWidget(self.max_label)
         
@@ -325,7 +325,7 @@ class MetricDisplayWidget(QWidget):
         
         self.avg_label = QLabel("0" + self.unit)
         self.avg_label.setFont(font_small)
-        self.avg_label.setStyleSheet("color: #ff9800;")
+        self.avg_label.setStyleSheet("color: #f39c12; font-weight: 500;")
         self.avg_label.setMinimumWidth(43)  # 设置数值显示的最小宽度
         avg_layout.addWidget(self.avg_label)
         
@@ -349,22 +349,25 @@ class MetricDisplayWidget(QWidget):
         # Styling
         self.setStyleSheet("""
             QWidget {
-                border: 2px solid #d0d0d0;
-                border-radius: 8px;
+                border: 1px solid #e9ecef;
+                border-radius: 10px;
                 background-color: white;
-                margin: 1px;
+                margin: 2px;
             }
             QLabel {
                 border: none;
                 background-color: transparent;
             }
             QProgressBar {
-                border: 1px solid #ccc;
-                border-radius: 3px;
-                background-color: #f0f0f0;
+                border: 1px solid #dee2e6;
+                border-radius: 4px;
+                background-color: #f8f9fa;
+                text-align: center;
             }
             QProgressBar::chunk {
                 border-radius: 3px;
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                    stop:0 #4a90e2, stop:1 #67b4f5);
             }
         """)
         
@@ -449,6 +452,7 @@ class OptimizedMonitorViewWidget(QWidget):
         self.metric_widgets = {}
         self.chart_widgets = {}
         self.chart_manager = None
+        self.charts_tab_widget = None
         
         # 数据存储相关
         self.current_session_id = None
@@ -778,34 +782,37 @@ class OptimizedMonitorViewWidget(QWidget):
         system_group = QGroupBox("系统性能指标")
         system_group.setStyleSheet("""
             QGroupBox {
-                font-weight: bold;
-                border: 2px solid #cccccc;
-                border-radius: 8px;
-                margin-top: 8px;
-                padding-top: 8px;
+                font-weight: 600;
+                border: 1px solid #e9ecef;
+                border-radius: 10px;
+                margin-top: 10px;
+                padding-top: 10px;
+                background-color: #fafbfc;
             }
             QGroupBox::title {
                 subcontrol-origin: margin;
-                left: 10px;
-                padding: 0 8px 0 8px;
+                left: 15px;
+                padding: 0 10px 0 10px;
+                color: #4a90e2;
+                font-size: 14px;
             }
         """)
         system_layout = QGridLayout(system_group)
         system_layout.setSpacing(12)  # 增加间距
         system_layout.setContentsMargins(15, 20, 15, 15)  # 增加内边距
         
-        # 创建系统指标组件
+        # 创建系统指标组件 - 使用蓝色系配色
         system_metrics = [
-            ("system_CPU使用率：Total", "%", "#2196F3"),
-            ("system_CPU使用率：用户态", "%", "#1976D2"),
-            ("system_内存使用", "%", "#4CAF50"),
-            ("system_电池电量", "%", "#FF9800"),
-            ("system_网络接收", "KB/s", "#9C27B0"),
-            ("system_网络发送", "KB/s", "#E91E63"),
-            ("system_CPU温度", "°C", "#F44336"),
-            ("system_负载1分", "", "#607D8B"),
-            ("system_负载5分", "", "#795548"),
-            ("system_负载15分", "", "#424242"),
+            ("system_CPU使用率：Total", "%", "#4a90e2"),
+            ("system_CPU使用率：用户态", "%", "#5ba3f5"),
+            ("system_内存使用", "%", "#67b4f5"),
+            ("system_电池电量", "%", "#7ac1f7"),
+            ("system_网络接收", "KB/s", "#8dccf9"),
+            ("system_网络发送", "KB/s", "#9fd6fa"),
+            ("system_CPU温度", "°C", "#b1dffc"),
+            ("system_负载1分", "", "#6c9bd1"),
+            ("system_负载5分", "", "#7ea8d8"),
+            ("system_负载15分", "", "#90b5df"),
             ("system_运行时间", "天", "#00BCD4"),
         ]
         
@@ -828,34 +835,37 @@ class OptimizedMonitorViewWidget(QWidget):
         self.apps_tab_widget = QTabWidget()
         self.apps_tab_widget.setStyleSheet("""
             QTabWidget {
-                border: 2px solid #4CAF50;
-                border-radius: 8px;
-                background-color: white;
+                border: none;
+                background-color: transparent;
                 margin-top: 10px;
             }
             QTabWidget::pane {
-                border: 2px solid #4CAF50;
-                border-radius: 8px;
-                padding: 10px;
-                background-color: white;
+                border: 1px solid #e9ecef;
+                border-radius: 10px;
+                padding: 15px;
+                background-color: #ffffff;
             }
             QTabBar::tab {
-                background-color: #f0f0f0;
-                border: 1px solid #ccc;
+                background-color: #f8f9fa;
+                border: 1px solid #dee2e6;
                 border-bottom: none;
-                border-radius: 6px 6px 0 0;
-                padding: 8px 15px;
-                margin-right: 2px;
+                border-radius: 8px 8px 0 0;
+                padding: 12px 24px;
+                margin-right: 4px;
                 min-width: 120px;
+                color: #6c757d;
+                font-weight: 500;
             }
             QTabBar::tab:selected {
-                background-color: #4CAF50;
-                color: white;
-                font-weight: bold;
+                background-color: white;
+                color: #4a90e2;
+                font-weight: 600;
+                border: 1px solid #e9ecef;
+                border-bottom: 1px solid white;
             }
             QTabBar::tab:hover {
-                background-color: #81C784;
-                color: white;
+                background-color: #e3f2fd;
+                color: #4a90e2;
             }
         """)
         # 初始显示Tab组件（即使没有内容）
@@ -872,22 +882,23 @@ class OptimizedMonitorViewWidget(QWidget):
         parent_layout.addWidget(scroll_area)
     
     def _create_charts_area(self, parent_layout):
-        """创建图表区域"""
+        """创建图表区域 - 使用Tab布局"""
         charts_group = QGroupBox("性能图表")
         charts_group.setStyleSheet("""
             QGroupBox {
-                font-weight: bold;
-                border: 2px solid #FF9800;
-                border-radius: 8px;
-                margin-top: 8px;
-                padding-top: 8px;
-                background-color: #fff8f0;
+                font-weight: 600;
+                border: 1px solid #e9ecef;
+                border-radius: 10px;
+                margin-top: 10px;
+                padding-top: 10px;
+                background-color: #fafbfc;
             }
             QGroupBox::title {
                 subcontrol-origin: margin;
-                left: 10px;
-                padding: 0 8px 0 8px;
-                color: #FF9800;
+                left: 15px;
+                padding: 0 10px 0 10px;
+                color: #4a90e2;
+                font-size: 14px;
             }
         """)
         charts_layout = QVBoxLayout(charts_group)
@@ -898,21 +909,67 @@ class OptimizedMonitorViewWidget(QWidget):
         if not self.chart_manager:
             self.chart_manager = MultiSeriesChartManager()
         
-        # 创建各类图表
+        # 创建TabWidget用于图表切换
+        self.charts_tab_widget = QTabWidget()
+        self.charts_tab_widget.setStyleSheet("""
+            QTabWidget {
+                border: none;
+                background-color: transparent;
+            }
+            QTabWidget::pane {
+                border: 1px solid #e9ecef;
+                border-radius: 8px;
+                padding: 10px;
+                background-color: #ffffff;
+            }
+            QTabBar::tab {
+                background-color: #f8f9fa;
+                border: 1px solid #dee2e6;
+                border-bottom: none;
+                border-radius: 6px 6px 0 0;
+                padding: 8px 16px;
+                margin-right: 2px;
+                min-width: 80px;
+                color: #6c757d;
+                font-weight: 500;
+            }
+            QTabBar::tab:selected {
+                background-color: white;
+                color: #4a90e2;
+                font-weight: 600;
+                border: 1px solid #e9ecef;
+                border-bottom: 1px solid white;
+            }
+            QTabBar::tab:hover {
+                background-color: #e3f2fd;
+                color: #4a90e2;
+            }
+        """)
+        
+        # 创建各类图表 - 使用蓝色系配色
         chart_configs = [
-            ("cpu", "CPU使用率", "%", "#2196F3"),
-            ("memory_mb", "应用内存使用量", "MB", "#4CAF50"),
-            ("memory_percent", "内存使用率", "%", "#388E3C"),
-            ("network", "网络流量", "KB/s", "#9C27B0"),
-            ("fps", "帧率", "FPS", "#FF9800"),
-            ("power", "功耗", "mW", "#F44336"),
+            ("cpu", "CPU使用率", "%", "#4a90e2"),
+            ("memory_mb", "内存使用量", "MB", "#5ba3f5"),
+            ("memory_percent", "内存占比", "%", "#67b4f5"),
+            ("network", "网络流量", "KB/s", "#7ac1f7"),
+            ("fps", "帧率", "FPS", "#8dccf9"),
+            ("power", "功耗", "mW", "#9fd6fa"),
         ]
         
         for chart_id, title, unit, color in chart_configs:
             chart_widget = AdvancedChartWidget(title, unit)
             self.chart_widgets[chart_id] = chart_widget
-            charts_layout.addWidget(chart_widget)
+            
+            # 创建单独的Tab页面容器
+            tab_container = QWidget()
+            tab_layout = QVBoxLayout(tab_container)
+            tab_layout.setContentsMargins(5, 5, 5, 5)
+            tab_layout.addWidget(chart_widget)
+            
+            # 添加到Tab
+            self.charts_tab_widget.addTab(tab_container, title)
         
+        charts_layout.addWidget(self.charts_tab_widget)
         parent_layout.addWidget(charts_group)
     
     def _add_placeholder_tab(self):
@@ -924,13 +981,13 @@ class OptimizedMonitorViewWidget(QWidget):
         # 提示信息
         info_label = QLabel("📱 请选择要监控的应用")
         info_label.setFont(QFont("Arial", 18, QFont.Bold))
-        info_label.setStyleSheet("color: #999; margin: 40px;")
+        info_label.setStyleSheet("color: #6c757d; margin: 40px;")
         info_label.setAlignment(Qt.AlignCenter)
         placeholder_layout.addWidget(info_label)
         
         description_label = QLabel("选择应用后，每个应用将显示为独立的Tab页面")
         description_label.setFont(QFont("Arial", 14))
-        description_label.setStyleSheet("color: #666; margin: 20px;")
+        description_label.setStyleSheet("color: #adb5bd; margin: 20px;")
         description_label.setAlignment(Qt.AlignCenter)
         placeholder_layout.addWidget(description_label)
         
@@ -959,13 +1016,13 @@ class OptimizedMonitorViewWidget(QWidget):
             # 添加应用信息标题
             info_label = QLabel(f"📱 {app_name}")
             info_label.setFont(QFont("Arial", 16, QFont.Bold))
-            info_label.setStyleSheet("color: #4CAF50; margin-bottom: 10px;")
+            info_label.setStyleSheet("color: #2c3e50; margin-bottom: 10px; font-weight: 600;")
             tab_layout.addWidget(info_label)
             
             # 添加包名信息
             package_label = QLabel(f"包名: {package_name}")
             package_label.setFont(QFont("Arial", 12))
-            package_label.setStyleSheet("color: #666; margin-bottom: 15px;")
+            package_label.setStyleSheet("color: #6c757d; margin-bottom: 15px;")
             tab_layout.addWidget(package_label)
             
             # 创建指标网格容器
@@ -978,13 +1035,13 @@ class OptimizedMonitorViewWidget(QWidget):
             for i in range(5):
                 metrics_layout.setColumnStretch(i, 1)
             
-            # 创建应用指标组件 - 5个指标一排显示，1600px窗口下使用清晰标题
+            # 创建应用指标组件 - 5个指标一排显示，使用蓝色系配色
             app_metrics = [
-                (f"{package_name}_CPU", "CPU使用率", "%", "#2196F3"),
-                (f"{package_name}_内存", "内存使用", "MB", "#4CAF50"),
-                (f"{package_name}_内存百分比", "内存占比", "%", "#388E3C"),
-                (f"{package_name}_帧率", "帧率", "FPS", "#FF9800"),
-                (f"{package_name}_功耗", "功耗", "mW", "#F44336"),
+                (f"{package_name}_CPU", "CPU使用率", "%", "#4a90e2"),
+                (f"{package_name}_内存", "内存使用", "MB", "#5ba3f5"),
+                (f"{package_name}_内存百分比", "内存占比", "%", "#67b4f5"),
+                (f"{package_name}_帧率", "帧率", "FPS", "#7ac1f7"),
+                (f"{package_name}_功耗", "功耗", "mW", "#8dccf9"),
             ]
             
             # 一排5个指标的布局
@@ -1109,7 +1166,7 @@ class OptimizedMonitorViewWidget(QWidget):
         .stat-value {{ font-size: 26px; font-weight: bold; color: #333; }}
         .chart-container {{ background: white; padding: 20px; border-radius: 8px; margin: 20px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }}
         .app-section {{ margin: 20px 0; }}
-        .app-title {{ background: #4CAF50; color: white; padding: 10px; border-radius: 5px; margin: 10px 0; }}
+        .app-title {{ background: white; color: black; padding: 10px; border: 1px solid #dee2e6; border-radius: 5px; margin: 10px 0; }}
         table {{ width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; }}
         th, td {{ padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }}
         th {{ background-color: #f8f9fa; font-weight: bold; }}

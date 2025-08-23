@@ -69,22 +69,45 @@ class ChartConfigDialog(QDialog):
         # 按钮区域
         button_layout = QHBoxLayout()
         
+        button_style = """
+            QPushButton {
+                background-color: white;
+                color: #333333;
+                border: 1px solid #dee2e6;
+                padding: 8px 16px;
+                border-radius: 6px;
+                font-weight: 500;
+                min-width: 100px;
+            }
+            QPushButton:hover {
+                background-color: #f8f9fa;
+                border-color: #4a90e2;
+            }
+            QPushButton:pressed {
+                background-color: #e9ecef;
+            }
+        """
+        
         self.reset_btn = QPushButton("Reset to Default")
         self.reset_btn.clicked.connect(self.reset_to_default)
+        self.reset_btn.setStyleSheet(button_style)
         button_layout.addWidget(self.reset_btn)
         
         button_layout.addStretch()
         
         self.cancel_btn = QPushButton("Cancel")
         self.cancel_btn.clicked.connect(self.reject)
+        self.cancel_btn.setStyleSheet(button_style)
         button_layout.addWidget(self.cancel_btn)
         
         self.apply_btn = QPushButton("Apply")
         self.apply_btn.clicked.connect(self.apply_config)
+        self.apply_btn.setStyleSheet(button_style)
         button_layout.addWidget(self.apply_btn)
         
         self.ok_btn = QPushButton("OK")
         self.ok_btn.clicked.connect(self.accept_config)
+        self.ok_btn.setStyleSheet(button_style)
         button_layout.addWidget(self.ok_btn)
         
         layout.addLayout(button_layout)
@@ -172,6 +195,24 @@ class ChartConfigDialog(QDialog):
         
         self.series_color_btn = QPushButton("Choose Color")
         self.series_color_btn.clicked.connect(self.choose_series_color)
+        self.series_color_btn.setStyleSheet("""
+            QPushButton {
+                background-color: white;
+                color: #333333;
+                border: 1px solid #dee2e6;
+                padding: 8px 16px;
+                border-radius: 6px;
+                font-weight: 500;
+                min-width: 100px;
+            }
+            QPushButton:hover {
+                background-color: #f8f9fa;
+                border-color: #4a90e2;
+            }
+            QPushButton:pressed {
+                background-color: #e9ecef;
+            }
+        """)
         self.series_settings_layout.addRow("Color:", self.series_color_btn)
         
         self.series_line_style_combo = QComboBox()

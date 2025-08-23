@@ -112,19 +112,41 @@ class AdvancedChartWidget(QWidget):
         controls_layout.addWidget(self.time_range_combo)
         
         # 暂停/继续
+        button_style = """
+            QPushButton {
+                background-color: white;
+                color: #333333;
+                border: 1px solid #dee2e6;
+                padding: 8px 16px;
+                border-radius: 6px;
+                font-weight: 500;
+                min-width: 80px;
+            }
+            QPushButton:hover {
+                background-color: #f8f9fa;
+                border-color: #4a90e2;
+            }
+            QPushButton:pressed {
+                background-color: #e9ecef;
+            }
+        """
+        
         self.pause_btn = QPushButton("暂停")
         self.pause_btn.clicked.connect(self.toggle_pause)
+        self.pause_btn.setStyleSheet(button_style)
         self.paused = False
         controls_layout.addWidget(self.pause_btn)
         
         # 清空数据
         clear_btn = QPushButton("清空")
         clear_btn.clicked.connect(self.clear_data)
+        clear_btn.setStyleSheet(button_style)
         controls_layout.addWidget(clear_btn)
         
         # 导出数据
         export_btn = QPushButton("导出")
         export_btn.clicked.connect(self.export_chart)
+        export_btn.setStyleSheet(button_style)
         controls_layout.addWidget(export_btn)
         
         control_layout.addLayout(controls_layout)
