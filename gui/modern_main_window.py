@@ -11,6 +11,7 @@ Features:
 
 import sys
 import os
+import time
 from PyQt5.QtWidgets import (QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, 
                            QTabWidget, QLabel, QStatusBar, QMenuBar, QAction,
                            QMessageBox, QProgressBar, QSplitter, QPushButton,
@@ -255,7 +256,7 @@ class ModernMainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("AndroidMetrics")
-        self.setGeometry(100, 100, 1400, 900)
+        self.setGeometry(100, 100, 1500, 900)  # 增加宽度以容纳更宽的指标显示
         
         # 设置窗口图标
         icon_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "assets", "icons", "androidmetrics_icon.png")
@@ -271,12 +272,16 @@ class ModernMainWindow(QMainWindow):
         self.connected_devices = []
         self.device_connection_dialog = None
         self.apk_manager_dialog = None
+        self.adb_collector = None  # Initialize ADB collector
         
         # Initialize components
         self.init_ui()
         self.apply_modern_theme()
         self.setup_animations()
         self.check_initial_device_status()
+        
+        # Setup device monitoring timer
+        self.setup_device_monitoring()
         
     def init_ui(self):
         """Initialize modern UI components"""
@@ -289,8 +294,8 @@ class ModernMainWindow(QMainWindow):
         main_layout.setSpacing(0)
         main_layout.setContentsMargins(0, 0, 0, 0)
         
-        # Create custom toolbar
-        self.create_modern_toolbar()
+        # 移除工具栏
+        # self.create_modern_toolbar()
         
         # Create tab widget
         self.tab_widget = ModernTabWidget()
@@ -305,16 +310,23 @@ class ModernMainWindow(QMainWindow):
             
         self.monitor_view = MonitorViewWidget()
         
-        # Add a welcome/dashboard tab
-        dashboard = self.create_dashboard()
-        self.tab_widget.addTab(dashboard, "🏠 仪表板")
+        # 移除仪表板标签页
+        # dashboard = self.create_dashboard()
+        # self.tab_widget.addTab(dashboard, "🏠 仪表板")
         
-        # Create tools tab with device connection and APK management
-        tools_tab = self.create_tools_tab()
-        self.tab_widget.addTab(tools_tab, "🔧 工具")
+        # Create device connection widget
+        self.device_connection_widget = self.create_device_connection_widget()
+        self.device_tab_index = self.tab_widget.addTab(self.device_connection_widget, "📱 设备连接")
+        
+        # Create APK manager widget
+        self.apk_manager_widget = self.create_apk_manager_widget()
+        self.apk_tab_index = self.tab_widget.addTab(self.apk_manager_widget, "📦 APK管理")
         
         self.tab_widget.addTab(self.app_selector, "📱 应用选择")
         self.tab_widget.addTab(self.monitor_view, "📊 性能监控")
+        
+        # 连接应用选择器的信号到性能监控器
+        self.connect_app_selector_signals()
         
         self.tab_widget.setCurrentIndex(0)
         
@@ -326,13 +338,13 @@ class ModernMainWindow(QMainWindow):
         
         main_layout.addWidget(container)
         
-        # Create modern status bar
-        self.status_bar = ModernStatusBar()
-        self.setStatusBar(self.status_bar)
+        # 移除状态栏
+        # self.status_bar = ModernStatusBar()
+        # self.setStatusBar(self.status_bar)
         
         
-        # Create menu bar
-        self.create_modern_menu()
+        # 移除菜单栏
+        # self.create_modern_menu()
         
     def create_modern_toolbar(self):
         """Create simplified modern toolbar"""
@@ -353,21 +365,21 @@ class ModernMainWindow(QMainWindow):
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         toolbar.addWidget(spacer)
         
-        # Add status indicator
-        self.status_label = QLabel("📱 准备就绪")
-        self.status_label.setStyleSheet("""
-            QLabel {
-                color: #6c757d;
-                font-size: 13px;
-                font-weight: 500;
-                padding: 6px 12px;
-                background-color: #f8f9fa;
-                border: 1px solid #dee2e6;
-                border-radius: 20px;
-                margin: 0 10px;
-            }
-        """)
-        toolbar.addWidget(self.status_label)
+        # 移除状态指示器（右上角设备计数）
+        # self.status_label = QLabel("📱 准备就绪")
+        # self.status_label.setStyleSheet("""
+        #     QLabel {
+        #         color: #6c757d;
+        #         font-size: 13px;
+        #         font-weight: 500;
+        #         padding: 6px 12px;
+        #         background-color: #f8f9fa;
+        #         border: 1px solid #dee2e6;
+        #         border-radius: 20px;
+        #         margin: 0 10px;
+        #     }
+        # """)
+        # toolbar.addWidget(self.status_label)
         
         self.addToolBar(toolbar)
         
@@ -516,15 +528,15 @@ class ModernMainWindow(QMainWindow):
         
         return card
     
-    def create_tools_tab(self):
-        """创建工具标签页"""
-        tools_widget = QWidget()
-        tools_layout = QVBoxLayout(tools_widget)
-        tools_layout.setSpacing(20)
-        tools_layout.setContentsMargins(30, 30, 30, 30)
+    def create_device_connection_widget(self):
+        """创建设备连接Widget（作为Tab内容）"""
+        widget = QWidget()
+        layout = QVBoxLayout(widget)
+        layout.setSpacing(20)
+        layout.setContentsMargins(30, 30, 30, 30)
         
         # 标题
-        title_label = QLabel("🔧 工具集合")
+        title_label = QLabel("📱 设备连接管理")
         title_label.setStyleSheet("""
             QLabel {
                 font-size: 24px;
@@ -533,11 +545,11 @@ class ModernMainWindow(QMainWindow):
                 margin-bottom: 20px;
             }
         """)
-        tools_layout.addWidget(title_label)
+        layout.addWidget(title_label)
         
-        # 工具按钮容器
-        buttons_frame = QFrame()
-        buttons_frame.setStyleSheet("""
+        # 设备连接状态框
+        status_frame = QFrame()
+        status_frame.setStyleSheet("""
             QFrame {
                 background-color: white;
                 border-radius: 12px;
@@ -545,63 +557,291 @@ class ModernMainWindow(QMainWindow):
                 padding: 20px;
             }
         """)
-        buttons_layout = QVBoxLayout(buttons_frame)
-        buttons_layout.setSpacing(15)
+        status_layout = QVBoxLayout(status_frame)
         
-        # 设备连接按钮
-        device_btn = QPushButton("📱 设备连接")
-        device_btn.setStyleSheet("""
+        # 状态标签
+        self.device_status_label = QLabel("当前状态: 未连接")
+        self.device_status_label.setStyleSheet("""
+            QLabel {
+                font-size: 16px;
+                color: #dc3545;
+                font-weight: bold;
+                padding: 10px;
+                background-color: #fff5f5;
+                border: 1px solid #f5c2c7;
+                border-radius: 8px;
+            }
+        """)
+        status_layout.addWidget(self.device_status_label)
+        
+        # 连接按钮
+        connect_btn = QPushButton("🔌 连接设备")
+        connect_btn.setStyleSheet("""
             QPushButton {
                 background-color: white;
                 color: black;
-                border: 1px solid #dee2e6;
+                border: 1px solid #007bff;
                 border-radius: 8px;
                 padding: 15px 20px;
                 font-size: 16px;
                 font-weight: bold;
-                text-align: left;
             }
             QPushButton:hover {
                 background-color: #f8f9fa;
-                border-color: #adb5bd;
+                border: 2px solid #007bff;
             }
             QPushButton:pressed {
                 background-color: #e9ecef;
             }
         """)
-        device_btn.clicked.connect(self.open_device_connection)
-        buttons_layout.addWidget(device_btn)
+        connect_btn.clicked.connect(self.open_device_connection)
+        status_layout.addWidget(connect_btn)
         
-        # APK管理按钮
-        apk_btn = QPushButton("📦 APK管理")
-        apk_btn.setStyleSheet("""
+        # 已连接设备列表
+        devices_label = QLabel("已连接设备:")
+        devices_label.setStyleSheet("""
+            QLabel {
+                font-size: 14px;
+                font-weight: bold;
+                color: #495057;
+                margin-top: 20px;
+            }
+        """)
+        status_layout.addWidget(devices_label)
+        
+        self.devices_list = QListWidget()
+        self.devices_list.setStyleSheet("""
+            QListWidget {
+                border: 1px solid #dee2e6;
+                border-radius: 8px;
+                background-color: #f8f9fa;
+                padding: 10px;
+                min-height: 150px;
+                selection-background-color: #4682B4;
+                selection-color: white;
+            }
+            QListWidget::item {
+                padding: 8px;
+                border-bottom: 1px solid #e9ecef;
+                background-color: white;
+                margin: 2px;
+                border-radius: 4px;
+                color: #333333;
+                font-weight: 500;
+            }
+            QListWidget::item:hover {
+                background-color: #e7f3ff;
+                color: #1976d2;
+                border: 1px solid #bbdefb;
+            }
+            QListWidget::item:selected {
+                background-color: #4682B4;
+                color: white;
+                border: 1px solid #2c5282;
+                font-weight: bold;
+            }
+            QListWidget::item:selected:hover {
+                background-color: #5a9bd3;
+                border: 1px solid #4682B4;
+            }
+        """)
+        status_layout.addWidget(self.devices_list)
+        
+        layout.addWidget(status_frame)
+        layout.addStretch()
+        
+        return widget
+    
+    def create_apk_manager_widget(self):
+        """创建APK管理Widget（作为Tab内容）"""
+        widget = QWidget()
+        layout = QVBoxLayout(widget)
+        layout.setSpacing(20)
+        layout.setContentsMargins(30, 30, 30, 30)
+        
+        # 标题
+        title_label = QLabel("📦 APK管理")
+        title_label.setStyleSheet("""
+            QLabel {
+                font-size: 24px;
+                font-weight: bold;
+                color: #495057;
+                margin-bottom: 20px;
+            }
+        """)
+        layout.addWidget(title_label)
+        
+        # APK管理容器
+        apk_frame = QFrame()
+        apk_frame.setStyleSheet("""
+            QFrame {
+                background-color: white;
+                border-radius: 12px;
+                border: 1px solid #e9ecef;
+                padding: 20px;
+            }
+        """)
+        apk_layout = QVBoxLayout(apk_frame)
+        
+        # 设备连接状态提示
+        self.apk_device_status = QLabel("⚠️ 请先连接设备")
+        self.apk_device_status.setStyleSheet("""
+            QLabel {
+                font-size: 14px;
+                color: #dc3545;
+                padding: 10px;
+                background-color: #fff5f5;
+                border: 1px solid #f5c2c7;
+                border-radius: 8px;
+                margin-bottom: 10px;
+            }
+        """)
+        apk_layout.addWidget(self.apk_device_status)
+        
+        # 操作按钮
+        btn_layout = QHBoxLayout()
+        
+        self.install_btn = QPushButton("📥 安装APK")
+        self.install_btn.setStyleSheet("""
             QPushButton {
                 background-color: white;
                 color: black;
-                border: 1px solid #dee2e6;
+                border: 1px solid #28a745;
                 border-radius: 8px;
-                padding: 15px 20px;
-                font-size: 16px;
+                padding: 12px 20px;
+                font-size: 14px;
                 font-weight: bold;
-                text-align: left;
             }
-            QPushButton:hover {
+            QPushButton:hover:!disabled {
                 background-color: #f8f9fa;
-                border-color: #adb5bd;
+                border: 2px solid #28a745;
             }
-            QPushButton:pressed {
+            QPushButton:pressed:!disabled {
                 background-color: #e9ecef;
             }
+            QPushButton:disabled {
+                background-color: #f0f0f0;
+                color: #999999;
+                border: 1px solid #dee2e6;
+            }
         """)
-        apk_btn.clicked.connect(self.open_apk_manager)
-        buttons_layout.addWidget(apk_btn)
+        self.install_btn.clicked.connect(self.open_apk_manager)
+        self.install_btn.setEnabled(False)
+        btn_layout.addWidget(self.install_btn)
         
-        tools_layout.addWidget(buttons_frame)
+        self.uninstall_btn = QPushButton("🗑️ 卸载应用")
+        self.uninstall_btn.setStyleSheet("""
+            QPushButton {
+                background-color: white;
+                color: black;
+                border: 1px solid #dc3545;
+                border-radius: 8px;
+                padding: 12px 20px;
+                font-size: 14px;
+                font-weight: bold;
+            }
+            QPushButton:hover:!disabled {
+                background-color: #f8f9fa;
+                border: 2px solid #dc3545;
+            }
+            QPushButton:pressed:!disabled {
+                background-color: #e9ecef;
+            }
+            QPushButton:disabled {
+                background-color: #f0f0f0;
+                color: #999999;
+                border: 1px solid #dee2e6;
+            }
+        """)
+        self.uninstall_btn.clicked.connect(self.open_apk_manager)
+        self.uninstall_btn.setEnabled(False)
+        btn_layout.addWidget(self.uninstall_btn)
         
-        # 添加弹性空间
-        tools_layout.addStretch()
+        self.backup_btn = QPushButton("💾 备份应用")
+        self.backup_btn.setStyleSheet("""
+            QPushButton {
+                background-color: white;
+                color: black;
+                border: 1px solid #ffc107;
+                border-radius: 8px;
+                padding: 12px 20px;
+                font-size: 14px;
+                font-weight: bold;
+            }
+            QPushButton:hover:!disabled {
+                background-color: #f8f9fa;
+                border: 2px solid #ffc107;
+            }
+            QPushButton:pressed:!disabled {
+                background-color: #e9ecef;
+            }
+            QPushButton:disabled {
+                background-color: #f0f0f0;
+                color: #999999;
+                border: 1px solid #dee2e6;
+            }
+        """)
+        self.backup_btn.clicked.connect(self.open_apk_manager)
+        self.backup_btn.setEnabled(False)
+        btn_layout.addWidget(self.backup_btn)
         
-        return tools_widget
+        btn_layout.addStretch()
+        apk_layout.addLayout(btn_layout)
+        
+        # 已安装应用列表
+        apps_label = QLabel("已安装应用:")
+        apps_label.setStyleSheet("""
+            QLabel {
+                font-size: 14px;
+                font-weight: bold;
+                color: #495057;
+                margin-top: 20px;
+            }
+        """)
+        apk_layout.addWidget(apps_label)
+        
+        self.apps_list = QListWidget()
+        self.apps_list.setStyleSheet("""
+            QListWidget {
+                border: 1px solid #dee2e6;
+                border-radius: 8px;
+                background-color: #f8f9fa;
+                padding: 10px;
+                min-height: 300px;
+                selection-background-color: #4682B4;
+                selection-color: white;
+            }
+            QListWidget::item {
+                padding: 10px;
+                border-bottom: 1px solid #e9ecef;
+                background-color: white;
+                margin: 2px;
+                border-radius: 4px;
+                color: #333333;
+                font-weight: 500;
+            }
+            QListWidget::item:hover {
+                background-color: #e7f3ff;
+                color: #1976d2;
+                border: 1px solid #bbdefb;
+            }
+            QListWidget::item:selected {
+                background-color: #4682B4;
+                color: white;
+                border: 1px solid #2c5282;
+                font-weight: bold;
+            }
+            QListWidget::item:selected:hover {
+                background-color: #5a9bd3;
+                border: 1px solid #4682B4;
+            }
+        """)
+        apk_layout.addWidget(self.apps_list)
+        
+        layout.addWidget(apk_frame)
+        layout.addStretch()
+        
+        return widget
         
     def create_modern_menu(self):
         """Create modern menu bar"""
@@ -638,9 +878,6 @@ class ModernMainWindow(QMainWindow):
         
         # Tools menu
         tools_menu = menubar.addMenu("🔧 工具")
-        tools_menu.addAction("📱 设备连接", self.open_device_connection)
-        tools_menu.addAction("📦 APK管理", self.open_apk_manager)
-        tools_menu.addSeparator()
         tools_menu.addAction("📈 性能分析器", self.performance_analyzer)
         tools_menu.addAction("🔍 日志查看器", self.log_viewer)
         
@@ -664,8 +901,10 @@ class ModernMainWindow(QMainWindow):
         # View menu
         view_menu = menubar.addMenu("👁 视图")
         view_menu.addAction("🏠 仪表板", lambda: self.tab_widget.setCurrentIndex(0))
-        view_menu.addAction("📱 应用选择", lambda: self.tab_widget.setCurrentIndex(1))
-        view_menu.addAction("📊 性能监控", lambda: self.tab_widget.setCurrentIndex(2))
+        view_menu.addAction("📱 设备连接", lambda: self.switch_to_device_tab())
+        view_menu.addAction("📦 APK管理", lambda: self.switch_to_apk_tab())
+        view_menu.addAction("📱 应用选择", lambda: self.switch_to_app_selector())
+        view_menu.addAction("📊 性能监控", lambda: self.switch_to_monitor())
         view_menu.addSeparator()
         view_menu.addAction("🔄 刷新界面", self.refresh_interface)
         
@@ -852,15 +1091,8 @@ class ModernMainWindow(QMainWindow):
     
     def on_device_connected(self, device_info):
         """设备连接成功处理"""
-        if device_info not in self.connected_devices:
-            self.connected_devices.append(device_info)
-        
-        # 更新状态显示
-        self.update_device_status()
-        
-        # 更新状态栏
-        if hasattr(self, 'status_bar'):
-            self.status_bar.set_connection_status(True)
+        # 立即检查设备状态以获取最新信息
+        self.check_device_status()
         
         # 显示成功消息
         QMessageBox.information(self, "设备连接成功", 
@@ -870,50 +1102,54 @@ class ModernMainWindow(QMainWindow):
         """更新设备连接状态显示"""
         device_count = len(self.connected_devices)
         
-        if device_count == 0:
-            status_text = "📱 无设备连接"
-            self.status_label.setStyleSheet("""
-                QLabel {
-                    color: #dc3545;
-                    font-size: 13px;
-                    font-weight: 500;
-                    padding: 6px 12px;
-                    background-color: #fff5f5;
-                    border: 1px solid #f5c2c7;
-                    border-radius: 20px;
-                    margin: 0 10px;
-                }
-            """)
-        elif device_count == 1:
-            status_text = "📱 1台设备已连接"
-            self.status_label.setStyleSheet("""
-                QLabel {
-                    color: #28a745;
-                    font-size: 13px;
-                    font-weight: 500;
-                    padding: 6px 12px;
-                    background-color: #f5fdf7;
-                    border: 1px solid #c3e6cb;
-                    border-radius: 20px;
-                    margin: 0 10px;
-                }
-            """)
-        else:
-            status_text = f"📱 {device_count}台设备已连接"
-            self.status_label.setStyleSheet("""
-                QLabel {
-                    color: #28a745;
-                    font-size: 13px;
-                    font-weight: 500;
-                    padding: 6px 12px;
-                    background-color: #f5fdf7;
-                    border: 1px solid #c3e6cb;
-                    border-radius: 20px;
-                    margin: 0 10px;
-                }
-            """)
-        
-        self.status_label.setText(status_text)
+        # 由于移除了状态标签，这个方法现在主要用于内部状态跟踪
+        # 如果需要状态标签，检查是否存在
+        if hasattr(self, 'status_label') and self.status_label:
+            if device_count == 0:
+                status_text = "📱 无设备连接"
+                self.status_label.setStyleSheet("""
+                    QLabel {
+                        color: #dc3545;
+                        font-size: 13px;
+                        font-weight: 500;
+                        padding: 6px 12px;
+                        background-color: #fff5f5;
+                        border: 1px solid #f5c2c7;
+                        border-radius: 20px;
+                        margin: 0 10px;
+                    }
+                """)
+                    
+            elif device_count == 1:
+                status_text = "📱 1台设备已连接"
+                self.status_label.setStyleSheet("""
+                    QLabel {
+                        color: #28a745;
+                        font-size: 13px;
+                        font-weight: 500;
+                        padding: 6px 12px;
+                        background-color: #f5fdf7;
+                        border: 1px solid #c3e6cb;
+                        border-radius: 20px;
+                        margin: 0 10px;
+                    }
+                """)
+            else:
+                status_text = f"📱 {device_count}台设备已连接"
+                self.status_label.setStyleSheet("""
+                    QLabel {
+                        color: #28a745;
+                        font-size: 13px;
+                        font-weight: 500;
+                        padding: 6px 12px;
+                        background-color: #f5fdf7;
+                        border: 1px solid #c3e6cb;
+                        border-radius: 20px;
+                        margin: 0 10px;
+                    }
+                """)
+            
+            self.status_label.setText(status_text)
         
         # 更新仪表盘统计卡片
         self.update_dashboard_stats()
@@ -926,25 +1162,312 @@ class ModernMainWindow(QMainWindow):
     
     def check_initial_device_status(self):
         """检查初始设备连接状态"""
+        self.check_device_status()
+    
+    def check_device_status(self):
+        """检查设备连接状态并更新UI"""
         try:
             import subprocess
             result = subprocess.run(["adb", "devices"], capture_output=True, text=True, timeout=3)
             if result.returncode == 0:
                 lines = result.stdout.strip().split('\n')[1:]  # 跳过标题行
-                connected_devices = []
+                current_devices = []
                 
                 for line in lines:
                     if line.strip() and 'device' in line:
                         device_id = line.split()[0]
-                        connected_devices.append(device_id)
+                        current_devices.append(device_id)
                 
-                self.connected_devices = connected_devices
-                self.update_device_status()
+                # 检查设备列表是否发生变化
+                if set(current_devices) != set(self.connected_devices):
+                    # 设备列表发生了变化
+                    old_count = len(self.connected_devices)
+                    new_count = len(current_devices)
+                    
+                    self.connected_devices = current_devices
+                    
+                    # 更新所有相关组件
+                    self.update_all_device_related_components()
+                    
+                    # 日志记录
+                    if new_count > old_count:
+                        print(f"设备连接: 现在有 {new_count} 台设备")
+                    elif new_count < old_count:
+                        print(f"设备断开: 现在有 {new_count} 台设备")
                 
-                # 更新状态栏
-                if hasattr(self, 'status_bar'):
-                    self.status_bar.set_connection_status(len(connected_devices) > 0)
-        except:
-            # ADB不可用或其他错误，保持默认状态
-            pass
+        except Exception as e:
+            print(f"检查设备状态失败: {e}")
+    
+    def update_all_device_related_components(self):
+        """更新所有与设备状态相关的组件"""
+        # 更新主窗口状态
+        self.update_device_status()
+        
+        # 更新设备连接标签页
+        self.update_device_connection_tab()
+        
+        # 更新应用选择器的设备列表
+        if hasattr(self, 'app_selector') and hasattr(self.app_selector, 'update_device_list'):
+            self.app_selector.update_device_list(self.connected_devices)
+        
+        # 更新状态栏
+        if hasattr(self, 'status_bar'):
+            self.status_bar.set_connection_status(len(self.connected_devices) > 0)
+        
+        # 如果有设备连接，初始化ADB
+        if len(self.connected_devices) > 0:
+            self.init_adb_and_fetch_apps()
+    
+    def setup_device_monitoring(self):
+        """设置设备监控定时器"""
+        self.device_monitor_timer = QTimer()
+        self.device_monitor_timer.timeout.connect(self.check_device_status)
+        self.device_monitor_timer.start(3000)  # 每3秒检查一次设备状态
+        
+        # 启动时立即检查一次
+        QTimer.singleShot(1000, self.check_device_status)  # 1秒后检查
+    
+    def connect_app_selector_signals(self):
+        """连接应用选择器的信号到性能监控器"""
+        if hasattr(self.app_selector, 'monitoring_started'):
+            self.app_selector.monitoring_started.connect(self.start_performance_monitoring)
+            print("✅ 已连接 monitoring_started 信号")
+        else:
+            print("⚠️ 应用选择器没有 monitoring_started 信号")
+            
+        if hasattr(self.app_selector, 'monitoring_stopped'):
+            self.app_selector.monitoring_stopped.connect(self.stop_performance_monitoring)
+            print("✅ 已连接 monitoring_stopped 信号")
+        else:
+            print("⚠️ 应用选择器没有 monitoring_stopped 信号")
+    
+    def start_performance_monitoring(self, config):
+        """开始性能监控"""
+        print(f"🚀 开始性能监控: {config}")
+        print(f"📱 设备: {getattr(self.app_selector, 'selected_device', 'None')}")
+        print(f"📊 选中应用数量: {len(config.get('selected_apps', []))}")
+        
+        # 检查是否有选中的设备
+        if not hasattr(self.app_selector, 'selected_device') or not self.app_selector.selected_device:
+            QMessageBox.warning(self, "⚠️ 警告", "请先在应用选择页面选择一个设备")
+            return
+        
+        # 检查是否有选中的应用
+        selected_apps = config.get('selected_apps', [])
+        if not selected_apps:
+            QMessageBox.warning(self, "⚠️ 警告", "请先选择至少一个应用进行监控")
+            return
+        
+        # 启动性能监控
+        if hasattr(self.monitor_view, 'start_monitoring'):
+            # 添加设备信息到配置
+            config['device_id'] = self.app_selector.selected_device
+            
+            # 创建ADB收集器
+            try:
+                from core.adb_collector import ADBCollector
+                adb_collector = ADBCollector()
+                adb_collector.device_id = self.app_selector.selected_device
+                
+                # 调用监控视图的开始方法
+                self.monitor_view.start_monitoring(adb_collector, config)
+                print("✅ 性能监控已开始")
+                # 自动切换到性能监控标签页
+                QTimer.singleShot(500, self.switch_to_monitor_tab)
+                
+            except Exception as e:
+                print(f"启动性能监控失败: {e}")
+                QMessageBox.critical(self, "❌ 错误", f"启动性能监控失败: {e}")
+                return
+        else:
+            print("⚠️ 性能监控组件没有 start_monitoring 方法")
+            # 创建一个简单的模拟监控
+            self.start_mock_monitoring(config)
+    
+    def stop_performance_monitoring(self):
+        """停止性能监控"""
+        print("🛑 停止性能监控")
+        
+        if hasattr(self.monitor_view, 'stop_monitoring'):
+            self.monitor_view.stop_monitoring()
+            print("✅ 性能监控已停止")
+    
+    def switch_to_monitor_tab(self):
+        """切换到性能监控标签页"""
+        for i in range(self.tab_widget.count()):
+            if self.tab_widget.tabText(i) == "📊 性能监控":
+                self.tab_widget.setCurrentIndex(i)
+                break
+    
+    def start_mock_monitoring(self, config):
+        """启动模拟监控（如果真实监控不可用）"""
+        print("🤖 启动模拟性能监控")
+        
+        # 创建一个简单的模拟数据更新定时器
+        if not hasattr(self, 'mock_monitoring_timer'):
+            self.mock_monitoring_timer = QTimer()
+            self.mock_monitoring_timer.timeout.connect(self.update_mock_data)
+        
+        self.mock_monitoring_timer.start(config.get('sample_interval', 3) * 1000)  # 转换为毫秒
+        
+        # 切换到性能监控标签页
+        QTimer.singleShot(500, self.switch_to_monitor_tab)
+    
+    def update_mock_data(self):
+        """更新模拟数据"""
+        import random
+        
+        # 生成一些模拟数据
+        mock_data = {
+            'timestamp': time.time(),
+            'cpu_usage': random.uniform(10, 80),
+            'memory_usage': random.uniform(30, 90),
+            'network_rx': random.uniform(0, 1000),
+            'network_tx': random.uniform(0, 500)
+        }
+        
+        # 尝试更新监控视图（如果支持）
+        if hasattr(self.monitor_view, 'update_data'):
+            self.monitor_view.update_data(mock_data)
+    
+    def closeEvent(self, event):
+        """窗口关闭事件"""
+        # 停止设备监控定时器
+        if hasattr(self, 'device_monitor_timer'):
+            self.device_monitor_timer.stop()
+        
+        # 停止模拟监控定时器
+        if hasattr(self, 'mock_monitoring_timer'):
+            self.mock_monitoring_timer.stop()
+        
+        # 停止性能监控
+        if hasattr(self.monitor_view, 'stop_monitoring'):
+            self.monitor_view.stop_monitoring()
+        
+        # 清理应用选择器的后台线程
+        if hasattr(self, 'app_selector') and hasattr(self.app_selector, 'cleanup_background_workers'):
+            self.app_selector.cleanup_background_workers()
+        
+        # 调用父类的关闭事件
+        super().closeEvent(event)
+    
+    def init_adb_and_fetch_apps(self):
+        """初始化ADB收集器并获取应用列表"""
+        try:
+            # 更新应用选择器的设备列表
+            if hasattr(self, 'app_selector') and hasattr(self.app_selector, 'update_device_list'):
+                self.app_selector.update_device_list(self.connected_devices)
+                
+            # 不再在这里自动获取应用列表，让用户选择设备后再获取
+                
+        except Exception as e:
+            print(f"更新设备列表失败: {e}")
+    
+    def update_device_connection_tab(self):
+        """更新设备连接Tab的内容"""
+        device_count = len(self.connected_devices)
+        
+        # 更新设备连接标签页
+        if hasattr(self, 'device_status_label'):
+            if device_count == 0:
+                self.device_status_label.setText("当前状态: 未连接")
+                self.device_status_label.setStyleSheet("""
+                    QLabel {
+                        font-size: 16px;
+                        color: #dc3545;
+                        font-weight: bold;
+                        padding: 10px;
+                        background-color: #fff5f5;
+                        border: 1px solid #f5c2c7;
+                        border-radius: 8px;
+                    }
+                """)
+            else:
+                self.device_status_label.setText(f"当前状态: {device_count}台设备已连接")
+                self.device_status_label.setStyleSheet("""
+                    QLabel {
+                        font-size: 16px;
+                        color: #28a745;
+                        font-weight: bold;
+                        padding: 10px;
+                        background-color: #f5fdf7;
+                        border: 1px solid #c3e6cb;
+                        border-radius: 8px;
+                    }
+                """)
+        
+        # 更新设备列表
+        if hasattr(self, 'devices_list'):
+            self.devices_list.clear()
+            for device in self.connected_devices:
+                self.devices_list.addItem(f"📱 {device}")
+        
+        # 更新APK管理标签页的状态
+        if hasattr(self, 'apk_device_status'):
+            if device_count == 0:
+                self.apk_device_status.setText("⚠️ 请先连接设备")
+                self.apk_device_status.setStyleSheet("""
+                    QLabel {
+                        font-size: 14px;
+                        color: #dc3545;
+                        padding: 10px;
+                        background-color: #fff5f5;
+                        border: 1px solid #f5c2c7;
+                        border-radius: 8px;
+                        margin-bottom: 10px;
+                    }
+                """)
+                # 禁用APK管理按钮
+                if hasattr(self, 'install_btn'):
+                    self.install_btn.setEnabled(False)
+                    self.uninstall_btn.setEnabled(False)
+                    self.backup_btn.setEnabled(False)
+            else:
+                self.apk_device_status.setText(f"✅ {device_count}台设备已连接")
+                self.apk_device_status.setStyleSheet("""
+                    QLabel {
+                        font-size: 14px;
+                        color: #28a745;
+                        padding: 10px;
+                        background-color: #f5fdf7;
+                        border: 1px solid #c3e6cb;
+                        border-radius: 8px;
+                        margin-bottom: 10px;
+                    }
+                """)
+                # 启用APK管理按钮
+                if hasattr(self, 'install_btn'):
+                    self.install_btn.setEnabled(True)
+                    self.uninstall_btn.setEnabled(True)
+                    self.backup_btn.setEnabled(True)
+        
+        # 更新应用选择器的设备列表
+        if hasattr(self, 'app_selector') and hasattr(self.app_selector, 'update_device_list'):
+            self.app_selector.update_device_list(self.connected_devices)
+    
+    def switch_to_device_tab(self):
+        """切换到设备连接Tab"""
+        if self.device_tab_index >= 0:
+            self.tab_widget.setCurrentIndex(self.device_tab_index)
+    
+    def switch_to_apk_tab(self):
+        """切换到APK管理Tab"""
+        if self.apk_tab_index >= 0:
+            self.tab_widget.setCurrentIndex(self.apk_tab_index)
+    
+    def switch_to_app_selector(self):
+        """切换到应用选择Tab"""
+        # 找到应用选择tab的索引
+        for i in range(self.tab_widget.count()):
+            if self.tab_widget.tabText(i) == "📱 应用选择":
+                self.tab_widget.setCurrentIndex(i)
+                break
+    
+    def switch_to_monitor(self):
+        """切换到性能监控Tab"""
+        # 找到性能监控tab的索引
+        for i in range(self.tab_widget.count()):
+            if self.tab_widget.tabText(i) == "📊 性能监控":
+                self.tab_widget.setCurrentIndex(i)
+                break
 

@@ -140,24 +140,343 @@ class ADBInstaller(QThread):
     
     def download_adb_generic(self):
         """通用ADB下载安装"""
-        self.status.emit("🌐 下载ADB平台工具...")
-        self.progress.emit(60)
+        import urllib.request
+        import zipfile
+        import shutil
+        import tempfile
         
-        # 这里应该实现实际的下载逻辑
-        # 为了示例，我们只是模拟
-        import time
-        time.sleep(2)
+        try:
+            self.status.emit("🌐 下载ADB平台工具...")
+            self.progress.emit(60)
+            
+            # 根据系统选择下载URL (使用腾讯云镜像，r36.0.1版本)
+            system = platform.system().lower()
+            if system == "windows":
+                adb_executable = "adb.exe"
+                # 主地址：腾讯云镜像 r36.0.1版本
+                url = "https://mirrors.cloud.tencent.com/AndroidSDK/platform-tools_r36.0.1-win.zip"
+                # 备用地址
+                backup_urls = [
+                    "https://mirrors.huaweicloud.com/android/repository/platform-tools-latest-windows.zip",
+                    "https://mirrors.ustc.edu.cn/android/repository/platform-tools-latest-windows.zip",
+                    "https://mirrors.aliyun.com/android/repository/platform-tools-latest-windows.zip",
+                    "https://dl.google.com/android/repository/platform-tools-latest-windows.zip"
+                ]
+            elif system == "darwin":
+                adb_executable = "adb"
+                # 主地址：腾讯云镜像 r36.0.1版本
+                url = "https://mirrors.cloud.tencent.com/AndroidSDK/platform-tools_r36.0.1-darwin.zip"
+                backup_urls = [
+                    "https://mirrors.huaweicloud.com/android/repository/platform-tools-latest-darwin.zip",
+                    "https://mirrors.ustc.edu.cn/android/repository/platform-tools-latest-darwin.zip",
+                    "https://mirrors.aliyun.com/android/repository/platform-tools-latest-darwin.zip",
+                    "https://dl.google.com/android/repository/platform-tools-latest-darwin.zip"
+                ]
+            else:  # Linux
+                adb_executable = "adb"
+                # 主地址：腾讯云镜像 r36.0.1版本
+                url = "https://mirrors.cloud.tencent.com/AndroidSDK/platform-tools_r36.0.1-linux.zip"
+                backup_urls = [
+                    "https://mirrors.huaweicloud.com/android/repository/platform-tools-latest-linux.zip",
+                    "https://mirrors.ustc.edu.cn/android/repository/platform-tools-latest-linux.zip",
+                    "https://mirrors.aliyun.com/android/repository/platform-tools-latest-linux.zip",
+                    "https://dl.google.com/android/repository/platform-tools-latest-linux.zip"
+                ]
+            
+            # 创建临时目录
+            with tempfile.TemporaryDirectory() as temp_dir:
+                zip_path = os.path.join(temp_dir, "platform-tools.zip")
+                
+                # 下载文件，支持备用地址
+                self.status.emit(f"📥 正在下载 {url.split('/')[-1]}...")
+                self._download_with_fallback(url, backup_urls, zip_path)
+                
+                self.progress.emit(75)
+                self.status.emit("📁 解压ADB工具...")
+                
+                # 解压文件
+                extract_dir = os.path.join(temp_dir, "extracted")
+                with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+                    zip_ref.extractall(extract_dir)
+                
+                self.progress.emit(85)
+                self.status.emit("📁 安装ADB工具...")
+                
+                # 确定目标目录
+                if system == "windows":
+                    # Windows: 安装到用户目录
+                    target_dir = os.path.expanduser("~/AndroidMetrics/adb")
+                else:
+                    # Linux/macOS: 尝试安装到系统目录或用户目录
+                    target_dir = "/usr/local/bin"
+                    if not os.access(target_dir, os.W_OK):
+                        target_dir = os.path.expanduser("~/AndroidMetrics/adb")
+                
+                # 创建目标目录
+                os.makedirs(target_dir, exist_ok=True)
+                
+                # 复制ADB工具
+                platform_tools_dir = os.path.join(extract_dir, "platform-tools")
+                if os.path.exists(platform_tools_dir):
+                    for file in os.listdir(platform_tools_dir):
+                        src_path = os.path.join(platform_tools_dir, file)
+                        if os.path.isfile(src_path):
+                            dst_path = os.path.join(target_dir, file)
+                            shutil.copy2(src_path, dst_path)
+                            
+                            # 设置执行权限 (Linux/macOS)
+                            if system in ["linux", "darwin"] and file == adb_executable:
+                                os.chmod(dst_path, 0o755)
+                
+                self.progress.emit(95)
+                
+                # 验证安装并更新PATH环境变量提示
+                adb_path = os.path.join(target_dir, adb_executable)
+                if os.path.exists(adb_path):
+                    # 验证ADB是否可以正常运行
+                    self.status.emit("🔍 验证ADB安装...")
+                    if self._verify_adb_installation(adb_path):
+                        self.status.emit("✅ ADB工具安装并验证成功")
+                        
+                        # 自动添加到环境变量
+                        if target_dir not in os.environ.get('PATH', ''):
+                            self.status.emit("🔧 正在添加到环境变量...")
+                            if self._add_to_path(target_dir, system):
+                                self.status.emit("✅ 已自动添加到系统PATH环境变量")
+                                if system == "windows":
+                                    self.status.emit("💡 重启应用后可在命令行直接使用adb命令")
+                                else:
+                                    self.status.emit("💡 重新打开终端后可直接使用adb命令")
+                            else:
+                                # 自动添加失败，提供手动建议
+                                self.status.emit("⚠️ 自动添加环境变量失败，请手动配置")
+                                if system == "windows":
+                                    self.status.emit(f"💡 手动添加: 将 {target_dir} 加入系统PATH")
+                                else:
+                                    self.status.emit(f"💡 手动执行: echo 'export PATH=$PATH:{target_dir}' >> ~/.bashrc")
+                        else:
+                            self.status.emit("✅ ADB已在系统PATH中，可直接使用")
+                    else:
+                        raise Exception("ADB工具安装成功但验证失败")
+                else:
+                    raise Exception("ADB工具安装失败：找不到可执行文件")
+                    
+        except urllib.error.URLError as e:
+            error_msg = f"下载失败：网络连接错误 ({str(e)})"
+            self.status.emit(f"❌ {error_msg}")
+            raise Exception(error_msg)
+        except zipfile.BadZipFile:
+            error_msg = "下载的文件损坏，请重试"
+            self.status.emit(f"❌ {error_msg}")
+            raise Exception(error_msg)
+        except PermissionError as e:
+            error_msg = f"权限不足，无法安装到目标目录 ({str(e)})"
+            self.status.emit(f"❌ {error_msg}")
+            raise Exception(error_msg)
+        except Exception as e:
+            error_msg = f"安装失败：{str(e)}"
+            self.status.emit(f"❌ {error_msg}")
+            raise
+    
+    def _download_with_progress(self, url: str, dest_path: str, max_retries: int = 3):
+        """带进度显示的文件下载，支持重试"""
+        import urllib.request
+        import urllib.parse
         
-        self.progress.emit(80)
-        self.status.emit("📁 解压ADB工具...")
-        time.sleep(1)
+        def progress_hook(block_num, block_size, total_size):
+            if total_size > 0:
+                # 计算下载进度 (60% -> 75%)
+                downloaded = block_num * block_size
+                progress_percent = min((downloaded / total_size) * 15 + 60, 75)
+                self.progress.emit(int(progress_percent))
+                
+                # 显示下载大小信息
+                if downloaded < total_size:
+                    mb_downloaded = downloaded / (1024 * 1024)
+                    mb_total = total_size / (1024 * 1024)
+                    self.status.emit(f"📥 下载中... {mb_downloaded:.1f}MB / {mb_total:.1f}MB")
+                else:
+                    self.status.emit("📥 下载完成")
+        
+        last_exception = None
+        for attempt in range(max_retries):
+            try:
+                if attempt > 0:
+                    self.status.emit(f"🔄 重试下载... (第{attempt + 1}次)")
+                
+                urllib.request.urlretrieve(url, dest_path, progress_hook)
+                return  # 下载成功，退出重试循环
+                
+            except urllib.error.URLError as e:
+                last_exception = e
+                if attempt < max_retries - 1:
+                    self.status.emit(f"⚠️ 下载失败，准备重试... ({str(e)})")
+                    import time
+                    time.sleep(2)  # 等待2秒后重试
+                continue
+            except Exception as e:
+                last_exception = e
+                if attempt < max_retries - 1:
+                    self.status.emit(f"⚠️ 下载失败，准备重试... ({str(e)})")
+                    import time
+                    time.sleep(2)
+                continue
+        
+        # 所有重试都失败了
+        raise Exception(f"下载失败，已重试{max_retries}次: {str(last_exception)}")
+    
+    def _download_with_fallback(self, primary_url: str, backup_urls: list, dest_path: str):
+        """支持备用地址的下载，提高下载成功率"""
+        urls_to_try = [primary_url] + backup_urls
+        
+        for i, url in enumerate(urls_to_try):
+            try:
+                if i > 0:
+                    self.status.emit(f"🔄 尝试备用地址 #{i}: {url.split('/')[-2] if len(url.split('/')) > 2 else 'backup'}")
+                
+                # 对于特殊的网页链接，跳过直接下载尝试
+                if "developer.android.google.cn" in url:
+                    self.status.emit("💡 请手动访问: https://developer.android.google.cn/studio/releases/platform-tools")
+                    continue
+                
+                self._download_with_progress(url, dest_path, max_retries=2)
+                self.status.emit(f"✅ 成功从{'主地址' if i == 0 else f'备用地址#{i}'}下载")
+                return  # 下载成功，退出
+                
+            except Exception as e:
+                error_msg = f"地址 {i+1} 下载失败: {str(e)}"
+                
+                if i < len(urls_to_try) - 1:
+                    self.status.emit(f"⚠️ {error_msg}，尝试下一个地址...")
+                else:
+                    # 所有地址都失败了
+                    self.status.emit(f"❌ 所有下载地址都失败")
+                    raise Exception(f"所有下载源都失败。最后错误: {str(e)}")
+    
+    def _verify_adb_installation(self, adb_path: str) -> bool:
+        """验证ADB安装是否成功"""
+        try:
+            # 运行 adb version 命令来验证
+            result = subprocess.run(
+                [adb_path, "version"], 
+                capture_output=True, 
+                text=True, 
+                timeout=10
+            )
+            
+            if result.returncode == 0 and "Android Debug Bridge" in result.stdout:
+                return True
+            else:
+                return False
+                
+        except (subprocess.TimeoutExpired, subprocess.CalledProcessError, FileNotFoundError):
+            return False
+    
+    def _add_to_path(self, adb_dir: str, system: str) -> bool:
+        """自动将ADB目录添加到系统PATH环境变量"""
+        try:
+            if system == "windows":
+                return self._add_to_windows_path(adb_dir)
+            else:  # Linux/macOS
+                return self._add_to_unix_path(adb_dir)
+        except Exception as e:
+            print(f"添加到PATH失败: {e}")
+            return False
+    
+    def _add_to_windows_path(self, adb_dir: str) -> bool:
+        """Windows系统添加到PATH"""
+        try:
+            import winreg
+            
+            # 打开用户环境变量注册表项
+            with winreg.OpenKey(winreg.HKEY_CURRENT_USER, 
+                              "Environment", 
+                              0, winreg.KEY_ALL_ACCESS) as key:
+                
+                # 获取当前PATH值
+                try:
+                    current_path, _ = winreg.QueryValueEx(key, "PATH")
+                except FileNotFoundError:
+                    current_path = ""
+                
+                # 检查是否已经存在
+                if adb_dir.lower() in current_path.lower():
+                    return True
+                
+                # 添加新路径
+                new_path = f"{current_path};{adb_dir}" if current_path else adb_dir
+                
+                # 更新注册表
+                winreg.SetValueEx(key, "PATH", 0, winreg.REG_EXPAND_SZ, new_path)
+                
+                # 广播环境变量更改消息
+                import ctypes
+                HWND_BROADCAST = 0xFFFF
+                WM_SETTINGCHANGE = 0x1A
+                ctypes.windll.user32.SendMessageW(HWND_BROADCAST, WM_SETTINGCHANGE, 0, "Environment")
+                
+                return True
+                
+        except ImportError:
+            # winreg模块不可用，可能不是Windows系统
+            return False
+        except Exception as e:
+            print(f"Windows PATH添加失败: {e}")
+            return False
+    
+    def _add_to_unix_path(self, adb_dir: str) -> bool:
+        """Linux/macOS系统添加到PATH"""
+        try:
+            import os
+            
+            # 确定shell配置文件
+            shell = os.environ.get('SHELL', '/bin/bash')
+            if 'zsh' in shell:
+                config_files = ['~/.zshrc', '~/.zprofile']
+            elif 'fish' in shell:
+                config_files = ['~/.config/fish/config.fish']
+            else:  # bash或其他
+                config_files = ['~/.bashrc', '~/.bash_profile', '~/.profile']
+            
+            export_line = f'export PATH="$PATH:{adb_dir}"'
+            
+            # 寻找存在的配置文件
+            for config_file in config_files:
+                config_path = os.path.expanduser(config_file)
+                
+                # 如果文件存在或者是最后一个选择，就使用它
+                if os.path.exists(config_path) or config_file == config_files[-1]:
+                    
+                    # 检查是否已经存在
+                    if os.path.exists(config_path):
+                        with open(config_path, 'r', encoding='utf-8') as f:
+                            content = f.read()
+                            if adb_dir in content:
+                                return True  # 已经存在
+                    
+                    # 添加到配置文件
+                    with open(config_path, 'a', encoding='utf-8') as f:
+                        f.write(f'\n# AndroidMetrics ADB Path\n{export_line}\n')
+                    
+                    # 更新当前进程的PATH (临时生效)
+                    current_path = os.environ.get('PATH', '')
+                    if adb_dir not in current_path:
+                        os.environ['PATH'] = f"{current_path}:{adb_dir}"
+                    
+                    return True
+            
+            return False
+            
+        except Exception as e:
+            print(f"Unix PATH添加失败: {e}")
+            return False
 
 class DeviceScanner(QThread):
     """设备扫描线程"""
     device_found = pyqtSignal(str, str)  # IP, 设备信息
     scan_progress = pyqtSignal(int)
     
-    def __init__(self, ip_range="192.168.1"):
+    def __init__(self, ip_range="10.42.0"):
         super().__init__()
         self.ip_range = ip_range
         self.running = True
@@ -219,6 +538,7 @@ class DeviceConnectionDialog(QDialog):
         
         self.adb_available = self.check_adb_available()
         self.connected_devices = []
+        self.recent_devices = self.load_recent_devices()
         
         self.init_ui()
         self.apply_styles()
@@ -390,8 +710,8 @@ class DeviceConnectionDialog(QDialog):
         ip_input_layout.addWidget(QLabel("设备IP地址:"))
         
         self.ip_input = QLineEdit()
-        self.ip_input.setPlaceholderText("例如: 192.168.1.100")
-        self.ip_input.setText("192.168.1.")
+        self.ip_input.setPlaceholderText("例如: 10.42.0.100")
+        self.ip_input.setText("10.42.0.")
         ip_input_layout.addWidget(self.ip_input)
         
         self.connect_btn = QPushButton("🔌 连接")
@@ -446,9 +766,8 @@ class DeviceConnectionDialog(QDialog):
         quick_layout = QGridLayout(quick_group)
         
         common_ips = [
-            "192.168.1.100", "192.168.1.101", "192.168.1.102",
-            "192.168.0.100", "192.168.0.101", "192.168.0.102",
-            "10.0.0.100", "10.0.0.101"
+            "10.42.0.100", "10.42.0.101", "10.42.0.102", "10.42.0.103",
+            "192.168.1.100", "192.168.1.101", "192.168.0.100", "192.168.0.101"
         ]
         
         button_style = """
@@ -477,6 +796,75 @@ class DeviceConnectionDialog(QDialog):
             quick_layout.addWidget(btn, i // 4, i % 4)
         
         layout.addWidget(quick_group)
+        
+        # 常用网段快速切换
+        network_group = QGroupBox("🌐 常用网段")
+        network_layout = QGridLayout(network_group)
+        
+        common_networks = [
+            ("10.42.0", "默认网段"), ("192.168.1", "家用网络1"), 
+            ("192.168.0", "家用网络2"), ("10.0.0", "企业网络")
+        ]
+        
+        for i, (network, desc) in enumerate(common_networks):
+            btn = QPushButton(f"{network}.x\n{desc}")
+            btn.clicked.connect(lambda checked, net=network: self.set_network_range(net))
+            btn.setStyleSheet("""
+                QPushButton {
+                    background-color: white;
+                    color: #333333;
+                    border: 1px solid #dee2e6;
+                    padding: 12px 8px;
+                    border-radius: 6px;
+                    font-weight: 500;
+                    min-width: 100px;
+                    text-align: center;
+                }
+                QPushButton:hover {
+                    background-color: #f8f9fa;
+                    border-color: #4a90e2;
+                }
+                QPushButton:pressed {
+                    background-color: #e9ecef;
+                }
+            """)
+            network_layout.addWidget(btn, i // 2, i % 2)
+        
+        layout.addWidget(network_group)
+        
+        # 最近连接的设备
+        recent_group = QGroupBox("🕐 最近连接")
+        recent_layout = QVBoxLayout(recent_group)
+        
+        self.recent_devices_list = QListWidget()
+        self.recent_devices_list.setMaximumHeight(80)
+        self.recent_devices_list.itemDoubleClicked.connect(self.connect_recent_device)
+        recent_layout.addWidget(self.recent_devices_list)
+        
+        # 清除历史按钮
+        clear_recent_btn = QPushButton("🗑 清除历史")
+        clear_recent_btn.clicked.connect(self.clear_recent_devices)
+        clear_recent_btn.setStyleSheet("""
+            QPushButton {
+                background-color: white;
+                color: #333333;
+                border: 1px solid #dee2e6;
+                padding: 6px 12px;
+                border-radius: 4px;
+                font-weight: 500;
+                font-size: 12px;
+            }
+            QPushButton:hover {
+                background-color: #f8f9fa;
+                border-color: #dc3545;
+                color: #dc3545;
+            }
+        """)
+        recent_layout.addWidget(clear_recent_btn)
+        
+        layout.addWidget(recent_group)
+        self.update_recent_devices_display()
+        
         layout.addStretch()
         
         return widget
@@ -494,8 +882,8 @@ class DeviceConnectionDialog(QDialog):
         config_layout = QHBoxLayout()
         config_layout.addWidget(QLabel("网络段:"))
         
-        self.network_input = QLineEdit("192.168.1")
-        self.network_input.setPlaceholderText("例如: 192.168.1")
+        self.network_input = QLineEdit("10.42.0")
+        self.network_input.setPlaceholderText("例如: 10.42.0")
         config_layout.addWidget(self.network_input)
         
         # 定义统一按钮样式
@@ -665,6 +1053,13 @@ class DeviceConnectionDialog(QDialog):
         """设置IP地址"""
         self.ip_input.setText(ip)
     
+    def set_network_range(self, network):
+        """设置网络段"""
+        # 更新IP输入框
+        self.ip_input.setText(f"{network}.")
+        # 更新扫描网段
+        self.network_input.setText(network)
+    
     def connect_by_ip(self):
         """通过IP连接设备"""
         ip = self.ip_input.text().strip()
@@ -697,6 +1092,9 @@ class DeviceConnectionDialog(QDialog):
                 
                 # 发出连接成功信号
                 self.device_connected.emit(f"{ip}:{port}")
+                
+                # 保存到最近设备
+                self.save_recent_device(f"{ip}:{port}")
                 
                 # 刷新设备列表
                 self.refresh_devices()
@@ -841,6 +1239,81 @@ class DeviceConnectionDialog(QDialog):
         self.connect_btn.setEnabled(self.adb_available)
         self.scan_btn.setEnabled(self.adb_available)
     
+    def load_recent_devices(self):
+        """加载最近连接的设备"""
+        try:
+            import json
+            config_file = os.path.expanduser("~/.androidmetrics_recent_devices.json")
+            if os.path.exists(config_file):
+                with open(config_file, 'r', encoding='utf-8') as f:
+                    return json.load(f)
+        except Exception as e:
+            print(f"加载最近设备失败: {e}")
+        return []
+    
+    def save_recent_device(self, device_address):
+        """保存最近连接的设备"""
+        try:
+            # 添加到列表顶部，如果已存在则移除重复项
+            if device_address in self.recent_devices:
+                self.recent_devices.remove(device_address)
+            self.recent_devices.insert(0, device_address)
+            
+            # 只保留最近10个
+            self.recent_devices = self.recent_devices[:10]
+            
+            # 保存到文件
+            import json
+            config_file = os.path.expanduser("~/.androidmetrics_recent_devices.json")
+            with open(config_file, 'w', encoding='utf-8') as f:
+                json.dump(self.recent_devices, f, indent=2, ensure_ascii=False)
+            
+            # 更新显示
+            self.update_recent_devices_display()
+            
+        except Exception as e:
+            print(f"保存最近设备失败: {e}")
+    
+    def update_recent_devices_display(self):
+        """更新最近设备显示"""
+        if hasattr(self, 'recent_devices_list'):
+            self.recent_devices_list.clear()
+            for device in self.recent_devices[:5]:  # 只显示最近5个
+                item = QListWidgetItem(f"🕐 {device}")
+                item.setData(Qt.UserRole, device)
+                self.recent_devices_list.addItem(item)
+    
+    def connect_recent_device(self, item):
+        """连接最近的设备"""
+        device_address = item.data(Qt.UserRole)
+        if ':' in device_address:
+            ip, port = device_address.split(':')
+            self.ip_input.setText(ip)
+            self.port_input.setText(port)
+        else:
+            self.ip_input.setText(device_address)
+        self.connect_by_ip()
+    
+    def clear_recent_devices(self):
+        """清除最近设备历史"""
+        reply = QMessageBox.question(
+            self, "确认清除", 
+            "确定要清除所有最近连接的设备历史记录吗？",
+            QMessageBox.Yes | QMessageBox.No
+        )
+        
+        if reply == QMessageBox.Yes:
+            self.recent_devices.clear()
+            try:
+                import json
+                config_file = os.path.expanduser("~/.androidmetrics_recent_devices.json")
+                if os.path.exists(config_file):
+                    os.remove(config_file)
+            except:
+                pass
+            self.update_recent_devices_display()
+            QMessageBox.information(self, "清除完成", "✅ 最近设备历史已清除")
+
     def apply_styles(self):
         """应用样式"""
         self.setStyleSheet("""

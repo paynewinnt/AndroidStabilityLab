@@ -132,7 +132,7 @@ class BatchADBExecutor:
                 check=True
             )
             return result.stdout.strip()
-        except Exception:
+        except Exception as e:
             return None
 
 class ADBCollector:
@@ -140,7 +140,7 @@ class ADBCollector:
         # Optimized timeout settings for better performance vs reliability balance
         self.timeout = timeout
         self.retry_count = retry_count
-        self.device_id = None
+        self._device_id = None
         self._last_network_stats = {}
         
         # Enhanced multi-level cache system
@@ -158,7 +158,7 @@ class ADBCollector:
         self._performance_stats = defaultdict(float)
         
         # Batch executor for parallel ADB commands
-        self.batch_executor = BatchADBExecutor(self.device_id, max_workers=8)
+        self.batch_executor = BatchADBExecutor(self._device_id, max_workers=8)
         
         # Initialize compiled regex patterns
         self._init_regex_patterns()
@@ -172,6 +172,18 @@ class ADBCollector:
             'device_info': 60.0         # 设备信息每分钟
         }
         self._last_collection_time = defaultdict(float)
+        
+    @property
+    def device_id(self):
+        """Get the current device ID"""
+        return self._device_id
+    
+    @device_id.setter  
+    def device_id(self, value):
+        """Set device ID and reinitialize batch executor"""
+        self._device_id = value
+        # Recreate batch executor with new device ID
+        self.batch_executor = BatchADBExecutor(self._device_id, max_workers=8)
         
     def _init_regex_patterns(self):
         """Initialize compiled regex patterns for better performance"""

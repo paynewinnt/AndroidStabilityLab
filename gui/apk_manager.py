@@ -22,7 +22,7 @@ from PyQt5.QtWidgets import (QDialog, QVBoxLayout, QHBoxLayout, QLabel,
                             QTableWidgetItem, QHeaderView, QSplitter,
                             QFrame, QGridLayout, QTabWidget, QWidget,
                             QScrollArea, QComboBox, QSpinBox)
-from PyQt5.QtCore import Qt, QThread, pyqtSignal, QTimer, QSize
+from PyQt5.QtCore import Qt, QThread, pyqtSignal, QTimer, QSize, QSettings
 from PyQt5.QtGui import QIcon, QFont, QColor, QPalette, QPixmap, QPainter
 
 class APKInfo:
@@ -85,10 +85,11 @@ class InstallWorker(QThread):
     overall_progress = pyqtSignal(int)  # 总体进度
     log_message = pyqtSignal(str)
     
-    def __init__(self, apk_files: List[str], devices: List[str]):
+    def __init__(self, apk_files: List[str], devices: List[str], install_options: dict = None):
         super().__init__()
         self.apk_files = apk_files
         self.devices = devices
+        self.install_options = install_options or {}
         self.total_tasks = len(apk_files) * len(devices)
         self.completed_tasks = 0
         self.running = True
@@ -107,6 +108,7 @@ class InstallWorker(QThread):
                 
                 apk_name = os.path.basename(apk_file)
                 self.log_message.emit(f"📱 正在安装 {apk_name} 到设备 {device_id}")
+                self.log_message.emit("=" * 60)  # 分隔线
                 
                 # 更新进度
                 self.progress_updated.emit(device_id, apk_name, 0)
@@ -120,9 +122,13 @@ class InstallWorker(QThread):
                     self.install_finished.emit(device_id, apk_name, success, message)
                     
                     if success:
-                        self.log_message.emit(f"✅ {apk_name} 安装成功到 {device_id}")
+                        self.log_message.emit(f"🎉 {apk_name} 安装成功到设备 {device_id}")
+                        self.log_message.emit(f"📄 详情: {message}")
                     else:
-                        self.log_message.emit(f"❌ {apk_name} 安装失败到 {device_id}: {message}")
+                        self.log_message.emit(f"❌ {apk_name} 安装失败到设备 {device_id}")
+                        self.log_message.emit(f"❗ 错误: {message}")
+                    
+                    self.log_message.emit("-" * 60)  # 任务分隔线
                         
                 except Exception as e:
                     self.install_finished.emit(device_id, apk_name, False, str(e))
@@ -139,14 +145,63 @@ class InstallWorker(QThread):
         self.log_message.emit("🎉 批量安装任务完成！")
     
     def install_apk(self, device_id: str, apk_file: str) -> Tuple[bool, str]:
-        """安装单个APK到指定设备"""
+        """安装单个APK到指定设备，包含版本对比"""
         try:
-            cmd = ["adb", "-s", device_id, "install", "-r", apk_file]
-            result = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
+            # 获取APK信息
+            apk_info = self.get_apk_info(apk_file)
+            package_name = apk_info.get('package_name', '')
+            new_version = apk_info.get('version_name', '未知')
+            new_version_code = apk_info.get('version_code', '未知')
+            
+            # 获取安装前版本信息
+            old_version_info = self.get_installed_app_version(device_id, package_name)
+            
+            if old_version_info:
+                old_version = old_version_info.get('version_name', '未知')
+                old_version_code = old_version_info.get('version_code', '未知')
+                version_comparison = f"版本更新: {old_version}({old_version_code}) → {new_version}({new_version_code})"
+            else:
+                version_comparison = f"全新安装: {new_version}({new_version_code})"
+            
+            # 记录安装前状态
+            self.log_message.emit(f"📋 {package_name} - {version_comparison}")
+            
+            # 构建安装命令
+            cmd = ["adb", "-s", device_id, "install"]
+            
+            # 添加安装选项
+            if self.install_options.get('replace_existing', True):
+                cmd.append('-r')
+            if self.install_options.get('allow_downgrade', False):
+                cmd.append('-d') 
+            if self.install_options.get('grant_permissions', False):
+                cmd.append('-g')
+            if self.install_options.get('install_on_sd', False):
+                cmd.append('-s')
+            
+            cmd.append(apk_file)
+            
+            # 记录使用的安装选项
+            options_str = " ".join([opt for opt in ['-r' if self.install_options.get('replace_existing') else None,
+                                                   '-d' if self.install_options.get('allow_downgrade') else None,
+                                                   '-g' if self.install_options.get('grant_permissions') else None,
+                                                   '-s' if self.install_options.get('install_on_sd') else None] if opt])
+            self.log_message.emit(f"⚙️ 安装选项: {options_str if options_str else '无特殊选项'}")
+            
+            # 执行安装
+            timeout = self.install_options.get('timeout', 300)
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
             
             if result.returncode == 0:
                 if "Success" in result.stdout:
-                    return True, "安装成功"
+                    # 验证安装后版本
+                    post_install_info = self.get_installed_app_version(device_id, package_name)
+                    if post_install_info:
+                        actual_version = post_install_info.get('version_name', '未知')
+                        actual_version_code = post_install_info.get('version_code', '未知')
+                        self.log_message.emit(f"✅ 安装完成，当前版本: {actual_version}({actual_version_code})")
+                    
+                    return True, f"安装成功 - {version_comparison}"
                 else:
                     return False, result.stdout.strip()
             else:
@@ -156,6 +211,68 @@ class InstallWorker(QThread):
             return False, "安装超时"
         except Exception as e:
             return False, f"安装异常: {str(e)}"
+    
+    def get_apk_info(self, apk_file: str) -> dict:
+        """获取APK文件信息"""
+        try:
+            result = subprocess.run(
+                ["aapt", "dump", "badging", apk_file],
+                capture_output=True, text=True, timeout=10
+            )
+            
+            info = {'package_name': '', 'version_name': '未知', 'version_code': '未知'}
+            
+            if result.returncode == 0:
+                lines = result.stdout.split('\n')
+                for line in lines:
+                    if line.startswith('package:'):
+                        parts = line.split(' ')
+                        for part in parts:
+                            if part.startswith('name='):
+                                info['package_name'] = part.split('=')[1].strip("'\"")
+                            elif part.startswith('versionName='):
+                                info['version_name'] = part.split('=')[1].strip("'\"")
+                            elif part.startswith('versionCode='):
+                                info['version_code'] = part.split('=')[1].strip("'\"")
+            
+            return info
+        except:
+            return {'package_name': '', 'version_name': '未知', 'version_code': '未知'}
+    
+    def get_installed_app_version(self, device_id: str, package_name: str) -> dict:
+        """获取设备上已安装应用的版本信息"""
+        if not package_name:
+            return None
+            
+        try:
+            # 使用dumpsys package获取版本信息
+            cmd = ["adb", "-s", device_id, "shell", "dumpsys", "package", package_name]
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=10)
+            
+            if result.returncode == 0:
+                lines = result.stdout.split('\n')
+                version_info = {}
+                
+                for line in lines:
+                    line = line.strip()
+                    if 'versionCode=' in line:
+                        import re
+                        match = re.search(r'versionCode=(\d+)', line)
+                        if match:
+                            version_info['version_code'] = match.group(1)
+                    elif 'versionName=' in line:
+                        import re
+                        match = re.search(r'versionName=([^\s]+)', line)
+                        if match:
+                            version_name = match.group(1)
+                            version_info['version_name'] = version_name.strip('"\'')
+                
+                if version_info:
+                    return version_info
+        except:
+            pass
+        
+        return None
     
     def stop(self):
         """停止安装"""
@@ -174,14 +291,33 @@ class APKManagerDialog(QDialog):
         self.selected_devices: List[str] = []
         self.install_worker = None
         
+        # 初始化设置存储，用于记住文件路径
+        self.settings = QSettings("AndroidMetrics", "APKManager")
+        self.last_apk_dir = self._ensure_path_exists(
+            self.settings.value("last_apk_directory", os.path.expanduser("~"))
+        )
+        self.last_log_dir = self._ensure_path_exists(
+            self.settings.value("last_log_directory", os.path.expanduser("~"))
+        )
+        
         self.init_ui()
         self.apply_styles()
         self.refresh_devices()
         
-        # 定时刷新设备列表
+        # 定时刷新设备列表 - 延长间隔避免频繁重置用户选择
         self.device_timer = QTimer()
-        self.device_timer.timeout.connect(self.refresh_devices)
-        self.device_timer.start(5000)  # 每5秒刷新一次
+        self.device_timer.timeout.connect(self.smart_refresh_devices)
+        self.device_timer.start(10000)  # 每10秒刷新一次，降低影响
+        
+        # 添加用户交互标志，防止在用户操作时刷新
+        self.user_interacting = False
+        self.last_user_interaction = 0
+    
+    def _ensure_path_exists(self, path: str) -> str:
+        """确保路径存在，如果不存在则返回用户主目录"""
+        if path and os.path.exists(path) and os.path.isdir(path):
+            return path
+        return os.path.expanduser("~")
     
     def init_ui(self):
         """初始化UI"""
@@ -462,7 +598,40 @@ class APKManagerDialog(QDialog):
         # 设备列表
         self.device_list = QListWidget()
         self.device_list.setAlternatingRowColors(True)
+        self.device_list.setStyleSheet("""
+            QListWidget {
+                border: 1px solid #dee2e6;
+                border-radius: 8px;
+                background-color: white;
+                selection-background-color: #4682B4;
+                selection-color: white;
+                padding: 5px;
+            }
+            QListWidget::item {
+                padding: 10px;
+                border-bottom: 1px solid #f1f3f4;
+                border-radius: 4px;
+                margin: 2px;
+                background-color: white;
+                color: #333333;
+                font-weight: 500;
+            }
+            QListWidget::item:hover {
+                background-color: #e7f3ff;
+                color: #1976d2;
+                border: 1px solid #bbdefb;
+            }
+            QListWidget::item:selected {
+                background-color: #4682B4;
+                color: white;
+                border: 1px solid #2c5282;
+                font-weight: bold;
+            }
+        """)
         device_layout.addWidget(self.device_list)
+        
+        # 添加设备状态变化监听
+        self.device_list.itemChanged.connect(self.on_device_item_changed)
         
         layout.addWidget(device_group)
         
@@ -617,18 +786,27 @@ class APKManagerDialog(QDialog):
     def select_apk_files(self):
         """选择APK文件"""
         files, _ = QFileDialog.getOpenFileNames(
-            self, "选择APK文件", "", 
+            self, "选择APK文件", self.last_apk_dir, 
             "Android APK Files (*.apk);;All Files (*)"
         )
         
         if files:
+            # 更新并保存最后使用的目录
+            self.last_apk_dir = os.path.dirname(files[0])
+            self.settings.setValue("last_apk_directory", self.last_apk_dir)
             self.add_apk_files(files)
     
     def select_apk_folder(self):
         """选择包含APK的文件夹"""
-        folder = QFileDialog.getExistingDirectory(self, "选择包含APK文件的文件夹")
+        folder = QFileDialog.getExistingDirectory(
+            self, "选择包含APK文件的文件夹", self.last_apk_dir
+        )
         
         if folder:
+            # 更新并保存最后使用的目录
+            self.last_apk_dir = folder
+            self.settings.setValue("last_apk_directory", self.last_apk_dir)
+            
             # 搜索文件夹中的所有APK文件
             apk_files = []
             for root, dirs, files in os.walk(folder):
@@ -688,8 +866,35 @@ class APKManagerDialog(QDialog):
         self.apk_table.setRowCount(0)
         self.update_stats()
     
+    def smart_refresh_devices(self):
+        """智能刷新设备列表 - 避免用户交互时刷新"""
+        import time
+        current_time = time.time()
+        
+        # 如果用户在最近5秒内有交互，跳过本次刷新
+        if current_time - self.last_user_interaction < 5:
+            self.add_log_message("⏭ 检测到用户交互，跳过设备列表刷新")
+            return
+        
+        # 如果正在安装，也跳过刷新
+        if self.install_worker and self.install_worker.isRunning():
+            return
+            
+        self.refresh_devices()
+    
     def refresh_devices(self):
-        """刷新设备列表"""
+        """刷新设备列表 - 保持已选择设备的状态"""
+        # 保存当前选中的设备
+        selected_devices = set()
+        for i in range(self.device_list.count()):
+            item = self.device_list.item(i)
+            if item and item.checkState() == Qt.Checked:
+                device_id = item.data(Qt.UserRole)
+                if device_id:
+                    selected_devices.add(device_id)
+        
+        # 暂时断开信号连接，防止频繁触发
+        self.device_list.itemChanged.disconnect()
         self.device_list.clear()
         
         try:
@@ -707,7 +912,15 @@ class APKManagerDialog(QDialog):
                         # 创建设备项
                         item = QListWidgetItem(f"📱 {device_info}")
                         item.setData(Qt.UserRole, device_id)
-                        item.setCheckState(Qt.Unchecked)
+                        
+                        # 恢复之前的选择状态
+                        if device_id in selected_devices:
+                            item.setCheckState(Qt.Checked)
+                            self.add_log_message(f"🔄 设备 {device_id} 状态已恢复为选中")
+                        else:
+                            item.setCheckState(Qt.Unchecked)
+                            
+                        item.setFlags(item.flags() | Qt.ItemIsUserCheckable | Qt.ItemIsEnabled | Qt.ItemIsSelectable)
                         
                         self.device_list.addItem(item)
                 
@@ -720,6 +933,8 @@ class APKManagerDialog(QDialog):
             item.setFlags(Qt.NoItemFlags)
             self.device_list.addItem(item)
         
+        # 重新连接信号
+        self.device_list.itemChanged.connect(self.on_device_item_changed)
         self.update_stats()
     
     def get_device_info(self, device_id: str) -> str:
@@ -741,19 +956,43 @@ class APKManagerDialog(QDialog):
     
     def select_all_devices(self):
         """选择所有设备"""
+        import time
+        self.last_user_interaction = time.time()  # 记录用户交互时间
+        
         for i in range(self.device_list.count()):
             item = self.device_list.item(i)
             if item.flags() != Qt.NoItemFlags:
                 item.setCheckState(Qt.Checked)
+        
         self.update_stats()
+        self.add_log_message("✅ 用户手动选择了所有设备")
     
     def deselect_all_devices(self):
         """取消选择所有设备"""
+        import time
+        self.last_user_interaction = time.time()  # 记录用户交互时间
+        
         for i in range(self.device_list.count()):
             item = self.device_list.item(i)
             if item.flags() != Qt.NoItemFlags:
                 item.setCheckState(Qt.Unchecked)
+        
         self.update_stats()
+        self.add_log_message("❌ 用户手动取消选择了所有设备")
+    
+    def on_device_item_changed(self, item):
+        """设备项状态变化处理"""
+        import time
+        self.last_user_interaction = time.time()  # 记录用户交互时间
+        
+        # 当设备项状态变化时，立即更新统计信息
+        self.update_stats()
+        
+        # 添加日志记录设备选择变化
+        device_id = item.data(Qt.UserRole)
+        if device_id:
+            status = "选中" if item.checkState() == Qt.Checked else "取消选中"
+            self.add_log_message(f"📱 设备 {device_id} 已{status}")
     
     def update_stats(self):
         """更新统计信息"""
@@ -820,8 +1059,19 @@ class APKManagerDialog(QDialog):
         self.start_install_btn.setEnabled(False)
         self.stop_install_btn.setEnabled(True)
         
+        # 收集安装选项
+        install_options = {
+            'replace_existing': self.replace_existing.isChecked(),
+            'allow_downgrade': self.allow_downgrade.isChecked(),
+            'grant_permissions': self.grant_permissions.isChecked(),
+            'install_on_sd': self.install_on_sd.isChecked(),
+            'timeout': self.timeout_spinbox.value()
+        }
+        
+        self.add_log_message(f"⚙️ 安装配置: {install_options}")
+        
         # 创建并启动安装线程
-        self.install_worker = InstallWorker(selected_apks, selected_devices)
+        self.install_worker = InstallWorker(selected_apks, selected_devices, install_options)
         self.install_worker.progress_updated.connect(self.update_install_progress)
         self.install_worker.install_finished.connect(self.on_install_finished)
         self.install_worker.overall_progress.connect(self.overall_progress.setValue)
@@ -940,12 +1190,18 @@ class APKManagerDialog(QDialog):
     
     def save_log(self):
         """保存日志"""
+        default_filename = f"apk_install_log_{time.strftime('%Y%m%d_%H%M%S')}.txt"
+        default_path = os.path.join(self.last_log_dir, default_filename)
+        
         file_path, _ = QFileDialog.getSaveFileName(
-            self, "保存日志", f"apk_install_log_{time.strftime('%Y%m%d_%H%M%S')}.txt",
+            self, "保存日志", default_path,
             "Text Files (*.txt);;All Files (*)"
         )
         
         if file_path:
+            # 更新并保存最后使用的目录
+            self.last_log_dir = os.path.dirname(file_path)
+            self.settings.setValue("last_log_directory", self.last_log_dir)
             try:
                 with open(file_path, 'w', encoding='utf-8') as f:
                     f.write(self.log_display.toPlainText())

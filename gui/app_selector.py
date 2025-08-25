@@ -353,6 +353,37 @@ class AppSelectorWidget(QWidget):
                 border-radius: 4px;
                 padding: 4px;
                 background-color: white;
+                color: #333333;
+            }
+            
+            QComboBox:hover {
+                border-color: #4682B4;
+                background-color: #f8f9fa;
+            }
+            
+            QComboBox QAbstractItemView {
+                border: 1px solid #cccccc;
+                background-color: white;
+                selection-background-color: #e3f2fd;
+                selection-color: #1976d2;
+                color: #333333;
+            }
+            
+            QComboBox QAbstractItemView::item {
+                height: 25px;
+                padding: 4px 8px;
+                color: #333333;
+                background-color: white;
+            }
+            
+            QComboBox QAbstractItemView::item:hover {
+                background-color: #e3f2fd;
+                color: #1976d2;
+            }
+            
+            QComboBox QAbstractItemView::item:selected {
+                background-color: #2196f3;
+                color: white;
             }
             
             QCheckBox {
