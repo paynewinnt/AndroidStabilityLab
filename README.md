@@ -1,217 +1,263 @@
 # Android Stability Lab
 
-[![Python](https://img.shields.io/badge/Python-3.7%2B-blue.svg)](https://www.python.org/)
-[![Entry](https://img.shields.io/badge/Entry-CLI%20%2B%20Web-2d7d46.svg)](#当前推荐入口)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
+[![Entry](https://img.shields.io/badge/Entry-CLI%20%2B%20Web-2d7d46.svg)](#quick-start)
+[![Tests](https://img.shields.io/badge/tests-pytest-0a7f3f.svg)](#testing)
 
-`Android Stability Lab` 是一个面向 Android 稳定性场景的本地优先测试与分析工作台，当前推荐围绕 `stability/` 体系使用，重点覆盖：
+English | [简体中文](README-CN.md)
 
-- 稳定性任务执行与报告输出
-- 问题聚合、回归对比与规则治理
-- 无人值守巡检、日/周报和本地 Web 门户
-- `golden suite` 样本库、规则准入基线审计和本地报告/JSON/产物共享
+Android Stability Lab is a local-first Android stability testing and analysis
+workspace. It brings device discovery, task execution, evidence collection,
+issue analysis, rule review, unattended patrols, and a lightweight web portal
+into one reproducible workflow.
 
-> 当前推荐入口是 `stability/`：`python -m stability.cli` 和 `serve-web` 是优先使用方式。
+The project is designed for teams that need a practical lab environment before
+they invest in a full online quality platform. It works well for local
+debugging, team intranet demos, rule-review experiments, smoke tests, and
+long-running device patrol prototypes.
 
-当前阶段口径：`V1 / V2` 主链已基本闭环，`V3` 最小流程闭环已落地。后续重点是生产化治理、真实平台适配、长稳产品化、规则/证据精度和长时运行可靠性。
+> Current recommended entry points are `python -m stability.cli` and
+> `python -m stability.cli serve-web`.
 
-部署与共享口径：默认本地部署、本地执行、自看自用；需要共享时，优先通过本地 Web、报告、JSON、HTML/Markdown、分析快照、规则评审报告、准入对比和附件产物导出完成。当前不应理解为完整多租户平台、完整 IAM、完整在线规则发布平台或完整审批流已经完成。
+## Table of Contents
 
-P0 边界口径：本仓库当前按“本地优先平台”收口，`serve-web`、JSON API、outbox/worker、受信 header SSO、规则准入和长稳 runner 都应先被理解为本地或团队内网共享能力。凡是依赖外部真实平台、长时运行或真实设备结果的能力，必须完成对应真实验收并留下可复核记录后，才允许写成“已完成真实链路”。
+- [Why This Exists](#why-this-exists)
+- [Feature Highlights](#feature-highlights)
+- [Project Status](#project-status)
+- [Quick Start](#quick-start)
+- [Common Commands](#common-commands)
+- [Web Portal](#web-portal)
+- [Demo Data](#demo-data)
+- [Project Layout](#project-layout)
+- [Testing](#testing)
+- [Configuration](#configuration)
+- [Security Notes](#security-notes)
+- [Roadmap](#roadmap)
+- [Contributing](#contributing)
+- [License](#license)
 
-必须真实验收后才算完成的能力包括：
+## Why This Exists
 
-- 外部通知、CI 回写、缺陷系统和提测平台对接：本地 mock/smoke 只证明出站合同和 worker 可运行，不能替代真实 endpoint 验收。
-- IM/飞书通知链路：必须按 runbook 完成本地 smoke、真实 2 小时试运行和真实 24 小时长时联调；未跑满 24 小时前，不写成真实通知链路已完成。
-- 长稳任务产品化：必须至少使用真实设备完成一轮执行，并能在 `/tasks`、`/runner`、`/performance` 和日报/周报里串起任务、轮次、设备、结果和产物。
-- 设备池治理：必须能在轮次记录、runner 历史、巡检摘要或日报/周报中复核断连、失败、重试、隔离和恢复探测记录，才算完成本地无人值守调度闭环。
-- 高级异常识别和性能风险阈值：没有真实样本标定、多证据确认或结构化解析前，只按启发式/规则式初步识别验收，不按生产级智能诊断或 AI 根因诊断验收。
-- SSO、用户目录、责任检索和规则配置入口：当前只按本地 session、受信 header、只读目录/检索和本地规则文件治理验收，不按完整企业级 IAM、多租户隔离、在线规则发布或审批平台验收。
+Android stability work often starts as a collection of shell scripts, ADB
+commands, local notes, screenshots, and scattered reports. That approach is
+fast at the beginning, but it becomes hard to reproduce, hand over, audit, or
+run unattended.
 
-当前重点能力状态统一按下面口径理解，避免把阶段性能力误写成完整平台完成：
+Android Stability Lab aims to make the core workflow repeatable:
 
-| 能力 | 当前状态 | 可依赖范围 | 不建议依赖为 |
-| --- | --- | --- | --- |
-| IM/飞书通知 | 部分可用 | 平台侧 `im_notify` / `feishu_bot` 合同、webhook 注册、worker、本地 mock/smoke、outbox receipt 观测可用于联调准入 | 真实 24 小时 IM 链路、生产群通知、完整订阅降噪和真实接收方幂等验收完成 |
-| SSO/身份 | 部分可用 | 本地 session、受信 SSO header claims、写操作身份解析、审计增强、只读用户目录和责任检索 | 完整企业级 OIDC/LDAP/SSO、独立 IAM、多租户数据隔离、复杂组织权限平台 |
-| 设备调度 | 部分可用 | 本地设备注册、状态同步、无人值守 runner、主备/轮转/补位、隔离和恢复探测 | 团队级设备预约、配额、审批、排班、维护窗口和跨团队设备平台 |
-| 规则在线发布 | 不建议依赖 | 只读规则配置中心、候选编辑预览、校验、diff、回放、评审、基线审计和本地规则文件治理 | 在线保存、发布、审批、回滚和多级变更工作流 |
+- Register devices and keep their current state visible.
+- Define stability tasks and run them through a consistent execution service.
+- Capture logs, reports, monitoring snapshots, traces, and issue artifacts.
+- Aggregate top issues and compare versions, devices, scenarios, and metrics.
+- Review analysis rules through replay, golden samples, reports, and baseline
+  audits.
+- Run unattended patrols and generate local daily or weekly summaries.
+- Share results through a local web portal and JSON endpoints.
 
-## 项目主要作用
+## Feature Highlights
 
-这个项目的核心作用，是把 Android 稳定性测试里原本分散、依赖人工、难以复盘的工作，收口成一条可重复执行、可追溯分析、可持续巡检的主链路：
+### Execution and Evidence
 
-- 把设备、任务、执行、异常、证据、报告接到同一套 CLI 和本地 Web 入口里
-- 把一次稳定性执行沉淀成可查询的 Run、Issue、Artifact、日报和周报
-- 把版本、设备、场景之间的差异比较和回归判断标准化
-- 把规则回放、`golden suite`、基线审计接进规则治理和准入评审流程
-- 把值班视角需要的 runner 心跳、失败率、掉线率、隔离设备数前置到首页和 `/runner`
+- Device discovery through ADB and local persistence.
+- Task and run lifecycle management from the CLI.
+- Scenario runners for cold start loops, Monkey, install/uninstall,
+  foreground/background, reboot, standby/wake, device cycle, and custom
+  automation flows.
+- Best-effort cleanup and retry handling for recoverable device or transport
+  failures.
+- Markdown and HTML report generation.
+- Artifact capture for logs, bugreports, logcat, Perfetto traces, monitoring
+  snapshots, and issue-specific evidence.
 
-## 主要解决的问题
+### Analysis and Rule Governance
 
-它主要解决的是 Android 稳定性工作里几类很常见的落地问题：
+- Top issue aggregation and issue-group drill-down.
+- Comparison by version, device, and scenario.
+- Regression judgment for issue counts and performance metrics.
+- Rule configuration through local JSON files.
+- Rule replay against historical runs.
+- Golden sample suites for rule acceptance.
+- Rule review reports with JSON, Markdown, and HTML outputs.
+- Baseline promotion, rollback, history, and audit artifacts.
 
-- 手工执行零散：任务靠临时 `adb` 命令和个人脚本完成，难复用、难交接
-- 失败复盘困难：异常发生后证据不全，日志、附件和报告分散在不同位置
-- 回归判断不稳定：版本之间的问题增减、性能波动和规则变化缺少统一比较口径
-- 长稳值班成本高：无人值守任务失败、设备掉线、设备隔离往往要靠人盯
-- 准入治理不闭环：规则变更、`golden suite` 验收、基线变化和审计记录缺少统一入口
-- 新人理解成本高：如果没有一份主线清晰的入口说明，很容易把 CLI、Web、报告和准入能力割裂理解
+### Monitoring Backends
 
-## 当前推荐入口
+The execution pipeline can collect monitoring data through multiple backends:
 
-```bash
-# 查看 CLI 总入口
-./.venv/bin/python -m stability.cli --help
+- `adb_collector`: built-in ADB snapshot collection.
+- `solox`: SoloX-based CPU, memory, network, battery, FPS, and GPU sampling.
+- `perfetto`: Perfetto trace sidecar for deeper system-level tracing.
+- `disabled`: run without monitoring.
 
-# 启动本地 Web 门户
-./.venv/bin/python -m stability.cli serve-web --host 127.0.0.1 --port 8030
-```
+Backend selection can be configured globally in `config/monitoring.json` or
+overridden per execution with `--monitoring-backend`.
 
-## 当前主线能力
+### Unattended Patrols
 
-### V1 执行闭环
+- Periodic task configuration with `interval_minutes`.
+- Primary and fallback device selection.
+- Fixed or round-robin device rotation.
+- Failure thresholds, quarantine, and recovery probes.
+- Single-runner lock and heartbeat files.
+- Patrol history, status summaries, daily reports, and weekly reports.
+- Runner-oriented web and JSON views for local duty dashboards.
 
-- 设备发现、任务定义、Run 创建与执行实例编排
-- `cold_start_loop`、`Monkey` 等稳定性场景执行
-- 异常识别、证据抓取、执行日志、`Markdown + HTML` 报告
-- 失败分类重试、清理、TCP 设备单次重连恢复
+### Integration Outbox
 
-### V2 分析闭环
+The repository includes a local integration outbox for webhook-style delivery:
 
-- `Top Issue` 聚合、问题组详情和多维对比
-- 版本 / 设备 / 场景维度的性能趋势比较与回归判断
-- 分析快照、规则回放、规则治理与差异比较
-- `golden suite` 样本验收、draft 提升、规则评审报告与基线审计
+- Durable event files and delivery receipts.
+- Retry and dead-letter state.
+- Webhook registration.
+- Worker commands for local or intranet delivery.
+- IM/Feishu payload contracts and smoke-test helpers.
 
-### V3 最小闭环
+This is intentionally a local-first integration layer. Real external endpoints
+must still be validated separately before claiming production readiness.
 
-- 无人值守任务配置、定时巡检、失败隔离和自动恢复探测
-- runner 心跳、单实例锁、最近 patrol 历史
-- 自动日报、周报和首页摘要卡
-- 本地 Web 门户：`/`、`/tasks`、`/performance`、`/issues`、`/runner`、`/goldens`、`/admission`、`/json-api`
-- 准入单主对象：`AdmissionCase` 稳定合同、`case_trace` 证据链、准入详情页与 CLI 查询入口
-- 最小协作、外部 outbox/worker/API 骨架、受信 header SSO 最小接入和只读用户/责任检索入口
+## Project Status
 
-## 快速开始
+The repository currently represents a functional local lab, not a complete
+enterprise platform.
 
-### 1. 准备环境
+Recommended interpretation:
 
-- Python `3.7+`
-- 可用的 `adb`
-- 至少一台开启 USB 调试的 Android 设备，或可连通的 TCP 设备
+| Area | Current Scope | Not Yet Claimed |
+| --- | --- | --- |
+| CLI and local web | Usable for local workflows, demos, smoke tests, and team intranet sharing | Hosted SaaS, multi-tenant platform, full IAM |
+| Device execution | Local ADB-driven execution and artifact capture | Fleet scheduling, quotas, approvals, maintenance windows |
+| Rule governance | Local rule files, replay, golden samples, reports, baseline audits | Online rule publishing, approval workflow, staged rollout |
+| IM/webhook integration | Outbox contracts, workers, mock/smoke validation | 24-hour production IM reliability without separate validation |
+| SSO/identity | Trusted headers, local sessions, simple audit identity | Enterprise OIDC/LDAP/IAM and tenant isolation |
+| Diagnosis | Rule-based evidence and attribution hints | AI root-cause diagnosis or production-grade intelligent triage |
 
-### 2. 安装依赖
+## Quick Start
+
+### Requirements
+
+- Python 3.10+ recommended.
+- ADB available in `PATH`.
+- One Android device with USB debugging enabled, or a reachable TCP device.
+- macOS or Linux shell environment for the bundled smoke scripts.
+
+### Install
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
+pip install pytest
 ```
 
-> 当前仓库的 `requirements.txt` 仅保留 CLI/Web 和稳定性主线需要的依赖。
-
-### 3. 验证入口
+### Verify the CLI
 
 ```bash
-adb devices
-./.venv/bin/python -m stability.cli --help
-./.venv/bin/python -m stability.cli serve-web --host 127.0.0.1 --port 8030
+PYTHONPATH=. ./.venv/bin/python -m stability.cli --help
 ```
 
-启动后可访问：
+### Start the Web Portal
+
+```bash
+PYTHONPATH=. ./.venv/bin/python -m stability.cli serve-web --host 127.0.0.1 --port 8030
+```
+
+Then open:
 
 - `http://127.0.0.1:8030/`
 - `http://127.0.0.1:8030/health`
 
-## 常用命令
-
-下面这些命令能覆盖当前大部分日常使用场景，具体参数请再追加 `--help`。
-
-### 任务与执行
+### Check Devices
 
 ```bash
-./.venv/bin/python -m stability.cli create-task --help
-./.venv/bin/python -m stability.cli create-run --help
-./.venv/bin/python -m stability.cli execute-run --help
-./.venv/bin/python -m stability.cli list-tasks
-./.venv/bin/python -m stability.cli show-task --help
-./.venv/bin/python -m stability.cli list-runs
-./.venv/bin/python -m stability.cli show-run --help
+adb devices
+PYTHONPATH=. ./.venv/bin/python -m stability.cli list-devices --sync
 ```
 
-### 监控后端
+## Common Commands
 
-当前执行链路已经支持通过统一的 `monitoring adapter` 切换不同监控后端：
+Add `--help` to any command for full options.
 
-- `adb_collector`：默认基础链路，提供 ADB 快照采样与本地持久化能力
-- `solox`：接入 SoloX Python API，适合无 Root 的一站式 CPU / Memory / Network / Battery / FPS / GPU 采样
-- `perfetto`：接入 Perfetto trace sidecar，适合更深入的系统级 tracing；默认会把 trace 文件挂到执行实例产物目录
-
-后端选择入口：
-
-- 全局默认配置：`config/monitoring.json`
-- 单次执行覆盖：`--monitoring-backend adb_collector|solox|perfetto|auto|disabled`
+### Tasks and Runs
 
 ```bash
-# 用 SoloX 跑一次现有 Run
-./.venv/bin/python -m stability.cli execute-run --run-id <run_id> --monitoring-backend solox
-
-# 用 Perfetto 作为本次执行的 tracing sidecar
-./.venv/bin/python -m stability.cli execute-run --run-id <run_id> --monitoring-backend perfetto
+PYTHONPATH=. ./.venv/bin/python -m stability.cli create-task --help
+PYTHONPATH=. ./.venv/bin/python -m stability.cli list-tasks
+PYTHONPATH=. ./.venv/bin/python -m stability.cli show-task --help
+PYTHONPATH=. ./.venv/bin/python -m stability.cli create-run --help
+PYTHONPATH=. ./.venv/bin/python -m stability.cli list-runs
+PYTHONPATH=. ./.venv/bin/python -m stability.cli show-run --help
+PYTHONPATH=. ./.venv/bin/python -m stability.cli execute-run --help
 ```
 
-### 设备与查询
+### Device and Issue Queries
 
 ```bash
-./.venv/bin/python -m stability.cli list-devices --sync
-./.venv/bin/python -m stability.cli show-device --help
-./.venv/bin/python -m stability.cli list-top-issues --help
-./.venv/bin/python -m stability.cli show-issue-group --help
-./.venv/bin/python -m stability.cli compare-issues --help
-./.venv/bin/python -m stability.cli compare-performance-trends --help
-./.venv/bin/python -m stability.cli judge-regression --help
+PYTHONPATH=. ./.venv/bin/python -m stability.cli list-devices --sync
+PYTHONPATH=. ./.venv/bin/python -m stability.cli show-device --help
+PYTHONPATH=. ./.venv/bin/python -m stability.cli list-top-issues --help
+PYTHONPATH=. ./.venv/bin/python -m stability.cli show-issue-group --help
+PYTHONPATH=. ./.venv/bin/python -m stability.cli compare-issues --help
 ```
 
-### 无人值守与巡检
+### Performance and Regression
 
 ```bash
-./.venv/bin/python -m stability.cli configure-unattended-task --help
-./.venv/bin/python -m stability.cli list-unattended-tasks
-./.venv/bin/python -m stability.cli patrol-unattended-tasks
-./.venv/bin/python -m stability.cli run-unattended-patrol-runner --help
-./.venv/bin/python -m stability.cli build-unattended-daily-report --help
-./.venv/bin/python -m stability.cli build-unattended-weekly-report --help
+PYTHONPATH=. ./.venv/bin/python -m stability.cli compare-performance-trends --help
+PYTHONPATH=. ./.venv/bin/python -m stability.cli judge-regression --help
+PYTHONPATH=. ./.venv/bin/python -m stability.cli create-analysis-snapshot --help
+PYTHONPATH=. ./.venv/bin/python -m stability.cli list-analysis-snapshots
 ```
 
-### 规则治理与准入
+### Rule Review and Admission
 
 ```bash
-./.venv/bin/python -m stability.cli replay-analysis-rules --help
-./.venv/bin/python -m stability.cli verify-rule-replay-golden-samples --help
-./.venv/bin/python -m stability.cli create-rule-review-report --help
-./.venv/bin/python -m stability.cli list-admission-cases --help
-./.venv/bin/python -m stability.cli show-admission-case --baseline-key <baseline_key>
-./.venv/bin/python -m stability.cli show-rule-review-report-baseline --help
-./.venv/bin/python -m stability.cli create-rule-review-report-baseline-audit --help
+PYTHONPATH=. ./.venv/bin/python -m stability.cli show-analysis-rules
+PYTHONPATH=. ./.venv/bin/python -m stability.cli validate-analysis-rules
+PYTHONPATH=. ./.venv/bin/python -m stability.cli diff-analysis-rules --help
+PYTHONPATH=. ./.venv/bin/python -m stability.cli replay-analysis-rules --help
+PYTHONPATH=. ./.venv/bin/python -m stability.cli verify-rule-replay-golden-samples --help
+PYTHONPATH=. ./.venv/bin/python -m stability.cli create-rule-review-report --help
+PYTHONPATH=. ./.venv/bin/python -m stability.cli list-admission-cases --help
+PYTHONPATH=. ./.venv/bin/python -m stability.cli show-admission-case --help
 ```
 
-## Web 门户
+### Unattended Runner
 
-`python -m stability.cli serve-web` 会启动一个无额外 Web 依赖的本地门户。它可以作为本机或团队内网共享入口使用，但当前仍以本地优先为主，不按完整在线平台、多租户隔离、完整企业级 IAM、团队级设备调度平台或在线规则发布平台验收。
+```bash
+PYTHONPATH=. ./.venv/bin/python -m stability.cli configure-unattended-task --help
+PYTHONPATH=. ./.venv/bin/python -m stability.cli list-unattended-tasks
+PYTHONPATH=. ./.venv/bin/python -m stability.cli patrol-unattended-tasks
+PYTHONPATH=. ./.venv/bin/python -m stability.cli run-unattended-patrol-runner --help
+PYTHONPATH=. ./.venv/bin/python -m stability.cli build-unattended-daily-report --help
+PYTHONPATH=. ./.venv/bin/python -m stability.cli build-unattended-weekly-report --help
+```
 
-当前主页面包括：
+### Integration Outbox
 
-- `/`：首页摘要，聚合设备、任务、问题、runner、latest daily report、latest weekly report
-- `/tasks`：任务与 Run 历史
-- `/performance`：最近监控快照、backend 摘要与 trace/snapshot 下钻
-- `/issues`：`Top Issue` 聚合与样本下钻
-- `/runner`：patrol runner 状态、心跳、最近巡检、日/周报摘要
-- `/goldens`：正式 `golden suite` 样本库与 diff 下钻
-- `/admission`：规则准入基线、`AdmissionCase`、latest audit、comparison report 汇总
-- `/json-api`：浏览器友好的 JSON API 导航页
+```bash
+PYTHONPATH=. ./.venv/bin/python -m stability.cli register-integration-webhook --help
+PYTHONPATH=. ./.venv/bin/python -m stability.cli deliver-integration-outbox --help
+PYTHONPATH=. ./.venv/bin/python -m stability.cli run-integration-outbox-worker --help
+PYTHONPATH=. ./.venv/bin/python -m stability.cli replay-integration-dead-letters --help
+```
 
-同时提供一组只读 JSON 端点：
+## Web Portal
+
+The web portal is dependency-light and intended for local or trusted intranet
+use.
+
+Main pages:
+
+- `/`: home dashboard for device, task, issue, runner, and report summaries.
+- `/tasks`: task and run history.
+- `/performance`: recent monitoring snapshots and trace links.
+- `/issues`: top issue aggregation and samples.
+- `/runner`: unattended patrol status, heartbeat, lock state, and reports.
+- `/goldens`: golden suite cases and diff views.
+- `/admission`: rule review baselines, admission cases, audits, and comparisons.
+- `/json-api`: browser-friendly JSON endpoint index.
+
+Read-only JSON endpoints:
 
 - `/api/home`
 - `/api/tasks`
@@ -225,93 +271,211 @@ adb devices
 - `/api/integration/outbox`
 - `/health`
 
-共享产物优先使用本地报告、JSON、HTML/Markdown、分析快照、规则评审报告、准入对比和附件路径清单；如需接入 CI、IM、缺陷系统或提测平台，应按当前 outbox/webhook/API 合同做真实平台适配。
+## Demo Data
 
-## 项目结构
+The repository intentionally includes demo/runtime data so a fresh checkout can
+show meaningful pages and reports without requiring a real device run first.
+
+Included data:
+
+- `data/android_metrics.db`
+- `data/android_metrics.db-shm`
+- `data/android_metrics.db-wal`
+- `runtime/admission_cases/`
+- `runtime/analysis_*`
+- `runtime/collaboration/`
+- `runtime/platform_health/`
+- `runtime/tasks/`
+- `runtime/unattended_runner/`
+- `runtime/apks/`
+
+Excluded data:
+
+- `runtime/integration_outbox/webhooks.json`
+- `.DS_Store`
+- Python bytecode and cache directories.
+
+The demo dataset is suitable for local exploration and tests. Before publishing
+a fork publicly, review the contents of `data/` and `runtime/` for device IDs,
+LAN addresses, tokens, test package names, and any organization-specific
+artifacts.
+
+## Project Layout
 
 ```text
 AndroidStabilityLab/
-├── stability/                 # 当前主系统
-│   ├── app/                   # 应用服务
-│   ├── cli/                   # CLI 入口
-│   ├── domain/                # 领域模型与值对象
-│   ├── execution/             # 执行计划与状态机
-│   ├── infrastructure/        # ADB / persistence / artifact 适配
-│   ├── issue/                 # 异常检测
-│   ├── repositories/          # 仓储实现
-│   ├── scenario/              # Monkey / cold_start_loop 等执行器
-│   └── web/                   # 本地 Web 门户
-├── config/                    # 规则、数据库与运行配置
-├── docs/                      # PRD、方案、开发计划
-├── scripts/                   # smoke / 验收脚本
-├── tests/                     # 单测与说明
-├── runtime/                   # 报告、快照、runner 状态等运行产物
-├── data/                      # 本地数据与数据库文件
-└── README.md
+├── stability/                 # Main package
+│   ├── app/                   # Application services
+│   ├── application/           # Higher-level orchestration helpers
+│   ├── artifact/              # Artifact capture and evidence parsing
+│   ├── cli/                   # CLI parser and command handlers
+│   ├── domain/                # Domain models, enums, errors, value objects
+│   ├── execution/             # Execution plans, hooks, state machine
+│   ├── infrastructure/        # ADB, monitoring, persistence, rule config
+│   ├── issue/                 # Issue detectors
+│   ├── repositories/          # Repository implementations
+│   ├── scenario/              # Scenario runners
+│   └── web/                   # Local web portal
+├── config/                    # Local JSON configuration and rule files
+├── data/                      # Demo SQLite database and WAL/SHM files
+├── docs/                      # Product notes, plans, runbooks
+├── runtime/                   # Demo reports, snapshots, runner state, artifacts
+├── scripts/                   # Smoke and verification scripts
+├── tests/                     # Pytest test suite and helpers
+├── check_env.py               # Environment check helper
+└── requirements.txt           # Runtime dependencies
 ```
 
-## 测试与验证
+Compatibility-facing modules such as `core/`, `database/`, and `utils/` are
+kept for public wrappers, infrastructure helpers, and stable import surfaces.
+New stability features should generally land under `stability/`.
 
-单元测试：
+## Testing
+
+Run the full test suite from the repository root:
 
 ```bash
-./.venv/bin/python -m unittest discover -s tests -v
+PYTHONPATH=. pytest -q
 ```
 
-常用 smoke 脚本：
+Current local baseline:
+
+```text
+447 passed, 12 subtests passed
+```
+
+Run shell syntax checks for smoke scripts:
+
+```bash
+bash -n scripts/verify_v1_acceptance.sh
+bash -n scripts/verify_web_portal_smoke.sh
+bash -n scripts/verify_cli_query_smoke.sh
+```
+
+Common smoke entry points:
 
 ```bash
 bash scripts/verify_v1_acceptance.sh
 bash scripts/verify_cli_query_smoke.sh
 bash scripts/verify_web_portal_smoke.sh
-bash scripts/verify_monkey_smoke.sh
-bash scripts/verify_cold_start_loop_smoke.sh
-bash scripts/verify_foreground_background_loop_smoke.sh --package-name com.example.app --device-id SERIAL
-bash scripts/verify_web_tasks_foreground_background_smoke.sh --package-name com.example.app --device-id SERIAL
+bash scripts/verify_monkey_smoke.sh --package-name com.example.app --device-id SERIAL
+bash scripts/verify_cold_start_loop_smoke.sh --package-name com.example.app --device-id SERIAL --launch-activity .MainActivity
 bash scripts/verify_install_uninstall_loop_smoke.sh --package-name com.example.app --apk-path /path/app.apk --device-id SERIAL
-bash scripts/verify_web_tasks_install_uninstall_smoke.sh --package-name com.example.app --apk-path /path/app.apk --device-id SERIAL
-bash scripts/verify_reboot_loop_smoke.sh --package-name com.example.app --device-id SERIAL
-bash scripts/verify_web_tasks_reboot_loop_smoke.sh --package-name com.example.app --device-id SERIAL
-bash scripts/verify_standby_wake_loop_smoke.sh --package-name com.example.app --device-id SERIAL
-bash scripts/verify_web_tasks_standby_wake_smoke.sh --package-name com.example.app --device-id SERIAL
 ```
 
-更完整的测试、真机 smoke 和成功判定标准见 [tests/README.md](tests/README.md)。
+More detailed validation notes are in `tests/README.md` and `docs/`.
 
-## 文档导航
+## Configuration
 
-- 产品需求：[docs/prd/Android Stability Lab产品需求文档.md](docs/prd/Android%20Stability%20Lab产品需求文档.md)
-- 总开发计划：[docs/计划/Android Stability Lab开发计划.md](docs/计划/Android%20Stability%20Lab开发计划.md)
-- `V3` 开发计划：[docs/计划/versions/Android Stability Lab V3开发计划.md](docs/计划/versions/Android%20Stability%20Lab%20V3开发计划.md)
-- 项目文件说明：[docs/项目文件说明.md](docs/项目文件说明.md)
+Important configuration files:
 
-## 仓库说明
+- `config/database.json`: local persistence configuration.
+- `config/monitoring.json`: monitoring backend defaults.
+- `config/platform.json`: platform-level local defaults.
+- `config/stability_rules.json`: issue fingerprinting, regression thresholds,
+  and attribution rules.
+- `config/performance_risk_thresholds.json`: performance risk thresholds.
+- `config/rule_review_policy.json`: rule review acceptance policy.
+- `config/rule_review_baseline_policy.json`: baseline promotion policy.
+- `config/rule_replay_golden_samples.json`: built-in golden replay samples.
 
-- 新增业务与文档默认以 `stability/`、CLI 和本地 Web 门户为准。
-- `core/`、`database/`、`utils/` 等目录目前主要作为基础设施、存储和通用工具补充存在；新增稳定性业务默认沉淀到 `stability/`。
-- 阅读代码或排查问题时，优先从 `stability/`、`tests/`、`docs/` 和 `scripts/` 开始更高效。
+The project favors explicit local files over hidden global state. This keeps
+experiments reproducible and makes rule changes easier to review.
 
-## 故障排查
+## Security Notes
 
-### ADB 连接异常
+- Do not commit real webhook secrets. `runtime/integration_outbox/webhooks.json`
+  is intentionally left out of version control.
+- Treat `runtime/` as shareable demo data only after review. It may contain
+  device IDs, LAN addresses, logs, APKs, and generated reports.
+- The web portal is designed for local or trusted intranet use. Do not expose it
+  directly to the public internet without adding authentication, authorization,
+  TLS, request limits, and deployment hardening.
+- Trusted-header identity support is useful for local SSO-like integration, but
+  it is not a replacement for a full enterprise IAM deployment.
+- IM/Feishu integration should complete real endpoint validation before being
+  used as an operational alert channel.
+
+## Roadmap
+
+Near-term priorities:
+
+- Tighten public packaging and installation flow.
+- Add a committed license file and contribution templates.
+- Keep demo fixtures smaller and easier to regenerate.
+- Improve first-run onboarding for users without demo data.
+- Expand real-device smoke coverage and document expected device setup.
+- Harden long-running runner behavior and recovery reporting.
+- Improve rule review UX in the web portal.
+
+Longer-term possibilities:
+
+- Optional hosted deployment profile.
+- Stronger identity and access-control model.
+- Richer device pool scheduling.
+- Rule publishing workflow with review and rollback.
+- More structured artifact indexing and retention controls.
+
+## Contributing
+
+Contributions are welcome, especially in these areas:
+
+- New stability scenarios or scenario runner improvements.
+- More reliable ADB and monitoring adapters.
+- Better issue detectors and evidence parsers.
+- Smaller, cleaner demo fixtures.
+- Documentation, examples, and onboarding improvements.
+- Tests that cover real workflows without requiring private devices.
+
+Suggested workflow:
+
+1. Open an issue or describe the change before large patches.
+2. Keep changes scoped and include tests when behavior changes.
+3. Run `PYTHONPATH=. pytest -q`.
+4. For device-facing changes, also run the relevant smoke script when possible.
+5. Avoid committing real secrets or private device data.
+
+## Troubleshooting
+
+### Python Cannot Import `stability`
+
+Run commands from the repository root and set `PYTHONPATH=.`:
+
+```bash
+PYTHONPATH=. pytest -q
+PYTHONPATH=. ./.venv/bin/python -m stability.cli --help
+```
+
+### ADB Device Not Found
 
 ```bash
 adb devices
 adb kill-server
 adb start-server
+adb devices
 ```
 
-### CLI / Web 启动异常
+For TCP devices, confirm the host and port are reachable from the machine
+running the lab.
 
-- 先确认虚拟环境已安装依赖
-- 再确认数据库配置可用，默认持久化链路依赖 SQLAlchemy
-- 如果只是在看命令帮助，`python -m stability.cli --help` 可先独立验证 CLI 装配是否正常
+### Web Portal Does Not Start
 
-### runner / 报告产物位置
+- Confirm dependencies are installed in the active virtual environment.
+- Confirm the selected port is free.
+- Run `PYTHONPATH=. ./.venv/bin/python -m stability.cli --help` first to verify
+  CLI import and command registration.
 
-- 巡检相关运行文件默认落在 `runtime/unattended_runner/`
-- 分析快照、评审报告、审计报告等也都在 `runtime/` 下分目录留档
+### Reports or Runner State Look Stale
 
-## 许可证
+Most generated artifacts live under `runtime/`. Check:
 
-本项目采用 [MIT License](LICENSE)。
+- `runtime/unattended_runner/`
+- `runtime/analysis_snapshots/`
+- `runtime/analysis_review_reports/`
+- `runtime/tasks/`
+
+## License
+
+The README currently documents the intended open-source shape of the project.
+Before public distribution, add the repository's final `LICENSE` file and keep
+this section aligned with it.
