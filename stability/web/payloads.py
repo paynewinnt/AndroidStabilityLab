@@ -38,6 +38,7 @@ def platform_surface() -> dict[str, list[dict[str, str]]]:
             {"label": "责任同步", "path": "/api/responsibility"},
             {"label": "设备池", "path": "/api/device-pools"},
             {"label": "快捷 ADB", "path": "/api/quick-adb"},
+            {"label": "快捷 ADB 包名查询", "path": "/api/quick-adb/packages"},
             {"label": "任务大厅", "path": "/api/tasks"},
             {"label": "长稳模板", "path": "/api/long-run-templates"},
             {"label": "性能采样", "path": "/api/performance"},
