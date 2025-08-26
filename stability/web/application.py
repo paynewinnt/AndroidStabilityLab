@@ -1,6 +1,58 @@
 from __future__ import annotations
 
-from .application_common import *
+from html import escape
+from typing import Any, Mapping
+from urllib.parse import parse_qs, urlparse
+
+from stability.domain import AppError, normalize_app_error
+from stability.web import payloads as portal_payloads
+from stability.web.application_common import WebPortalApplication, bind_web_portal_application
+from stability.web.request_context import (
+    REQUIRED_TRUSTED_SSO_CLAIMS,
+    TRUSTED_SSO_HEADERS,
+    WRITABLE_IDENTITY_FORM_FIELDS,
+    request_id_from_headers,
+)
+from stability.web.routes import (
+    API_ADMISSION_BASELINE_PREFIX,
+    API_ADMISSION_CASE_PREFIX,
+    API_ADMISSION_REPORT_PREFIX,
+    API_ARCHIVE_TASK_ROUTES,
+    API_CONFIGURE_UNATTENDED_ROUTES,
+    API_CREATE_RUN_ROUTES,
+    API_CREATE_TASK_ROUTES,
+    API_EXECUTE_RUN_ROUTES,
+    API_GOLDEN_CASE_PREFIX,
+    API_PATROL_UNATTENDED_ROUTES,
+    API_RELEASE_SUBMISSION_DETAIL_PREFIX,
+    API_REPLAY_DEAD_LETTERS_ROUTES,
+    API_RUN_ARTIFACTS_PREFIX,
+    API_RUN_DETAIL_PREFIX,
+    API_RUN_INTEGRATION_WORKER_ROUTES,
+    API_RUN_UNATTENDED_ROUND_ROUTES,
+    API_SYNC_CI_DECISIONS_ROUTES,
+    API_TASK_DETAIL_PREFIX,
+    API_UNATTENDED_DETAIL_PREFIX,
+    HTML_ADMISSION_BASELINE_PREFIX,
+    HTML_ARCHIVE_TASK_ROUTES,
+    HTML_CONFIGURE_UNATTENDED_ROUTES,
+    HTML_CREATE_RUN_ROUTES,
+    HTML_CREATE_TASK_ROUTES,
+    HTML_EXECUTE_RUN_ROUTES,
+    HTML_GOLDEN_CASE_PREFIX,
+    HTML_PATROL_UNATTENDED_ROUTES,
+    HTML_REPLAY_DEAD_LETTERS_ROUTES,
+    HTML_RUN_ARTIFACTS_PREFIX,
+    HTML_RUN_DETAIL_PREFIX,
+    HTML_RUN_INTEGRATION_WORKER_ROUTES,
+    HTML_RUN_UNATTENDED_ROUND_ROUTES,
+    HTML_SYNC_CI_DECISIONS_ROUTES,
+    HTML_TASK_DETAIL_PREFIX,
+    HTML_UNATTENDED_DETAIL_PREFIX,
+    is_api_route,
+    route_in,
+    route_value_after_prefix,
+)
 from .application_helpers_admission import ApplicationAdmissionHelpersMixin
 from .application_helpers_forms import ApplicationFormHelpersMixin
 from .application_helpers_integration import ApplicationIntegrationHelpersMixin
@@ -31,6 +83,10 @@ from .features.integration.routes import handle_integration_get, handle_integrat
 from .features.performance.page import PerformancePageMixin as ApplicationPerformancePageMixin
 from .features.performance.payload import PerformancePayloadMixin as ApplicationPerformancePayloadMixin
 from .features.performance.routes import handle_performance_get
+from .features.quick_adb.actions import QuickAdbActionsMixin as ApplicationQuickAdbActionsMixin
+from .features.quick_adb.page import QuickAdbPageMixin as ApplicationQuickAdbPageMixin
+from .features.quick_adb.payload import QuickAdbPayloadMixin as ApplicationQuickAdbPayloadMixin
+from .features.quick_adb.routes import handle_quick_adb_get, handle_quick_adb_post
 from .features.runner.page import (
     RunnerCardsPageMixin as ApplicationRunnerCardsPagesMixin,
     RunnerPageMixin as ApplicationRunnerPagesMixin,
@@ -52,6 +108,7 @@ class WebPortalApplication(
     ApplicationPayloadCoreMixin,
     ApplicationTasksPayloadMixin,
     ApplicationPayloadDevicesMixin,
+    ApplicationQuickAdbPayloadMixin,
     ApplicationPerformancePayloadMixin,
     ApplicationPayloadWorkflowsMixin,
     ApplicationPayloadCollaborationMixin,
@@ -59,6 +116,7 @@ class WebPortalApplication(
     ApplicationIssueAdmissionActionsMixin,
     ApplicationPayloadQualityIntegrationMixin,
     ApplicationDevicesPageMixin,
+    ApplicationQuickAdbPageMixin,
     ApplicationCorePagesMixin,
     ApplicationRunnerPagesMixin,
     ApplicationRecordPagesMixin,
@@ -73,6 +131,7 @@ class WebPortalApplication(
     ApplicationTaskIntegrationPagesMixin,
     ApplicationIntegrationPageMixin,
     ApplicationTaskActionsMixin,
+    ApplicationQuickAdbActionsMixin,
     ApplicationRunnerActionsMixin,
     ApplicationDeviceActionsMixin,
     ApplicationIntegrationActionsMixin,
@@ -248,6 +307,7 @@ class WebPortalApplication(
                 for feature_handler in (
                     handle_tasks_post,
                     handle_devices_post,
+                    handle_quick_adb_post,
                     handle_runner_post,
                     handle_integration_post,
                     handle_admission_post,
@@ -595,6 +655,7 @@ class WebPortalApplication(
                 return self._html_response(200, self._render_doctor(payload))
             for feature_handler in (
                 handle_devices_get,
+                handle_quick_adb_get,
                 handle_tasks_get,
                 handle_runner_get,
                 handle_integration_get,

@@ -11,6 +11,7 @@ def sidebar_nav(page_title: str) -> str:
         ("平台说明", "/platform", "平台说明"),
         ("诊断中心", "/doctor", "诊断中心"),
         ("设备池", "/device-pools", "设备池"),
+        ("快捷 ADB", "/quick-adb", "快捷 ADB"),
         ("任务大厅", "/tasks", "任务大厅"),
         ("长稳模板", "/long-run-templates", "长稳运行模板"),
         ("巡检状态", "/runner", "巡检状态"),
