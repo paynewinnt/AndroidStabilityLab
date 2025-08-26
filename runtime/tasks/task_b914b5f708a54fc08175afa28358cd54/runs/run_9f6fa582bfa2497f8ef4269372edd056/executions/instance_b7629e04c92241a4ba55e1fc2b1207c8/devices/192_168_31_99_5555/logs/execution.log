@@ -1,4 +1,0 @@
-[2026-04-19T12:29:33.264795] preparing instance instance_b7629e04c92241a4ba55e1fc2b1207c8
-device=192.168.31.99:5555
-[2026-04-19T12:29:33.278683] instance entered running state
-[2026-04-19T12:29:33.316678] execution finished with status failed

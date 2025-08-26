@@ -1,4 +1,0 @@
-[2026-04-19T15:19:09.409321] preparing instance instance_da9f9402afdf433a8eff2a0b85175f1a
-device=192.168.31.99:5555
-[2026-04-19T15:19:09.423893] instance entered running state
-[2026-04-19T15:19:09.423996] scenario attempt 1/1 started for instance instance_da9f9402afdf433a8eff2a0b85175f1a

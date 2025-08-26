@@ -117,9 +117,11 @@ PYTHONPATH=. ./.venv/bin/python -m stability.cli run-unattended-patrol-runner --
 - `/admission`：规则准入、基线、审计和对比
 - `/json-api`：JSON API 导航
 
-## 演示数据
+## 运行态数据
 
-仓库有意提交了一批演示数据，便于新 clone 后直接打开 Web 页面查看效果：
+运行态数据只保留在本地。应用运行时会创建 `data/` 和 `runtime/`，但这两个目录已被 Git 忽略，不能作为源码 fixture 提交。
+
+本地运行态通常包括：
 
 - `data/android_metrics.db`
 - `data/android_metrics.db-shm`
@@ -127,18 +129,13 @@ PYTHONPATH=. ./.venv/bin/python -m stability.cli run-unattended-patrol-runner --
 - `runtime/admission_cases/`
 - `runtime/analysis_*`
 - `runtime/collaboration/`
+- `runtime/integration_outbox/`
 - `runtime/platform_health/`
 - `runtime/tasks/`
 - `runtime/unattended_runner/`
 - `runtime/apks/`
 
-不会提交：
-
-- `runtime/integration_outbox/webhooks.json`
-- `.DS_Store`
-- Python bytecode 和 cache 目录
-
-公开 fork 前请重新检查 `data/` 和 `runtime/`，确认没有真实设备 ID、内网地址、token、组织内部日志或不应公开的 APK。
+这些文件可能包含真实设备 ID、内网地址、webhook secret、包名、APK、日志、生成报告和组织内部证据，不要提交。需要演示样例时，放到 `runtime.example/` 或 `tests/fixtures/`，并把真实值替换成稳定假数据。
 
 ## 目录结构
 
@@ -157,9 +154,10 @@ AndroidStabilityLab/
 │   ├── scenario/              # 场景 runner
 │   └── web/                   # 本地 Web 门户
 ├── config/                    # 本地 JSON 配置和规则
-├── data/                      # 演示 SQLite 数据库和 WAL/SHM
+├── data/                      # 本地 SQLite 数据库和 WAL/SHM，已忽略
 ├── docs/                      # 产品说明、计划和 runbook
-├── runtime/                   # 演示报告、快照、runner 状态和产物
+├── runtime/                   # 本地报告、快照、runner 状态和产物，已忽略
+├── runtime.example/           # 脱敏运行态示例说明
 ├── scripts/                   # smoke 和验收脚本
 ├── tests/                     # pytest 测试
 └── requirements.txt           # 运行依赖
@@ -189,8 +187,8 @@ bash scripts/verify_web_portal_smoke.sh
 
 ## 安全说明
 
-- 不要提交真实 webhook secret，`runtime/integration_outbox/webhooks.json` 已保留为本地未跟踪文件。
-- `runtime/` 只应在复核后作为演示数据共享，里面可能包含设备 ID、内网地址、日志、APK 和报告。
+- 不要提交运行态数据或真实 webhook secret。`data/` 和 `runtime/` 已被忽略，因为里面可能包含设备 ID、内网地址、日志、APK、生成报告和本地凭据。
+- 需要演示样例时，只提交 `runtime.example/` 或 `tests/fixtures/` 下的脱敏数据。
 - Web 门户默认按本地或可信内网使用设计，不应裸露到公网。
 - 受信 header 身份只适合本地 SSO-like 接入，不等价于完整企业 IAM。
 - IM/飞书链路必须完成真实 endpoint 验证后，才能作为生产告警链路使用。
@@ -214,4 +212,4 @@ PYTHONPATH=. pytest -q
 
 ## 许可证
 
-公开发布前请补齐最终 `LICENSE` 文件，并让本节与许可证文件保持一致。
+仓库根目录未添加 `LICENSE` 文件前，本项目不授予开源许可。除非另有明确说明，使用、再分发和修改权利均由项目所有者保留。

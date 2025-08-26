@@ -1,5 +1,0 @@
-[2026-04-24T19:10:32.738491] preparing instance instance_d1f35a319eac4fe199d141cd8763fd5d
-device=192.168.31.99:5555
-[2026-04-24T19:10:32.753733] instance entered running state
-[2026-04-24T19:10:32.753848] scenario attempt 1/1 started for instance instance_d1f35a319eac4fe199d141cd8763fd5d
-[2026-04-24T19:10:33.730846] execution finished with status success

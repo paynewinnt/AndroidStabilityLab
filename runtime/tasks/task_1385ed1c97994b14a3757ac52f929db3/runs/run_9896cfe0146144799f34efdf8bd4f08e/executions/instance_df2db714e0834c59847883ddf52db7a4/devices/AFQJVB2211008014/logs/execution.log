@@ -1,5 +1,0 @@
-[2026-04-25T04:04:53.598063] preparing instance instance_df2db714e0834c59847883ddf52db7a4
-device=AFQJVB2211008014
-[2026-04-25T04:04:53.617167] instance entered running state
-[2026-04-25T04:04:53.617298] scenario attempt 1/1 started for instance instance_df2db714e0834c59847883ddf52db7a4
-[2026-04-25T04:05:04.884057] execution finished with status success

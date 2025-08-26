@@ -271,12 +271,13 @@ Read-only JSON endpoints:
 - `/api/integration/outbox`
 - `/health`
 
-## Demo Data
+## Runtime Data
 
-The repository intentionally includes demo/runtime data so a fresh checkout can
-show meaningful pages and reports without requiring a real device run first.
+Runtime state is local-only. The application creates `data/` and `runtime/`
+while it runs, but those directories are ignored by Git and must not be used as
+source-controlled fixtures.
 
-Included data:
+Local runtime locations include:
 
 - `data/android_metrics.db`
 - `data/android_metrics.db-shm`
@@ -284,21 +285,16 @@ Included data:
 - `runtime/admission_cases/`
 - `runtime/analysis_*`
 - `runtime/collaboration/`
+- `runtime/integration_outbox/`
 - `runtime/platform_health/`
 - `runtime/tasks/`
 - `runtime/unattended_runner/`
 - `runtime/apks/`
 
-Excluded data:
-
-- `runtime/integration_outbox/webhooks.json`
-- `.DS_Store`
-- Python bytecode and cache directories.
-
-The demo dataset is suitable for local exploration and tests. Before publishing
-a fork publicly, review the contents of `data/` and `runtime/` for device IDs,
-LAN addresses, tokens, test package names, and any organization-specific
-artifacts.
+These files may contain device IDs, LAN addresses, webhook secrets, package
+names, APKs, logs, generated reports, and other organization-specific evidence.
+Do not commit them. Sanitized examples should live under `runtime.example/` or
+`tests/fixtures/`, with realistic values replaced by stable fake data.
 
 ## Project Layout
 
@@ -317,9 +313,10 @@ AndroidStabilityLab/
 │   ├── scenario/              # Scenario runners
 │   └── web/                   # Local web portal
 ├── config/                    # Local JSON configuration and rule files
-├── data/                      # Demo SQLite database and WAL/SHM files
+├── data/                      # Local SQLite database and WAL/SHM files (ignored)
 ├── docs/                      # Product notes, plans, runbooks
-├── runtime/                   # Demo reports, snapshots, runner state, artifacts
+├── runtime/                   # Local reports, snapshots, runner state, artifacts (ignored)
+├── runtime.example/           # Sanitized example runtime layout and notes
 ├── scripts/                   # Smoke and verification scripts
 ├── tests/                     # Pytest test suite and helpers
 ├── check_env.py               # Environment check helper
@@ -384,10 +381,10 @@ experiments reproducible and makes rule changes easier to review.
 
 ## Security Notes
 
-- Do not commit real webhook secrets. `runtime/integration_outbox/webhooks.json`
-  is intentionally left out of version control.
-- Treat `runtime/` as shareable demo data only after review. It may contain
-  device IDs, LAN addresses, logs, APKs, and generated reports.
+- Do not commit runtime data or webhook secrets. `data/` and `runtime/` are
+  intentionally ignored because they may contain device IDs, LAN addresses,
+  logs, APKs, generated reports, and local credentials.
+- Use `runtime.example/` or `tests/fixtures/` for sanitized examples only.
 - The web portal is designed for local or trusted intranet use. Do not expose it
   directly to the public internet without adding authentication, authorization,
   TLS, request limits, and deployment hardening.
@@ -476,6 +473,6 @@ Most generated artifacts live under `runtime/`. Check:
 
 ## License
 
-The README currently documents the intended open-source shape of the project.
-Before public distribution, add the repository's final `LICENSE` file and keep
-this section aligned with it.
+No open-source license is granted until a `LICENSE` file is added at the
+repository root. Use, redistribution, and modification rights are reserved by
+the project owner unless explicitly stated otherwise.

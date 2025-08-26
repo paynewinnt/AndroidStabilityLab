@@ -56,8 +56,13 @@ venv.bak/
 
 # Database
 *.db
+*.db-*
+*.db-shm
+*.db-wal
 *.sqlite
+*.sqlite-*
 *.sqlite3
+*.sqlite3-*
 instance/
 
 # Logs
@@ -156,6 +161,8 @@ device_logs/
 screenshots/
 
 # Project specific
+data/
+runtime/
 sample_apks/
 test_data/
 temp/
