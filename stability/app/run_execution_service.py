@@ -29,6 +29,7 @@ from .run_execution.host_commands import HostCommandResult, HostCommandRunner, S
 from .run_execution.metadata import MetadataReportMixin
 from .run_execution.monitoring import MonitoringHelpersMixin
 from .run_execution.retry import RetryDecision, RetryHelpersMixin
+from stability.domain import AppError
 from .task_service import TaskRecordNotFound
 
 
@@ -67,6 +68,9 @@ class ExecutedRunResult:
     instances: Sequence[ExecutionInstanceLike]
     report_paths: Dict[str, str] = field(default_factory=dict)
     html_report_paths: Dict[str, str] = field(default_factory=dict)
+    executed_instance_count: int = 0
+    skipped_instance_count: int = 0
+    skipped_reason: str = ""
     executed_at: datetime = field(default_factory=utcnow)
 
 
@@ -127,17 +131,36 @@ class RunExecutionService(ExecutionLoopMixin, RetryHelpersMixin, MonitoringHelpe
         task = self._get_task(getattr(run, "task_definition_id", ""))
         instances = list(self._instance_repository.list_by_run(run_id))
         if not instances:
-            raise LookupError(f"Run '{run_id}' does not contain any execution instances.")
+            raise AppError.not_found(f"Run '{run_id}' does not contain any execution instances.")
 
         report_paths: Dict[str, str] = {}
         html_report_paths: Dict[str, str] = {}
-        concurrency = self._normalize_concurrency(max_concurrency, instance_count=len(instances))
+        for instance in instances:
+            self._collect_report_paths(instance, report_paths, html_report_paths)
+
+        executable_instances = [instance for instance in instances if self._is_executable_instance(instance)]
+        skipped_instance_count = len(instances) - len(executable_instances)
+        skipped_reason = self._skipped_execution_reason(instances, executable_instances)
+        if not executable_instances:
+            persisted_run = self._run_repository.get(run_id) or run
+            return ExecutedRunResult(
+                task=task,
+                run=persisted_run,
+                instances=tuple(self._instance_repository.list_by_run(run_id)),
+                report_paths=report_paths,
+                html_report_paths=html_report_paths,
+                executed_instance_count=0,
+                skipped_instance_count=skipped_instance_count,
+                skipped_reason=skipped_reason,
+            )
+
+        concurrency = self._normalize_concurrency(max_concurrency, instance_count=len(executable_instances))
         normalized_retry_count = self._normalize_retry_count(retry_count)
         if concurrency == 1:
             self._execute_serial_instances(
                 task=task,
                 run=run,
-                instances=instances,
+                instances=executable_instances,
                 report_paths=report_paths,
                 html_report_paths=html_report_paths,
                 persist_monitoring=persist_monitoring,
@@ -149,7 +172,7 @@ class RunExecutionService(ExecutionLoopMixin, RetryHelpersMixin, MonitoringHelpe
             self._execute_parallel_instances(
                 task=task,
                 run=run,
-                instances=instances,
+                instances=executable_instances,
                 report_paths=report_paths,
                 html_report_paths=html_report_paths,
                 persist_monitoring=persist_monitoring,
@@ -166,7 +189,36 @@ class RunExecutionService(ExecutionLoopMixin, RetryHelpersMixin, MonitoringHelpe
             instances=tuple(self._instance_repository.list_by_run(run_id)),
             report_paths=report_paths,
             html_report_paths=html_report_paths,
+            executed_instance_count=len(executable_instances),
+            skipped_instance_count=skipped_instance_count,
+            skipped_reason=skipped_reason,
         )
+
+    @classmethod
+    def _is_executable_instance(cls, instance: ExecutionInstanceLike) -> bool:
+        return cls._instance_status(instance) in {"pending", "preparing"}
+
+    @classmethod
+    def _skipped_execution_reason(
+        cls,
+        instances: Sequence[ExecutionInstanceLike],
+        executable_instances: Sequence[ExecutionInstanceLike],
+    ) -> str:
+        skipped_count = len(instances) - len(executable_instances)
+        if skipped_count <= 0:
+            return ""
+        statuses = {cls._instance_status(instance) for instance in instances}
+        terminal_statuses = {"success", "failed", "cancelled", "precheck_failed"}
+        active_statuses = {"running", "collecting", "stopping"}
+        if statuses and statuses.issubset(terminal_statuses):
+            return "Run 已处于终态，execute-run 不会重复执行同一批实例；如需重跑，请新建 Run。"
+        if statuses and statuses.issubset(active_statuses):
+            return "Run 当前已有实例正在执行或采集中，已跳过重复启动。"
+        return "已跳过非待执行实例，只执行 pending/preparing 实例。"
+
+    @staticmethod
+    def _instance_status(instance: ExecutionInstanceLike) -> str:
+        return str(getattr(instance, "instance_status", getattr(instance, "status", "")) or "")
 
     def _execute_instance(
         self,

@@ -231,6 +231,9 @@ def _run_execute_payload(
         "retry_count": retry_count,
         "report_paths": _json_safe_dict(getattr(result, "report_paths", {})),
         "instances": [_instance_payload(instance) for instance in instances],
+        "executed_instance_count": int(getattr(result, "executed_instance_count", len(instances)) or 0),
+        "skipped_instance_count": int(getattr(result, "skipped_instance_count", 0) or 0),
+        "skipped_reason": str(getattr(result, "skipped_reason", "") or ""),
     }
     if requested_monitoring_backend:
         payload["requested_monitoring_backend"] = requested_monitoring_backend
