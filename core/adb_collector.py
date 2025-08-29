@@ -1,6 +1,6 @@
 """Public wrapper for the ADB collector."""
 
-from stability.infrastructure.legacy.adb.collector import ADBCollector
+from stability.infrastructure.adb import ADBCollector
 
 STABLE_API_SHIM = True
 

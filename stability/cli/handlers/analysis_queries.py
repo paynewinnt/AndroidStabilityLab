@@ -10,7 +10,6 @@ from typing import Any, Mapping, Sequence
 
 from stability import create_v1_bootstrap, create_v1_persistent_bootstrap
 from stability.app import (
-    AggregatedIssueNotFound,
     DeviceRecordNotFound,
     RunRecordNotFound,
     SnapshotRecordNotFound,
@@ -19,6 +18,7 @@ from stability.app import (
 )
 from stability.app.task_service import TaskRecordNotFound
 from stability.domain import (
+    AppError,
     AggregatedIssue,
     AnalysisSnapshotRecord,
     AnalysisSnapshotSummary,
@@ -39,6 +39,22 @@ from stability.domain import (
     TaskTemplateType,
 )
 from stability.cli.handlers.web import handle_serve_web as _web_handle_serve_web
+from stability.cli.payloads_analysis import (
+    _aggregated_issue_payload,
+    _analysis_snapshot_record_payload,
+    _analysis_snapshot_summary_payload,
+    _comparison_result_payload,
+    _issue_attribution_payload,
+    _performance_trend_payload,
+    _regression_result_payload,
+)
+from stability.cli.utils import (
+    _analysis_snapshot_filters,
+    _expand_multi_value,
+    _require_snapshot_replay_args,
+    _require_snapshot_review_args,
+    _require_snapshot_scope_args,
+)
 from stability.web import serve_web_portal
 
 # Split from stability.cli.task_create; analysis.py owns this command/payload group.
@@ -96,7 +112,7 @@ def _handle_show_issue_group(args: argparse.Namespace) -> int:
             created_from=args.created_from.strip(),
             created_to=args.created_to.strip(),
         )
-    except AggregatedIssueNotFound as exc:
+    except AppError as exc:
         raise SystemExit(str(exc)) from exc
 
     payload = {

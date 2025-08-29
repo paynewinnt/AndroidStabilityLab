@@ -4,13 +4,17 @@ from stability.application import (
     CreateRunCommand,
     CreateTaskCommand,
     ExecuteRunCommand,
+    StopRunCommand,
     create_run as run_create_use_case,
     create_task as task_create_use_case,
     execute_run as run_execute_use_case,
+    stop_run as run_stop_use_case,
 )
 from stability.app import ConfigProvider
 
-from ...application_common import *
+from pathlib import Path
+from typing import Any, Mapping
+from urllib.parse import quote
 
 
 class TasksActionsMixin:
@@ -203,8 +207,18 @@ class TasksActionsMixin:
             "runner_path": "/runner",
             "unattended_detail_path": "",
         }
+        template_key = self._form_value(dict(payload), "long_run_template_key")
+        template_name = self._form_value(dict(payload), "long_run_template_name")
+        if template_key:
+            long_run["template_key"] = template_key
+        if template_name:
+            long_run["template_name"] = template_name
         merged = dict(metadata or {})
         merged.setdefault("source", "web")
+        if template_key:
+            merged["long_run_template_id"] = template_key
+        if template_name:
+            merged["long_run_template_name"] = template_name
         merged["monitoring_backend"] = monitoring_backend
         merged["long_run"] = long_run
         tags = list(merged.get("tags", []) or []) if isinstance(merged.get("tags", []), list) else []
@@ -321,6 +335,25 @@ class TasksActionsMixin:
                 retry_count=max(self._form_int(payload, "retry_count", default=0), 0),
                 monitoring_backend=resolved_monitoring_backend or monitoring_backend,
                 requested_monitoring_backend=monitoring_backend or "",
+            ),
+        )
+
+    def _handle_run_stop(
+        self,
+        payload: Mapping[str, list[str]],
+        *,
+        request_context: Mapping[str, Any],
+    ) -> dict[str, Any]:
+        service = getattr(self._bundle, "run_execution_service", None)
+        if service is None or not hasattr(service, "stop_run"):
+            raise ValueError("Run stop service is unavailable.")
+        actor = dict(request_context.get("current_actor", {}) or {})
+        return run_stop_use_case(
+            service,
+            StopRunCommand(
+                run_id=self._required_form_value(dict(payload), "run_id"),
+                requested_by=str(actor.get("actor_id", "") or "web"),
+                reason=self._form_value(dict(payload), "reason") or "user_stopped",
             ),
         )
 

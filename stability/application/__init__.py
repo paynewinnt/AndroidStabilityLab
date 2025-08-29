@@ -4,9 +4,11 @@ from .task_lifecycle import (
     CreateRunCommand,
     CreateTaskCommand,
     ExecuteRunCommand,
+    StopRunCommand,
     create_run,
     create_task,
     execute_run,
+    stop_run,
     resolve_monitoring_backend_override,
 )
 from .device_management import (
@@ -44,9 +46,11 @@ __all__ = [
     "CreateRunCommand",
     "CreateTaskCommand",
     "ExecuteRunCommand",
+    "StopRunCommand",
     "create_run",
     "create_task",
     "execute_run",
+    "stop_run",
     "resolve_monitoring_backend_override",
     "ConnectDeviceCommand",
     "DevicePoolQuery",

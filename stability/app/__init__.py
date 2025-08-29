@@ -1,7 +1,7 @@
 """Application services for Android Stability Lab."""
 
 from .admission_case_service import AdmissionCaseService
-from .analysis_service import AggregatedIssueNotFound, AnalysisService
+from .analysis_service import AnalysisService
 from .attribution_service import AttributionService
 from .collaboration_service import CollaborationService
 from .comparison_service import ComparisonService
@@ -44,7 +44,7 @@ from .rule_governance_service import (
 from .rule_review_report_service import RuleReviewReportService
 from .rule_review_service import RuleReviewService
 from .run_history_service import RunHistoryService
-from .run_execution_service import ExecutedRunResult, RunExecutionService, RunRecordNotFound
+from .run_execution_service import ExecutedRunResult, RunExecutionService, RunRecordNotFound, StoppedRunResult
 from .runtime_lifecycle_service import RuntimeLifecycleService
 from .snapshot_service import SnapshotRecordNotFound, SnapshotService
 from .task_service import TaskArchiveResult, TaskRecordNotFound, TaskService
@@ -68,7 +68,6 @@ from .unattended_runner_service import (
 
 __all__ = [
     "CreatedExecutionBatch",
-    "AggregatedIssueNotFound",
     "AdmissionCaseService",
     "AnalysisService",
     "AttributionService",
@@ -117,6 +116,7 @@ __all__ = [
     "RunHistoryService",
     "RunExecutionService",
     "RunRecordNotFound",
+    "StoppedRunResult",
     "RuntimeLifecycleService",
     "RuntimePathsConfig",
     "SnapshotRecordNotFound",

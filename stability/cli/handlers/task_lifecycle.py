@@ -20,7 +20,6 @@ from stability.application import (
     resolve_monitoring_backend_override,
 )
 from stability.app import (
-    AggregatedIssueNotFound,
     DeviceRecordNotFound,
     RunRecordNotFound,
     SnapshotRecordNotFound,
@@ -49,6 +48,20 @@ from stability.domain import (
     TaskTemplateType,
 )
 from stability.cli.handlers.web import handle_serve_web as _web_handle_serve_web
+from stability.cli.payloads_longrun import _long_run_templates_payload, _parse_key_value_overrides
+from stability.cli.utils import (
+    _expand_multi_value,
+    _maybe_sync_devices,
+    _parse_json_object,
+    _parse_optional_bool,
+    _split_values,
+    _unattended_daily_report_payload,
+    _unattended_patrol_payload,
+    _unattended_round_execution_payload,
+    _unattended_runner_payload,
+    _unattended_task_payload,
+    _unattended_weekly_report_payload,
+)
 from stability.scenario.registry import get_template_form_schema
 from stability.time_utils import format_beijing_datetime_or_original
 from stability.web import serve_web_portal

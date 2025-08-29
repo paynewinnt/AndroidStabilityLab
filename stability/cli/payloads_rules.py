@@ -10,7 +10,6 @@ from typing import Any, Mapping, Sequence
 
 from stability import create_v1_bootstrap, create_v1_persistent_bootstrap
 from stability.app import (
-    AggregatedIssueNotFound,
     DeviceRecordNotFound,
     RunRecordNotFound,
     SnapshotRecordNotFound,
@@ -39,6 +38,8 @@ from stability.domain import (
     TaskTemplateType,
 )
 from stability.cli.handlers.web import handle_serve_web as _web_handle_serve_web
+from stability.app.admission_report_builder import risk_item_payload as _performance_risk_item_payload
+from stability.cli.payloads_analysis import _issue_event_payload
 from stability.time_utils import format_beijing_datetime_or_original
 from stability.web import serve_web_portal
 

@@ -18,6 +18,7 @@ from stability.app.integration_outbox_service import IntegrationOutboxService
 from stability.domain import WebhookSubscription
 from stability.infrastructure.command_runner import CommandResult, CommandRunner, SubprocessCommandRunner
 from stability.infrastructure.monitoring_config import (
+    DEFAULT_PERFETTO_REMOTE_PATH_TEMPLATE,
     SUPPORTED_MONITORING_BACKENDS,
     load_monitoring_profile_registry,
 )
@@ -457,10 +458,10 @@ class DoctorService:
         )
 
     def _check_target_perfetto_write_permission(self) -> DoctorCheck:
-        probe_path = f"/data/local/tmp/asl_doctor_{self._safe_device_token(self._device_id)}.txt"
+        probe_path = self._target_perfetto_probe_path()
         write_result = self._run(
-            ["adb", "-s", self._device_id, "shell", "echo", "doctor", ">", probe_path],
-            timeout_seconds=8,
+            ["adb", "-s", self._device_id, "shell", "perfetto", "-o", probe_path, "-t", "1s", "sched"],
+            timeout_seconds=12,
         )
         ls_result = self._run(
             ["adb", "-s", self._device_id, "shell", "ls", "-l", probe_path],
@@ -474,7 +475,11 @@ class DoctorService:
         return DoctorCheck(
             name="target_perfetto_write_permission",
             status="ok" if ok else "fail",
-            summary="/data/local/tmp 可写，Perfetto trace 落盘具备基础条件。" if ok else "/data/local/tmp 写入失败，Perfetto trace 可能无法落盘。",
+            summary=(
+                "目标设备可通过 perfetto 写入 trace，Perfetto 采集具备基础条件。"
+                if ok
+                else "目标设备无法通过 perfetto 写入 trace，Perfetto 采集可能不可用。"
+            ),
             details={
                 "device_id": self._device_id,
                 "probe_path": probe_path,
@@ -483,6 +488,22 @@ class DoctorService:
                 "cleanup": self._command_details(cleanup_result),
             },
         )
+
+    def _target_perfetto_probe_path(self) -> str:
+        token = self._safe_device_token(self._device_id)
+        template = DEFAULT_PERFETTO_REMOTE_PATH_TEMPLATE
+        try:
+            registry = load_monitoring_profile_registry(self._config_dir / "monitoring.json")
+            profiles = dict(registry.get("profiles", {}) or {})
+            profile = dict(profiles.get("perfetto", {}) or {})
+            metadata = dict(profile.get("metadata", {}) or {})
+            template = str(metadata.get("perfetto_remote_path_template") or template)
+        except Exception:
+            template = DEFAULT_PERFETTO_REMOTE_PATH_TEMPLATE
+        try:
+            return template.format(session_name=f"asl_doctor_{token}", device_id=self._device_id)
+        except Exception:
+            return DEFAULT_PERFETTO_REMOTE_PATH_TEMPLATE.format(session_name=f"asl_doctor_{token}", device_id=self._device_id)
 
     def _check_target_wireless_reachability(self) -> DoctorCheck:
         host_port = self._split_host_port(self._device_id)

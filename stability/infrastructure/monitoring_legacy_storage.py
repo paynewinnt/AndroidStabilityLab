@@ -7,10 +7,8 @@ from typing import Any, Mapping, Optional
 
 from stability.infrastructure.monitoring_models import MonitoringSessionHandle, MonitoringSnapshot
 
-try:
-    from database.data_storage import data_storage as default_data_storage
-except Exception:  # pragma: no cover - optional dependency during bootstrap
-    default_data_storage = None
+# database.data_storage has been removed — legacy storage adapter is no longer available.
+default_data_storage = None
 
 logger = logging.getLogger(__name__)
 

@@ -10,7 +10,6 @@ from typing import Any, Mapping, Sequence
 
 from stability import create_v1_bootstrap, create_v1_persistent_bootstrap
 from stability.app import (
-    AggregatedIssueNotFound,
     DeviceRecordNotFound,
     RunRecordNotFound,
     SnapshotRecordNotFound,
@@ -39,6 +38,7 @@ from stability.domain import (
     TaskTemplateType,
 )
 from stability.cli.handlers.web import handle_serve_web as _web_handle_serve_web
+from stability.cli.payloads_admission import _admission_case_payload, _admission_report_payload_from_bundle
 from stability.web import serve_web_portal
 
 # Split from stability.cli.task_create; analysis.py owns this command/payload group.

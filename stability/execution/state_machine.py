@@ -23,10 +23,11 @@ class ExecutionStateMachine:
 
     DEFAULT_INSTANCE_TRANSITIONS: Dict[Optional[str], Set[str]] = {
         None: {"pending"},
-        "pending": {"preparing", "running", "failed", "cancelled"},
-        "preparing": {"running", "failed", "cancelled"},
-        "running": {"collecting", "success", "failed", "cancelled"},
-        "collecting": {"success", "failed", "cancelled"},
+        "pending": {"preparing", "running", "stopping", "failed", "cancelled"},
+        "preparing": {"running", "stopping", "failed", "cancelled"},
+        "running": {"stopping", "collecting", "success", "failed", "cancelled"},
+        "stopping": {"cancelled", "failed"},
+        "collecting": {"stopping", "success", "failed", "cancelled"},
         "success": set(),
         "failed": set(),
         "cancelled": set(),
@@ -119,7 +120,7 @@ class ExecutionStateMachine:
 
         statuses = [self._get_instance_status(instance) for instance in instances]
         pending_states = {"pending", "preparing"}
-        running_states = {"running", "collecting"}
+        running_states = {"running", "stopping", "collecting"}
         terminal_states = self.TERMINAL_INSTANCE_STATES
 
         if any(status in running_states for status in statuses):

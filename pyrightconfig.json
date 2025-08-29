@@ -1,0 +1,19 @@
+{
+  "include": ["stability", "core", "utils", "tests"],
+  "exclude": ["**/__pycache__", ".venv", "**/node_modules"],
+  "venvPath": ".",
+  "venv": ".venv",
+  "typeCheckingMode": "off",
+  "reportMissingTypeStubs": false,
+  "reportMissingImports": true,
+  "reportMissingParameterType": "none",
+  "reportMissingTypeArgument": "none",
+  "reportUnknownMemberType": "none",
+  "reportUnknownArgumentType": "none",
+  "reportUnknownVariableType": "none",
+  "reportUnknownParameterType": "none",
+  "reportUnusedImport": "none",
+  "reportUnusedVariable": "none",
+  "pythonVersion": "3.12",
+  "pythonPlatform": "Linux"
+}

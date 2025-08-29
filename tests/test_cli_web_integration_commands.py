@@ -10,7 +10,6 @@ import unittest
 from unittest.mock import patch
 
 from stability.app import DeviceRecordNotFound
-from stability.app.analysis_service import AggregatedIssueNotFound
 from stability.app.task_service import TaskRecordNotFound
 from stability.cli import task_create
 from tests.helpers.cli import run_main_with_bundle
@@ -40,12 +39,28 @@ class CLIWebIntegrationCommandsTest(unittest.TestCase):
         self.assertEqual(payload["web"]["public_base_url"], "http://127.0.0.1:8041/")
         self.assertEqual(
             payload["web"]["pages"],
-            ["/", "/platform", "/tasks", "/long-run-templates", "/performance", "/issues", "/runner", "/integration", "/goldens", "/admission", "/json-api"],
+            [
+                "/",
+                "/platform",
+                "/tasks",
+                "/runs",
+                "/long-run-templates",
+                "/performance",
+                "/artifacts",
+                "/issues",
+                "/runner",
+                "/integration",
+                "/goldens",
+                "/admission",
+                "/json-api",
+            ],
         )
         self.assertIn("/api/platform", payload["web"]["api_endpoints"])
         self.assertIn("/api/manifest", payload["web"]["api_endpoints"])
         self.assertIn("/api/openapi.json", payload["web"]["api_endpoints"])
+        self.assertIn("/api/runs", payload["web"]["api_endpoints"])
         self.assertIn("/api/long-run-templates", payload["web"]["api_endpoints"])
+        self.assertIn("/api/artifacts", payload["web"]["api_endpoints"])
         self.assertIn("/api/runner", payload["web"]["api_endpoints"])
         self.assertIn("/api/integration", payload["web"]["api_endpoints"])
         self.assertIn("/api/integration/outbox", payload["web"]["api_endpoints"])

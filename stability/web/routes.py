@@ -9,6 +9,7 @@ HTML_CREATE_TASK_ROUTES = frozenset({"/tasks/actions/create-task", "/tasks/actio
 HTML_ARCHIVE_TASK_ROUTES = frozenset({"/tasks/actions/archive-task", "/tasks/actions/delete"})
 HTML_CREATE_RUN_ROUTES = frozenset({"/tasks/actions/create-run", "/runs/actions/create"})
 HTML_EXECUTE_RUN_ROUTES = frozenset({"/tasks/actions/execute-run", "/runs/actions/execute"})
+HTML_STOP_RUN_ROUTES = frozenset({"/tasks/actions/stop-run", "/runs/actions/stop"})
 HTML_CONFIGURE_UNATTENDED_ROUTES = frozenset({
     "/runner/actions/configure-unattended",
     "/unattended/actions/configure",
@@ -38,6 +39,7 @@ API_CREATE_TASK_ROUTES = frozenset({"/api/tasks/actions/create-task", "/api/task
 API_ARCHIVE_TASK_ROUTES = frozenset({"/api/tasks/actions/archive-task", "/api/tasks/actions/delete"})
 API_CREATE_RUN_ROUTES = frozenset({"/api/tasks/actions/create-run", "/api/runs/actions/create"})
 API_EXECUTE_RUN_ROUTES = frozenset({"/api/tasks/actions/execute-run", "/api/runs/actions/execute"})
+API_STOP_RUN_ROUTES = frozenset({"/api/tasks/actions/stop-run", "/api/runs/actions/stop"})
 API_CONFIGURE_UNATTENDED_ROUTES = frozenset({
     "/api/runner/actions/configure-unattended",
     "/api/unattended/actions/configure",

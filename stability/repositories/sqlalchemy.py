@@ -14,7 +14,7 @@ from stability.infrastructure.persistence import (
     TaskDefinitionRecord,
     TaskRunRecord,
 )
-from stability.domain import ExecutionInstance, TaskDefinition, TaskRun
+from stability.domain import AppError, AppErrorCode, ExecutionInstance, TaskDefinition, TaskRun
 
 from .mappers import (
     artifact_to_record,
@@ -45,7 +45,7 @@ class _SQLAlchemyRepositoryBase:
         if self._connection_manager.is_connected():
             return
         if not self._connection_manager.connect():
-            raise RuntimeError("Unable to connect to the configured database.")
+            raise AppError(AppErrorCode.INTERNAL_ERROR, "Unable to connect to the configured database.")
 
 
 class SQLAlchemyDeviceRepository(_SQLAlchemyRepositoryBase):
@@ -134,7 +134,7 @@ class SQLAlchemyRunRepository(_SQLAlchemyRepositoryBase):
         with self._session() as session:
             task_record = self._find_task_record(session, run.task_definition_id)
             if task_record is None:
-                raise LookupError(
+                raise AppError.not_found(
                     f"Task definition '{run.task_definition_id}' must exist before saving run '{run.run_id}'."
                 )
 
@@ -144,7 +144,7 @@ class SQLAlchemyRunRepository(_SQLAlchemyRepositoryBase):
             session.flush()
             persisted = self._find_record(session, run.run_id)
             if persisted is None:
-                raise LookupError(f"Run '{run.run_id}' was not persisted.")
+                raise AppError.not_found(f"Run '{run.run_id}' was not persisted.")
             return run_from_record(persisted)
 
     @staticmethod
@@ -176,7 +176,7 @@ class SQLAlchemyInstanceRepository(_SQLAlchemyRepositoryBase):
             for instance in instances:
                 task_run_record = self._find_run_record(session, instance.run_id)
                 if task_run_record is None:
-                    raise LookupError(
+                    raise AppError.not_found(
                         f"Task run '{instance.run_id}' must exist before saving instance '{instance.instance_id}'."
                     )
 
@@ -216,7 +216,7 @@ class SQLAlchemyInstanceRepository(_SQLAlchemyRepositoryBase):
     def save(self, instance: ExecutionInstance) -> ExecutionInstance:
         saved = self.add_many([instance])
         if not saved:
-            raise LookupError(f"Instance '{instance.instance_id}' was not persisted.")
+            raise AppError.not_found(f"Instance '{instance.instance_id}' was not persisted.")
         return saved[0]
 
     def list_by_run(self, run_id: str) -> Sequence[ExecutionInstance]:

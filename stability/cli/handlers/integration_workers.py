@@ -10,7 +10,6 @@ from typing import Any, Mapping, Sequence
 
 from stability import create_v1_bootstrap, create_v1_persistent_bootstrap
 from stability.app import (
-    AggregatedIssueNotFound,
     DeviceRecordNotFound,
     RunRecordNotFound,
     SnapshotRecordNotFound,

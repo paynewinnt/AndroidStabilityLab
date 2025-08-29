@@ -2,7 +2,7 @@
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
 [![入口](https://img.shields.io/badge/入口-CLI%20%2B%20Web-2d7d46.svg)](#快速开始)
-[![测试](https://img.shields.io/badge/tests-pytest-0a7f3f.svg)](#测试)
+[![测试](https://img.shields.io/badge/tests-unittest-0a7f3f.svg)](#测试)
 
 [English](README.md) | 简体中文
 
@@ -42,8 +42,7 @@ PYTHONPATH=. ./.venv/bin/python -m stability.cli serve-web --host 127.0.0.1 --po
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-pip install -r requirements.txt
-pip install pytest
+pip install -r requirements-dev.txt
 ```
 
 ### 验证 CLI
@@ -159,22 +158,27 @@ AndroidStabilityLab/
 ├── runtime/                   # 本地报告、快照、runner 状态和产物，已忽略
 ├── runtime.example/           # 脱敏运行态示例说明
 ├── scripts/                   # smoke 和验收脚本
-├── tests/                     # pytest 测试
-└── requirements.txt           # 运行依赖
+├── tests/                     # Python 测试
+├── requirements.txt           # 运行依赖
+└── requirements-dev.txt       # 运行依赖加本地开发工具
 ```
+
+旧的 `database/` 包已移除。`core/` 和 `utils/` 这类兼容入口仅保留为兼容或退休入口。新的稳定性能力应放在 `stability/` 下。
 
 ## 测试
 
 从仓库根目录运行：
 
 ```bash
-PYTHONPATH=. pytest -q
+PYTHONPATH=. ./.venv/bin/python -m unittest discover -s tests -v
 ```
 
 当前本地基线：
 
 ```text
-447 passed, 12 subtests passed
+Ran 466 tests
+
+OK
 ```
 
 常用 smoke：
@@ -207,7 +211,7 @@ bash scripts/verify_web_portal_smoke.sh
 提交前建议运行：
 
 ```bash
-PYTHONPATH=. pytest -q
+PYTHONPATH=. ./.venv/bin/python -m unittest discover -s tests -v
 ```
 
 ## 许可证

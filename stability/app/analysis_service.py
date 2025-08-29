@@ -11,6 +11,7 @@ from typing import Any, Dict, Iterable, List, Mapping, Optional, Protocol, Seque
 from stability.domain import (
     AggregatedIssue,
     AnalysisRuleConfig,
+    AppError,
     FingerprintRuleConfig,
     IssueEventReference,
     IssueFingerprint,
@@ -98,10 +99,6 @@ class _AggregateBucket:
     last_seen_at: datetime | None = None
 
 
-class AggregatedIssueNotFound(LookupError):
-    """Raised when one requested aggregated issue fingerprint does not exist."""
-
-
 class AnalysisService:
     """Minimal V2 aggregation service built on top of V1 run and instance results."""
 
@@ -162,7 +159,7 @@ class AnalysisService:
         grouped = self._collect_groups(query)
         item = grouped.get(fingerprint.strip())
         if item is None:
-            raise AggregatedIssueNotFound(f"Aggregated issue '{fingerprint}' was not found.")
+            raise AppError.not_found(f"Aggregated issue '{fingerprint}' was not found.")
         return self._to_aggregated_issue(item, include_samples=True)
 
     def query_aggregated_issues(self, *, include_samples: bool = False, **filters: Any) -> List[AggregatedIssue]:

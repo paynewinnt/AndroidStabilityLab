@@ -49,24 +49,32 @@ class FakeHostCommandRunner:
     def __init__(self, responses: dict[tuple[str, ...], object]) -> None:
         self._responses = responses
         self.calls: list[tuple[str, ...]] = []
+        self._cursor: dict[tuple[str, ...], int] = {}
 
     def run(self, command, *, timeout_seconds: int):
         normalized = tuple(command)
         self.calls.append(normalized)
         if normalized not in self._responses:
             raise AssertionError(f"Unexpected cleanup command: {normalized!r}")
-        return self._responses[normalized]
+        response = self._responses[normalized]
+        if isinstance(response, list):
+            index = self._cursor.get(normalized, 0)
+            if index >= len(response):
+                return response[-1]
+            self._cursor[normalized] = index + 1
+            return response[index]
+        return response
 
 
 class FailingScenarioRunner:
     def execute(self, task, run, instance, layout, log_path):
         return ScenarioExecutionResult(
             success=False,
-            note="Detected fatal crash during scenario execution.",
+            note="Detected native crash during scenario execution.",
             exit_reason="execution_error",
             result_level="failed",
             metadata={
-                "stdout_tail": "FATAL EXCEPTION: main\nProcess: com.example.app, PID: 2456",
+                "stdout_tail": "signal 11 (SIGSEGV) code 1 (SEGV_MAPERR) fault addr 0x0\nProcess: com.example.app, PID: 2456",
                 "stderr_tail": "",
             },
         )
@@ -231,6 +239,71 @@ class RecordingMonitoringAdapter:
 
 
 class RunExecutionServiceArtifactIntegrationTest(unittest.TestCase):
+    def test_stop_run_kills_device_monkey_without_remote_shell_c_wrapper(self) -> None:
+        with TemporaryDirectory() as tempdir:
+            runtime_root = Path(tempdir) / "runtime"
+            device = Device(
+                device_id="device-1",
+                serial="device-1",
+                model="Pixel",
+                connection_state=DeviceConnectionState.ONLINE,
+                availability_state=DeviceAvailabilityState.IDLE,
+            )
+            task_repository = InMemoryTaskRepository()
+            run_repository = InMemoryRunRepository()
+            instance_repository = InMemoryInstanceRepository()
+            execution_service = ExecutionService(
+                planner=StaticDevicePlanner(devices={device.device_id: device}),
+                run_factory=DomainTaskRunFactory(),
+                instance_factory=DomainExecutionInstanceFactory(devices={device.device_id: device}),
+                run_repository=run_repository,
+                instance_repository=instance_repository,
+                state_machine=ExecutionStateMachine(),
+                hooks=LifecycleHookRegistry(),
+            )
+            pidof_command = ("adb", "-s", "device-1", "shell", "pidof", "com.android.commands.monkey")
+            cleanup_runner = FakeHostCommandRunner(
+                {
+                    pidof_command: [
+                        CommandResult(0, "31882\n", ""),
+                        CommandResult(1, "", ""),
+                    ],
+                    ("adb", "-s", "device-1", "shell", "kill", "31882"): CommandResult(0, "", ""),
+                    ("adb", "-s", "device-1", "shell", "cmd", "statusbar", "collapse"): CommandResult(0, "", ""),
+                    ("adb", "-s", "device-1", "shell", "input", "keyevent", "BACK"): CommandResult(0, "", ""),
+                    ("adb", "-s", "device-1", "shell", "am", "force-stop", "com.example.app"): CommandResult(0, "", ""),
+                }
+            )
+            run_execution_service = RunExecutionService(
+                task_repository=task_repository,
+                run_repository=run_repository,
+                instance_repository=instance_repository,
+                execution_service=execution_service,
+                monitoring_adapter=None,
+                artifact_path_planner=ArtifactPathPlanner(runtime_root=runtime_root),
+                scenario_runners={},
+                artifact_collector=IssueArtifactCollector(command_runner=FakeCommandRunner({})),
+                host_command_runner=cleanup_runner,
+            )
+
+            task = TaskDefinition(
+                task_id="task-stop",
+                task_name="Stop Task",
+                template_type=TaskTemplateType.MONKEY,
+                target_app=TaskTargetApp(package_name="com.example.app"),
+                selected_device_ids=[device.device_id],
+            )
+            TaskService(repository=task_repository).create_task(task)
+            created_batch = execution_service.create_run(task)
+
+            result = run_execution_service.stop_run(created_batch.run.run_id, requested_by="tester")
+
+            self.assertEqual(result.run.run_status, "cancelled")
+            self.assertIn(pidof_command, cleanup_runner.calls)
+            self.assertIn(("adb", "-s", "device-1", "shell", "kill", "31882"), cleanup_runner.calls)
+            self.assertNotIn("sh", [part for call in cleanup_runner.calls for part in call])
+            self.assertEqual(result.stopped_instance_count, 1)
+
     def test_execute_run_retries_retryable_transport_exception_and_cleans_up_before_success(self) -> None:
         with TemporaryDirectory() as tempdir:
             runtime_root = Path(tempdir) / "runtime"
@@ -845,26 +918,11 @@ class RunExecutionServiceArtifactIntegrationTest(unittest.TestCase):
                                 "Applications Memory Usage (in Kilobytes):\ncom.example.app\n",
                                 "",
                             ),
-                            (
-                                "adb",
-                                "-s",
-                                "device-1",
-                                "shell",
-                                "bugreport",
-                            ): CommandResult(0, "bugreport snapshot\n", ""),
-                            (
-                                "adb",
-                                "-s",
-                                "device-1",
-                                "logcat",
-                                "--pid",
-                                "2456",
-                                "-d",
-                                "-v",
-                                "threadtime",
-                                "-t",
-                                "250",
-                            ): CommandResult(0, "07-19 12:00:00.000 E AndroidRuntime: pid scoped\n", ""),
+                            ("adb", "-s", "device-1", "shell", "dumpsys", "SurfaceFlinger"): CommandResult(
+                                0,
+                                "SurfaceFlinger dump\n",
+                                "",
+                            ),
                             (
                                 "adb",
                                 "-s",
@@ -926,6 +984,11 @@ class RunExecutionServiceArtifactIntegrationTest(unittest.TestCase):
                         }
                     )
                 ),
+                host_command_runner=FakeHostCommandRunner(
+                    {
+                        ("adb", "-s", "device-1", "shell", "am", "force-stop", "com.example.app"): CommandResult(0, "", ""),
+                    }
+                ),
             )
 
             task = TaskDefinition(
@@ -952,7 +1015,7 @@ class RunExecutionServiceArtifactIntegrationTest(unittest.TestCase):
                 {
                     ArtifactType.BUGREPORT,
                     ArtifactType.DROPBOX,
-                    ArtifactType.DUMPSYS_MEMINFO,
+                    ArtifactType.DUMPSYS_SURFACEFLINGER,
                     ArtifactType.EXECUTION_LOG,
                     ArtifactType.LOGCAT,
                     ArtifactType.TRACES,
@@ -970,22 +1033,21 @@ class RunExecutionServiceArtifactIntegrationTest(unittest.TestCase):
             self.assertIn("logcat.txt", report_text)
             self.assertIn("bugreport.txt", report_text)
             self.assertIn("dropbox.txt", report_text)
-            self.assertIn("meminfo.txt", report_text)
+            self.assertIn("surfaceflinger.txt", report_text)
             self.assertIn("tombstone.txt", report_text)
             self.assertIn("capture_status: success", report_text)
-            self.assertIn("issue_pid=2456", report_text)
             self.assertIn("<h2>Artifacts</h2>", html_report_text)
             self.assertIn("logcat.txt", html_report_text)
             self.assertIn("bugreport.txt", html_report_text)
             self.assertIn("dropbox.txt", html_report_text)
-            self.assertIn("meminfo.txt", html_report_text)
+            self.assertIn("surfaceflinger.txt", html_report_text)
             self.assertIn("tombstone.txt", html_report_text)
             analysis_ready = instance.summary.metadata["analysis_ready"]
             self.assertEqual(analysis_ready["issues"]["count"], 1)
-            self.assertEqual(analysis_ready["issues"]["types"], ["crash"])
+            self.assertEqual(analysis_ready["issues"]["types"], ["native_crash"])
             self.assertEqual(
                 analysis_ready["artifacts"]["types"],
-                ["bugreport", "dropbox", "dumpsys_meminfo", "execution_log", "logcat", "tombstone", "traces"],
+                ["bugreport", "dropbox", "dumpsys_surfaceflinger", "execution_log", "logcat", "tombstone", "traces"],
             )
             self.assertEqual(analysis_ready["report"]["markdown_path"], instance.metadata["report_path"])
             self.assertEqual(analysis_ready["report"]["html_path"], instance.metadata["html_report_path"])

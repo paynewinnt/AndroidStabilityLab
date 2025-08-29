@@ -6,7 +6,6 @@
 """
 
 import sys
-import os
 import importlib
 from typing import List, Tuple
 
@@ -42,31 +41,7 @@ def check_required_packages() -> List[Tuple[str, bool, str]]:
     
     return results
 
-def check_database_modules() -> List[Tuple[str, bool, str]]:
-    """检查数据库模块"""
-    database_modules = [
-        ('database.connection', '数据库连接管理'),
-        ('database.models', '数据库模型'),
-        ('database.data_storage', '数据存储服务'),
-        ('database.operations', '数据库操作'),
-        ('database.maintenance', '数据库维护'),
-        ('database.exceptions', '异常处理')
-    ]
-    
-    results = []
-    # 添加当前目录到Python路径
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    if current_dir not in sys.path:
-        sys.path.insert(0, current_dir)
-    
-    for module_name, description in database_modules:
-        try:
-            importlib.import_module(module_name)
-            results.append((description, True, f"✅ {description}: 可用"))
-        except ImportError as e:
-            results.append((description, False, f"❌ {description}: {str(e)}"))
-    
-    return results
+# 注: database/ 包已移除，不再检查其模块。
 
 def check_python_environment() -> Tuple[bool, str]:
     """检查Python环境"""
@@ -98,21 +73,11 @@ def main():
         if not ok:
             all_packages_ok = False
     
-    # 检查数据库模块
-    print(f"\n🗄️  数据库模块检查:")
-    db_results = check_database_modules()
-    all_db_ok = True
-    
-    for module_name, ok, msg in db_results:
-        print(f"  {msg}")
-        if not ok:
-            all_db_ok = False
-    
     # 总结
     print(f"\n" + "=" * 60)
     print("📊 检查结果总结:")
-    
-    if python_ok and python_env_ok and all_packages_ok and all_db_ok:
+
+    if python_ok and python_env_ok and all_packages_ok:
         print("🎉 所有检查通过！环境配置正确。")
         print("\n🚀 当前推荐入口:")
         print("   /usr/bin/python -m stability.cli --help")
@@ -127,8 +92,6 @@ def main():
         if not all_packages_ok:
             print("   - 请安装缺失的依赖包: /usr/bin/python -m pip install -r requirements.txt")
         
-        if not all_db_ok:
-            print("   - 检查数据库模块导入错误")
         
         return 1
 

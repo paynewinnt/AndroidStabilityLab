@@ -13,9 +13,11 @@ def sidebar_nav(page_title: str) -> str:
         ("设备池", "/device-pools", "设备池"),
         ("快捷 ADB", "/quick-adb", "快捷 ADB"),
         ("任务大厅", "/tasks", "任务大厅"),
+        ("Run 列表", "/runs", "Run 列表"),
         ("长稳模板", "/long-run-templates", "长稳运行模板"),
         ("巡检状态", "/runner", "巡检状态"),
         ("性能采样", "/performance", "性能采样"),
+        ("产物中心", "/artifacts", "产物中心"),
         ("问题中心", "/issues", "问题中心"),
         ("集成 Outbox", "/integration", "集成 Outbox"),
         ("Golden Suite", "/goldens", "Golden Suite"),
@@ -128,12 +130,25 @@ def route_link(label: str, path: Any) -> str:
     return f"<a href='{escape(raw, quote=True)}'>{escape(label)}</a>"
 
 
-def inline_link(label: str, path: Any) -> str:
+def route_link_new_tab(label: str, path: Any) -> str:
     raw = str(path or "").strip()
     if not raw:
         return escape(label)
     return (
-        f"<a href='/admission/view?path={quote(raw, safe='')}' target='_blank' rel='noopener noreferrer'>"
+        f"<a href='{escape(raw, quote=True)}' data-file-preview-link='1' "
+        f"data-file-preview-title='{escape(str(label), quote=True)}' data-file-preview-path='{escape(raw, quote=True)}'>"
+        f"{escape(label)}</a>"
+    )
+
+
+def inline_link(label: str, path: Any) -> str:
+    raw = str(path or "").strip()
+    if not raw:
+        return escape(label)
+    href = f"/admission/view?path={quote(raw, safe='')}"
+    return (
+        f"<a href='{escape(href, quote=True)}' data-file-preview-link='1' "
+        f"data-file-preview-title='{escape(str(label), quote=True)}' data-file-preview-path='{escape(raw, quote=True)}'>"
         f"{escape(label)}</a>"
     )
 

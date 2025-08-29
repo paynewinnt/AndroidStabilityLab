@@ -26,6 +26,13 @@ class TaskFormsMixin:
         return self._long_run_task_create_form(payload) + self._standard_task_create_form(payload)
 
     def _task_operation_launcher(self, payload: Mapping[str, Any]) -> str:
+        defaults = dict(payload.get("operation_defaults", {}) or {})
+        auto_open_modal = str(defaults.get("auto_open_modal", "") or "")
+        auto_open_marker = (
+            f"<span hidden data-task-auto-open='{escape(auto_open_modal, quote=True)}'></span>"
+            if auto_open_modal
+            else ""
+        )
         return (
             "<div class='task-operation-hub'>"
             "<div class='task-operation-buttons'>"
@@ -35,8 +42,9 @@ class TaskFormsMixin:
             + self._task_modal_button("执行 Run", "execute-run", "选择监控 backend、并发、重试并开始执行。")
             + self._task_modal_button("归档 / 隐藏", "delete-task-run", "不物理删除，只从默认列表隐藏并记录审计事件。")
             + "</div>"
-            "<div class='task-operation-note'>新增入口已收进弹窗；列表在下方分区展示，避免任务页被长表单撑开。</div>"
+            "<div class='task-operation-note'>任务列表现在是主入口；Run 创建、执行和停止也可以直接从每个任务行打开。</div>"
             "</div>"
+            + auto_open_marker
             + self._task_modal("long-run-task", "创建长稳任务", self._long_run_task_create_form(payload))
             + self._task_modal("standard-task", "创建任务", self._standard_task_create_form(payload))
             + self._task_modal("create-run", "创建 Run", self._run_create_form(payload))
@@ -141,6 +149,27 @@ class TaskFormsMixin:
     def _long_run_task_create_form(self, payload: Mapping[str, Any]) -> str:
         current_actor = dict(payload.get("current_actor", {}) or {})
         defaults = dict(payload.get("operation_defaults", {}) or {})
+        long_run_template_key = str(defaults.get("long_run_template_key", "") or "")
+        long_run_template_name = str(defaults.get("long_run_template_name", "") or "")
+        selected_task_name = str(defaults.get("task_name", "") or "")
+        selected_package_name = str(defaults.get("package_name", "") or "")
+        selected_runtime_hours = max(int(defaults.get("runtime_hours", 12) or 12), 1)
+        selected_interval_minutes = max(int(defaults.get("interval_minutes", 60) or 60), 1)
+        selected_retry_count = max(int(defaults.get("retry_count", 1) or 1), 0)
+        selected_device_count = max(int(defaults.get("desired_device_count", 1) or 1), 1)
+        selected_failure_threshold = max(int(defaults.get("failure_threshold", 3) or 3), 1)
+        selected_rotation_strategy = str(defaults.get("rotation_strategy", "") or "round_robin")
+        selected_rotation_advance_policy = str(defaults.get("rotation_advance_policy", "") or "every_round")
+        selected_start_now = str(defaults.get("start_now", "1") or "1")
+        selected_monitoring_backend = str(defaults.get("monitoring_backend", "") or "default")
+        selected_primary_devices = tuple(str(item) for item in list(defaults.get("primary_device_ids", []) or []) if str(item or "").strip())
+        selected_backup_devices = tuple(str(item) for item in list(defaults.get("backup_device_ids", []) or []) if str(item or "").strip())
+        selected_metadata = defaults.get("metadata", {})
+        metadata_value = (
+            json.dumps(selected_metadata, ensure_ascii=False, indent=2)
+            if isinstance(selected_metadata, Mapping) and selected_metadata
+            else ""
+        )
         selected_template = str(defaults.get("template_type", "") or "monkey")
         template_schema = get_template_form_schema(selected_template)
         template_options = self._task_template_options(selected_template)
@@ -151,6 +180,7 @@ class TaskFormsMixin:
             field_name="devices",
             empty_title="自动调度",
             empty_hint="不绑定设备；无人值守轮次按设备池挑选",
+            selected_values=selected_primary_devices,
         )
         backup_device_selector = self._task_device_selector(
             list(payload.get("schedulable_devices", []) or []),
@@ -159,18 +189,30 @@ class TaskFormsMixin:
             field_name="backup_devices",
             empty_title="不指定候补设备",
             empty_hint="主设备不可用时才尝试补位",
+            selected_values=selected_backup_devices,
         )
         metric_selector = self._task_metric_selector(default_selected=tuple(template_schema["metrics"]["default"]))
+        template_notice = ""
+        if long_run_template_key:
+            template_notice = self._notice(
+                "已套用长稳模板："
+                + (long_run_template_name or long_run_template_key)
+                + "。已预填运行时长、轮转间隔、期望设备数和轮转策略；只需补包名、设备和监控策略即可创建。",
+                tone="ok",
+            )
         return (
             "<article class='card stack task-create-card long-run-task-create-card'>"
             "<h3>创建长稳任务 <span class='heading-hint'>一次提交创建普通 Task，并写入 runner 可见的无人值守配置。</span></h3>"
-            f"<form method='post' action='{escape(self._actor_scoped_path('/tasks/actions/create-task', current_actor=current_actor), quote=True)}' class='stack task-create-form long-run-task-create-form'>"
+            + template_notice
+            + f"<form method='post' action='{escape(self._actor_scoped_path('/tasks/actions/create-task', current_actor=current_actor), quote=True)}' class='stack task-create-form long-run-task-create-form'>"
             "<input type='hidden' name='configure_unattended' value='1' />"
+            f"<input type='hidden' name='long_run_template_key' value='{escape(long_run_template_key, quote=True)}' />"
+            f"<input type='hidden' name='long_run_template_name' value='{escape(long_run_template_name, quote=True)}' />"
             "<section class='task-form-section task-form-section-basic'>"
             "<div class='task-form-section-title'>测试目标</div>"
             "<div class='form-grid-three task-basic-grid'>"
-            "<label>任务名<input type='text' name='task_name' value='' placeholder='例如 直播间 overnight 长稳' required /></label>"
-            "<label>包名<input type='text' name='package_name' value='' placeholder='com.example.app' required /></label>"
+            f"<label>任务名<input type='text' name='task_name' value='{escape(selected_task_name, quote=True)}' placeholder='例如 直播间 overnight 长稳' required /></label>"
+            f"<label>包名<input type='text' name='package_name' value='{escape(selected_package_name, quote=True)}' placeholder='com.example.app' required /></label>"
             f"<label>长稳模板<select name='template_type'>{template_options}</select></label>"
             "</div>"
             f"{self._task_template_risk_notice(template_schema)}"
@@ -179,15 +221,24 @@ class TaskFormsMixin:
             "<section class='task-form-section'>"
             "<div class='task-form-section-title'>运行策略</div>"
             "<div class='form-grid-three'>"
-            "<label>运行时长(小时)<input type='number' name='runtime_hours' value='12' min='1' /></label>"
-            "<label>轮转间隔(分钟)<input type='number' name='interval_minutes' value='60' min='1' /></label>"
-            "<label>失败重试<input type='number' name='retry_count' value='1' min='0' /></label>"
-            "<label>期望设备数<input type='number' name='desired_device_count' value='1' min='1' /></label>"
-            "<label>失败阈值<input type='number' name='failure_threshold' value='3' min='1' /></label>"
+            f"<label>运行时长(小时)<input type='number' name='runtime_hours' value='{selected_runtime_hours}' min='1' /></label>"
+            f"<label>轮转间隔(分钟)<input type='number' name='interval_minutes' value='{selected_interval_minutes}' min='1' /></label>"
+            f"<label>失败重试<input type='number' name='retry_count' value='{selected_retry_count}' min='0' /></label>"
+            f"<label>期望设备数<input type='number' name='desired_device_count' value='{selected_device_count}' min='1' /></label>"
+            f"<label>失败阈值<input type='number' name='failure_threshold' value='{selected_failure_threshold}' min='1' /></label>"
             "<label>自动补位<select name='auto_backfill'><option value='1'>开启</option><option value='0'>关闭</option></select></label>"
-            "<label>轮转策略<select name='rotation_strategy'><option value='round_robin'>round_robin</option><option value='fixed'>fixed</option></select></label>"
-            "<label>轮转推进<select name='rotation_advance_policy'><option value='every_round'>every_round</option><option value='failure_only'>failure_only</option></select></label>"
-            "<label>立即开始<select name='start_now'><option value='1'>是</option><option value='0'>否</option></select></label>"
+            "<label>轮转策略<select name='rotation_strategy'>"
+            f"<option value='round_robin'{' selected' if selected_rotation_strategy == 'round_robin' else ''}>round_robin</option>"
+            f"<option value='fixed'{' selected' if selected_rotation_strategy == 'fixed' else ''}>fixed</option>"
+            "</select></label>"
+            "<label>轮转推进<select name='rotation_advance_policy'>"
+            f"<option value='every_round'{' selected' if selected_rotation_advance_policy == 'every_round' else ''}>every_round</option>"
+            f"<option value='failure_only'{' selected' if selected_rotation_advance_policy == 'failure_only' else ''}>failure_only</option>"
+            "</select></label>"
+            "<label>立即开始<select name='start_now'>"
+            f"<option value='1'{' selected' if selected_start_now == '1' else ''}>是</option>"
+            f"<option value='0'{' selected' if selected_start_now == '0' else ''}>否</option>"
+            "</select></label>"
             "</div>"
             "</section>"
             "<section class='task-form-section'>"
@@ -201,7 +252,12 @@ class TaskFormsMixin:
             "<div class='task-form-section-title'>监控策略</div>"
             "<div class='long-run-monitoring-grid'>"
             "<div class='long-run-monitoring-controls'>"
-            "<label>Monitoring Backend<select name='monitoring_backend'><option value='default'>default - 基础 ADB 快照</option><option value='solox'>solox - 实时性能采样</option><option value='perfetto'>perfetto - 系统 Trace</option></select></label>"
+            "<label>Monitoring Backend<select name='monitoring_backend'>"
+            f"<option value='default'{' selected' if selected_monitoring_backend == 'default' else ''}>default - 基础 ADB 快照</option>"
+            f"<option value='solox'{' selected' if selected_monitoring_backend == 'solox' else ''}>solox - 实时性能采样</option>"
+            f"<option value='perfetto'{' selected' if selected_monitoring_backend == 'perfetto' else ''}>perfetto - 系统 Trace</option>"
+            f"<option value='solox_perfetto'{' selected' if selected_monitoring_backend == 'solox_perfetto' else ''}>solox_perfetto - SoloX + Perfetto</option>"
+            "</select></label>"
             "<label>采样间隔(秒)<input type='number' name='sampling_interval' value='5' min='0' /></label>"
             "<div class='meta'>先选采集方式和频率，再勾选这条长稳任务要沉淀的指标。</div>"
             "</div>"
@@ -223,7 +279,7 @@ class TaskFormsMixin:
             "<div class='form-grid-three task-params-grid'>"
             f"{self._task_params_builder(managed_apks=list(payload.get('managed_apks', []) or []), upload_url=self._actor_scoped_path('/tasks/actions/upload-apk', current_actor=current_actor), delete_url=self._actor_scoped_path('/tasks/actions/delete-apk', current_actor=current_actor))}"
             f"{self._json_textarea_with_help('task_params(JSON)', 'task_params', '例如 {\"event_count\": 5000, \"throttle_ms\": 300}', self._task_params_help())}"
-            f"{self._json_textarea_with_help('metadata(JSON)', 'metadata', '例如 {\"owner_team\":\"android-client\"}', self._metadata_help())}"
+            f"{self._json_textarea_with_help('metadata(JSON)', 'metadata', '例如 {\"owner_team\":\"android-client\"}', self._metadata_help(), value=metadata_value)}"
             "</div>"
             "</section>"
             "<div class='form-actions'>"
@@ -306,6 +362,7 @@ class TaskFormsMixin:
         *,
         wide: bool = True,
         rows: int = 2,
+        value: str = "",
     ) -> str:
         class_name = "json-field-with-help"
         if wide:
@@ -319,7 +376,7 @@ class TaskFormsMixin:
             f"<div class='json-param-help-body'>{help_html}</div>"
             "</details>"
             "</div>"
-            f"<textarea name='{escape(name, quote=True)}' rows='{int(rows)}' placeholder='{escape(placeholder, quote=True)}'></textarea>"
+            f"<textarea name='{escape(name, quote=True)}' rows='{int(rows)}' placeholder='{escape(placeholder, quote=True)}'>{escape(value)}</textarea>"
             "</div>"
         )
 
@@ -337,6 +394,7 @@ class TaskFormsMixin:
             class_name += " form-field-wide"
         section_html = []
         for section in get_param_sections_for_web():
+            is_general_section = set(section.template_scopes) == {"all"}
             field_html = "".join(
                 cls._task_param_builder_input(
                     field.key,
@@ -350,20 +408,21 @@ class TaskFormsMixin:
                 )
                 for field in section.fields
             )
+            open_attr = " open" if is_general_section else ""
             section_html.append(
-                "<div class='task-param-builder-section' "
+                f"<details{open_attr} class='task-param-builder-section task-param-builder-drawer' "
                 f"data-template-scope='{escape(' '.join(section.template_scopes), quote=True)}'>"
-                f"<div class='meta'>{escape(section.title)}</div>"
+                f"<summary><strong>{escape(section.title)}</strong><span>{len(section.fields)} 个参数</span></summary>"
                 "<div class='task-param-builder-grid'>"
                 + field_html
                 + "</div>"
-                "</div>"
+                "</details>"
             )
         return (
             f"<div class='{class_name}' data-task-param-builder='1'>"
             "<div class='json-field-header'>"
             "<span>参数表单</span>"
-            "<span class='meta'>填写后自动生成下方 task_params(JSON)，也可以继续手写 JSON。</span>"
+            "<span class='meta'>默认只展开通用参数；按需展开当前模板参数，填写后自动生成 task_params(JSON)。</span>"
             "</div>"
             + "".join(section_html)
             + "</div>"
@@ -538,7 +597,9 @@ class TaskFormsMixin:
         field_name: str = "devices",
         empty_title: str = "自动调度（不指定设备）",
         empty_hint: str = "执行时按设备池选择",
+        selected_values: Sequence[str] = (),
     ) -> str:
+        selected = {str(item or "").strip() for item in selected_values if str(item or "").strip()}
         help_text = (
             "可勾选一台或多台；选择“自动调度”则任务不绑定具体设备。"
             if allow_empty
@@ -555,9 +616,10 @@ class TaskFormsMixin:
             )
         cards = []
         if allow_empty:
+            checked = " checked" if not selected else ""
             cards.append(
                 "<label class='device-choice-card device-choice-auto'>"
-                f"<input type='checkbox' name='{escape(field_name, quote=True)}' value='' checked />"
+                f"<input type='checkbox' name='{escape(field_name, quote=True)}' value=''{checked} />"
                 f"<span><strong>{escape(empty_title)}</strong><small>{escape(empty_hint)}</small></span>"
                 "</label>"
             )
@@ -568,9 +630,10 @@ class TaskFormsMixin:
             model = str(item.get("model", "") or item.get("display_name", "") or "").strip()
             group_name = str(item.get("group_name", "") or "").strip() or "未分组"
             team_name = str(item.get("team_name", "") or item.get("team", "") or "").strip() or "未分配"
+            checked = " checked" if device_id in selected else ""
             cards.append(
                 "<label class='device-choice-card'>"
-                f"<input type='checkbox' name='{escape(field_name, quote=True)}' value='{escape(device_id, quote=True)}' />"
+                f"<input type='checkbox' name='{escape(field_name, quote=True)}' value='{escape(device_id, quote=True)}'{checked} />"
                 "<span>"
                 f"<strong>{escape(device_id)}</strong>"
                 f"<small>{escape(' / '.join(part for part in [model, group_name, team_name] if part))}</small>"

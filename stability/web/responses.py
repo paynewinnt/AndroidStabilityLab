@@ -1,6 +1,10 @@
 from __future__ import annotations
 
-from .application_common import *
+import json
+import mimetypes
+from pathlib import Path
+from typing import Any
+from stability.domain import AppError
 
 
 class ApplicationResponseMixin:
@@ -60,7 +64,7 @@ class ApplicationResponseMixin:
             "X-ASL-Request-ID": request_id,
             "X-ASL-Portal-Mode": self._portal_mode(),
             "X-Content-Type-Options": "nosniff",
-            "X-Frame-Options": "DENY",
+            "X-Frame-Options": "SAMEORIGIN",
             "Referrer-Policy": "no-referrer",
             "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
             "Cross-Origin-Resource-Policy": "same-origin",
@@ -69,7 +73,7 @@ class ApplicationResponseMixin:
                 "default-src 'self'; "
                 "base-uri 'self'; "
                 "form-action 'self'; "
-                "frame-ancestors 'none'; "
+                "frame-ancestors 'self'; "
                 "img-src 'self' data:; "
                 "object-src 'none'; "
                 "style-src 'self' 'unsafe-inline'; "

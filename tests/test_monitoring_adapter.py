@@ -113,6 +113,21 @@ class _RecordingAdapter:
         return None
 
 
+class _SnapshotAdapter(_RecordingAdapter):
+    def __init__(self, *, backend: str, system=None, apps=None) -> None:
+        super().__init__(backend=backend)
+        self._system = system
+        self._apps = apps or []
+
+    def collect_snapshot(self, handle: MonitoringSessionHandle) -> MonitoringSnapshot:
+        return MonitoringSnapshot(
+            timestamp=handle.started_at,
+            system=self._system,
+            apps=list(self._apps),
+            metadata={"backend": self.backend},
+        )
+
+
 def _successful_command_runner():
     def runner(command):
         normalized = tuple(str(item) for item in command)
@@ -294,7 +309,7 @@ class PerfettoTraceCaptureAdapterTest(unittest.TestCase):
             snapshot = adapter.collect_snapshot(handle)
 
             self.assertEqual(len(started_commands), 2)
-            self.assertEqual(started_commands[0][-1], "/data/local/tmp/session-recapture.perfetto-trace")
+            self.assertEqual(started_commands[0][-1], "/data/misc/perfetto-traces/session-recapture.perfetto-trace")
             self.assertEqual(started_commands[1][-1], "-")
             self.assertEqual(snapshot.metadata["perfetto"]["trace_status"], "captured")
             self.assertEqual(snapshot.metadata["perfetto"]["capture_mode"], "stdout_fallback")
@@ -399,6 +414,78 @@ class MonitoringAdapterBuildTest(unittest.TestCase):
         self.assertEqual(len(solox_adapter.started_configs), 0)
         self.assertEqual(len(adb_adapter.started_configs), 1)
         self.assertEqual(len(perfetto_adapter.started_configs), 1)
+
+    def test_configured_adapter_can_skip_trace_snapshot_for_periodic_samples(self) -> None:
+        adb_adapter = _RecordingAdapter(backend="adb_collector")
+        perfetto_adapter = _RecordingAdapter(backend="perfetto")
+        adapter = ConfiguredMonitoringAdapter(
+            default_profile="perfetto",
+            profiles={
+                "perfetto": {
+                    "metrics_backend": "adb_collector",
+                    "trace_backend": "perfetto",
+                    "metadata": {},
+                },
+            },
+            legacy_adapter=adb_adapter,
+            perfetto_adapter=perfetto_adapter,
+        )
+
+        handle = adapter.start_session("device-1", session_name="periodic-sample")
+        handle.state["skip_trace_snapshot"] = True
+        periodic_snapshot = adapter.collect_snapshot(handle)
+        handle.state.pop("skip_trace_snapshot", None)
+        final_snapshot = adapter.collect_snapshot(handle)
+
+        self.assertEqual(periodic_snapshot.metadata["backend"], "adb_collector")
+        self.assertEqual(final_snapshot.metadata["backend"], "perfetto")
+
+    def test_configured_adapter_enriches_solox_with_adb_fallback_metrics(self) -> None:
+        solox_adapter = _SnapshotAdapter(
+            backend="solox",
+            system={"cpu_usage": 12.0},
+            apps=[{"package_name": "com.example.app", "cpu_usage": 3.0, "memory_pss": 100.0}],
+        )
+        adb_adapter = _SnapshotAdapter(
+            backend="adb_collector",
+            system={"cpu_usage": 80.0, "battery_level": 90.0},
+            apps=[
+                {
+                    "package_name": "com.example.app",
+                    "cpu_usage": 99.0,
+                    "memory_java": 20.0,
+                    "memory_native": 30.0,
+                    "gpu_p95_ms": 6.0,
+                    "gpu_p99_ms": 9.0,
+                    "jank_percent": 4.0,
+                }
+            ],
+        )
+        adapter = ConfiguredMonitoringAdapter(
+            default_profile="solox",
+            profiles={"solox": {"metrics_backend": "solox", "trace_backend": "", "metadata": {}}},
+            legacy_adapter=adb_adapter,
+            solox_adapter=solox_adapter,
+        )
+
+        handle = adapter.start_session(
+            "device-1",
+            config=MonitoringSessionConfig(selected_apps=({"package_name": "com.example.app"},)),
+            session_name="solox-with-fallback",
+        )
+        snapshot = adapter.collect_snapshot(handle)
+
+        self.assertEqual(snapshot.metadata["backend"], "solox")
+        self.assertTrue(snapshot.metadata["fallback_metric_enriched"])
+        self.assertEqual(snapshot.system["cpu_usage"], 12.0)
+        self.assertEqual(snapshot.system["battery_level"], 90.0)
+        self.assertEqual(snapshot.apps[0]["cpu_usage"], 3.0)
+        self.assertEqual(snapshot.apps[0]["memory_pss"], 100.0)
+        self.assertEqual(snapshot.apps[0]["memory_java"], 20.0)
+        self.assertEqual(snapshot.apps[0]["memory_native"], 30.0)
+        self.assertEqual(snapshot.apps[0]["gpu_p95_ms"], 6.0)
+        self.assertEqual(snapshot.apps[0]["gpu_p99_ms"], 9.0)
+        self.assertEqual(snapshot.apps[0]["jank_percent"], 4.0)
 
 
 if __name__ == "__main__":

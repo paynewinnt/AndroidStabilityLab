@@ -664,8 +664,8 @@ class WebPortalApplicationTest(unittest.TestCase):
         self.assertEqual(headers["X-ASL-Request-ID"], "portal_req_test")
         self.assertEqual(headers["X-ASL-Portal-Mode"], "local_ops_console")
         self.assertEqual(headers["X-Content-Type-Options"], "nosniff")
-        self.assertEqual(headers["X-Frame-Options"], "DENY")
-        self.assertIn("frame-ancestors 'none'", headers["Content-Security-Policy"])
+        self.assertEqual(headers["X-Frame-Options"], "SAMEORIGIN")
+        self.assertIn("frame-ancestors 'self'", headers["Content-Security-Policy"])
 
     def test_unknown_page_returns_404_html(self) -> None:
         app = WebPortalApplication(self._bundle())
@@ -1158,6 +1158,20 @@ class WebPortalApplicationTest(unittest.TestCase):
         self.assertEqual(execute_run_payload["run_status"], "success")
         self.assertEqual(execute_run_payload["monitoring_backend"], "solox")
         self.assertEqual(execute_run_payload["instance_count"], 1)
+
+        stop_run_payload = self._post_json_or_skip(
+            app,
+            "/api/runs/actions/stop",
+            {
+                "run_id": "run-1",
+                "reason": "user_stopped",
+            },
+            headers={"X-ASL-Session-Token": "asl.session.v1:tester:tester"},
+        )
+        self.assertEqual(stop_run_payload["action"], "stop_run")
+        self.assertEqual(stop_run_payload["run_id"], "run-1")
+        self.assertEqual(stop_run_payload["run_status"], "cancelled")
+        self.assertEqual(stop_run_payload["stopped_instance_count"], 1)
 
     def test_web_archive_task_hides_task_and_emits_audited_outbox_event(self) -> None:
         bundle = self._bundle()

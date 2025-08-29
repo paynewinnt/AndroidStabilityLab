@@ -1,5 +1,9 @@
 """Retired performance monitor API stub."""
 
+# RETIRED MODULE — scheduled for removal in 2026-Q3.
+# No code in the project imports this module anymore.
+# If you are reading this after 2026-Q3, this file can be safely deleted.
+
 STABLE_API_SHIM = True
 
 _RETIREMENT_MESSAGE = (

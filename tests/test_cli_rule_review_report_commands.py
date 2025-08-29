@@ -10,7 +10,6 @@ import unittest
 from unittest.mock import patch
 
 from stability.app import DeviceRecordNotFound
-from stability.app.analysis_service import AggregatedIssueNotFound
 from stability.app.task_service import TaskRecordNotFound
 from stability.cli import task_create
 from tests.helpers.cli import run_main_with_bundle

@@ -241,6 +241,24 @@ def writable_bundle() -> object:
             report_paths={"instance-write-1": "runtime/report.md"},
         )
 
+    def _stop_run(run_id: str, *, requested_by="", reason="user_stopped"):
+        run = SimpleNamespace(run_id=run_id, run_status="cancelled")
+        instance = SimpleNamespace(
+            instance_id="instance-write-1",
+            device_id="device-1",
+            instance_status="cancelled",
+        )
+        return SimpleNamespace(
+            task=base_task,
+            run=run,
+            instances=(instance,),
+            requested_by=requested_by,
+            reason=reason,
+            stopped_instance_count=1,
+            already_terminal_instance_count=0,
+            cleanup_results=({"device_id": "device-1", "ok": True},),
+        )
+
     def _configure_task(*, task_id: str, interval_minutes: int, device_id: str = "device-1", backup_device_id: str = "device-2", **kwargs):
         return SimpleNamespace(
             task_id=task_id,
@@ -356,7 +374,7 @@ def writable_bundle() -> object:
     web_bundle.task_service.create_task = _create_task
     web_bundle.task_service.get_task = _get_task
     web_bundle.execution_service = SimpleNamespace(plan_run=_plan_run, create_run=_create_run)
-    web_bundle.run_execution_service = SimpleNamespace(execute_run=_execute_run)
+    web_bundle.run_execution_service = SimpleNamespace(execute_run=_execute_run, stop_run=_stop_run)
     web_bundle.unattended_service = SimpleNamespace(
         configure_task=_configure_task,
         list_task_records=lambda **kwargs: (_configure_task(task_id="task-1", interval_minutes=30),),
@@ -367,6 +385,5 @@ def writable_bundle() -> object:
         build_weekly_report=_build_weekly_report,
     )
     return web_bundle
-
 
 

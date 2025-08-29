@@ -57,7 +57,13 @@ class TaskDetailPageMixin(TaskFormsMixin):
     def _render_task_detail(self, payload: dict[str, Any]) -> str:
         task = dict(payload.get("task", {}) or {})
         runs = list(payload.get("runs", []) or [])
+        task_id = str(task.get("task_id", "") or "")
+        task_name = str(task.get("task_name", "") or task_id or "任务详情")
         body = [
+            self._task_page_return_strip(
+                current=f"任务详情 · {task_name}",
+                links=[("返回任务大厅", "/tasks")],
+            ),
             self._metric_grid(
                 [
                     ("任务", task.get("task_name", "n/a") or "n/a"),

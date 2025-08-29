@@ -74,6 +74,21 @@ class ExecutedRunResult:
     executed_at: datetime = field(default_factory=utcnow)
 
 
+@dataclass(frozen=True)
+class StoppedRunResult:
+    """Return object for a user-requested stop against one run."""
+
+    task: TaskDefinitionLike
+    run: TaskRunLike
+    instances: Sequence[ExecutionInstanceLike]
+    requested_by: str = ""
+    reason: str = "user_stopped"
+    stopped_instance_count: int = 0
+    already_terminal_instance_count: int = 0
+    cleanup_results: Sequence[dict[str, Any]] = field(default_factory=tuple)
+    stopped_at: datetime = field(default_factory=utcnow)
+
+
 class RunExecutionService(ExecutionLoopMixin, RetryHelpersMixin, MonitoringHelpersMixin, MetadataReportMixin):
     """Best-effort local executor for the V1 task/run/instance backbone."""
 
@@ -115,6 +130,8 @@ class RunExecutionService(ExecutionLoopMixin, RetryHelpersMixin, MonitoringHelpe
         self._host_command_runner = host_command_runner or SubprocessHostCommandRunner()
         self._report_service = report_service or ReportService()
         self._lifecycle_lock = threading.Lock()
+        self._stop_events: dict[str, threading.Event] = {}
+        self._stop_events_lock = threading.Lock()
 
     def execute_run(
         self,
@@ -154,6 +171,7 @@ class RunExecutionService(ExecutionLoopMixin, RetryHelpersMixin, MonitoringHelpe
                 skipped_reason=skipped_reason,
             )
 
+        self._clear_stop_request(run_id)
         concurrency = self._normalize_concurrency(max_concurrency, instance_count=len(executable_instances))
         normalized_retry_count = self._normalize_retry_count(retry_count)
         if concurrency == 1:
@@ -194,6 +212,64 @@ class RunExecutionService(ExecutionLoopMixin, RetryHelpersMixin, MonitoringHelpe
             skipped_reason=skipped_reason,
         )
 
+    def stop_run(
+        self,
+        run_id: str,
+        *,
+        requested_by: str = "",
+        reason: str = "user_stopped",
+    ) -> StoppedRunResult:
+        """Request termination of a running or queued run and clean up device-side work."""
+        run = self._get_run(run_id)
+        task = self._get_task(getattr(run, "task_definition_id", ""))
+        instances = list(self._instance_repository.list_by_run(run_id))
+        if not instances:
+            raise AppError.not_found(f"Run '{run_id}' does not contain any execution instances.")
+
+        normalized_reason = str(reason or "user_stopped").strip() or "user_stopped"
+        self._request_stop(run_id)
+        cleanup_results = [
+            *self._request_active_scenario_stop(task=task, run=run, instances=instances),
+            *self._request_device_cleanup(task=task, run=run, instances=instances),
+        ]
+
+        stopped_count = 0
+        terminal_count = 0
+        for instance in instances:
+            status = self._instance_status(instance)
+            if status in {"success", "failed", "cancelled", "precheck_failed"}:
+                terminal_count += 1
+                continue
+            summary = {
+                "note": "用户请求停止 Run。",
+                "metadata": {
+                    "stop_requested_by": str(requested_by or ""),
+                    "stop_reason": normalized_reason,
+                    "stop_cleanup_results": cleanup_results,
+                },
+            }
+            with self._lifecycle_lock:
+                self._execution_service.cancel_instance(
+                    task,
+                    run,
+                    instance,
+                    exit_reason="user_stopped",
+                    summary=summary,
+                )
+            stopped_count += 1
+
+        persisted_run = self._run_repository.get(run_id) or run
+        return StoppedRunResult(
+            task=task,
+            run=persisted_run,
+            instances=tuple(self._instance_repository.list_by_run(run_id)),
+            requested_by=str(requested_by or ""),
+            reason=normalized_reason,
+            stopped_instance_count=stopped_count,
+            already_terminal_instance_count=terminal_count,
+            cleanup_results=tuple(cleanup_results),
+        )
+
     @classmethod
     def _is_executable_instance(cls, instance: ExecutionInstanceLike) -> bool:
         return cls._instance_status(instance) in {"pending", "preparing"}
@@ -219,6 +295,133 @@ class RunExecutionService(ExecutionLoopMixin, RetryHelpersMixin, MonitoringHelpe
     @staticmethod
     def _instance_status(instance: ExecutionInstanceLike) -> str:
         return str(getattr(instance, "instance_status", getattr(instance, "status", "")) or "")
+
+    def _request_stop(self, run_id: str) -> None:
+        with self._stop_events_lock:
+            event = self._stop_events.get(run_id)
+            if event is None:
+                event = threading.Event()
+                self._stop_events[run_id] = event
+            event.set()
+
+    def _clear_stop_request(self, run_id: str) -> None:
+        with self._stop_events_lock:
+            event = self._stop_events.get(run_id)
+            if event is None:
+                event = threading.Event()
+                self._stop_events[run_id] = event
+            event.clear()
+
+    def _run_stop_requested(self, run: TaskRunLike) -> bool:
+        run_id = str(getattr(run, "run_id", "") or "")
+        if not run_id:
+            return False
+        with self._stop_events_lock:
+            event = self._stop_events.get(run_id)
+        return bool(event and event.is_set())
+
+    def _request_active_scenario_stop(
+        self,
+        *,
+        task: TaskDefinitionLike,
+        run: TaskRunLike,
+        instances: Sequence[ExecutionInstanceLike],
+    ) -> list[dict[str, Any]]:
+        runner = self._resolve_scenario_runner(task)
+        stop_active_processes = getattr(runner, "stop_active_processes", None)
+        if stop_active_processes is None:
+            return []
+        try:
+            return list(
+                stop_active_processes(
+                    device_ids=self._run_device_ids(run, instances),
+                    package_name=self._task_package_name(task),
+                )
+                or []
+            )
+        except Exception as exc:  # pragma: no cover - best-effort cleanup path
+            return [
+                {
+                    "action": "host_scenario_stop",
+                    "ok": False,
+                    "error": str(exc),
+                }
+            ]
+
+    def _request_device_cleanup(
+        self,
+        *,
+        task: TaskDefinitionLike,
+        run: TaskRunLike,
+        instances: Sequence[ExecutionInstanceLike],
+    ) -> list[dict[str, Any]]:
+        package_name = self._task_package_name(task)
+        device_ids = self._run_device_ids(run, instances)
+        cleanup_results: list[dict[str, Any]] = []
+        for device_id in device_ids:
+            cleanup_results.extend(self._request_device_monkey_cleanup(device_id))
+            commands = [
+                ["adb", "-s", device_id, "shell", "cmd", "statusbar", "collapse"],
+                ["adb", "-s", device_id, "shell", "input", "keyevent", "BACK"],
+            ]
+            if package_name:
+                commands.append(["adb", "-s", device_id, "shell", "am", "force-stop", package_name])
+            for command in commands:
+                cleanup_results.append(self._run_device_cleanup_command(device_id, command))
+        return cleanup_results
+
+    def _request_device_monkey_cleanup(self, device_id: str) -> list[dict[str, Any]]:
+        cleanup_results: list[dict[str, Any]] = []
+        pidof_command = ["adb", "-s", device_id, "shell", "pidof", "com.android.commands.monkey"]
+        pidof_result = self._run_device_cleanup_command(device_id, pidof_command)
+        cleanup_results.append(pidof_result)
+        pids = self._pids_from_output(str(pidof_result.get("stdout_tail", "") or ""))
+        if not pids:
+            return cleanup_results
+
+        kill_command = ["adb", "-s", device_id, "shell", "kill", *pids]
+        cleanup_results.append(self._run_device_cleanup_command(device_id, kill_command))
+        time.sleep(0.2)
+
+        verify_command = ["adb", "-s", device_id, "shell", "pidof", "com.android.commands.monkey"]
+        verify_result = self._run_device_cleanup_command(device_id, verify_command)
+        cleanup_results.append(verify_result)
+        remaining_pids = self._pids_from_output(str(verify_result.get("stdout_tail", "") or ""))
+        if remaining_pids:
+            force_kill_command = ["adb", "-s", device_id, "shell", "kill", "-9", *remaining_pids]
+            cleanup_results.append(self._run_device_cleanup_command(device_id, force_kill_command))
+        return cleanup_results
+
+    def _run_device_cleanup_command(self, device_id: str, command: Sequence[str]) -> dict[str, Any]:
+        result = self._host_command_runner.run(command, timeout_seconds=5)
+        return {
+            "device_id": device_id,
+            "action": " ".join(command[3:]) if len(command) > 3 else " ".join(command),
+            "command": list(command),
+            "return_code": result.returncode,
+            "timed_out": result.timed_out,
+            "stdout_tail": self._tail_text(result.stdout, limit=200),
+            "stderr_tail": self._tail_text(result.stderr, limit=200),
+        }
+
+    @staticmethod
+    def _pids_from_output(output: str) -> list[str]:
+        return [part for part in str(output or "").replace("\n", " ").split() if part.isdigit()]
+
+    @staticmethod
+    def _task_package_name(task: TaskDefinitionLike) -> str:
+        target_app = getattr(task, "target_app", None)
+        if isinstance(target_app, str):
+            return target_app
+        return str(getattr(target_app, "package_name", "") or "")
+
+    @staticmethod
+    def _run_device_ids(run: TaskRunLike, instances: Sequence[ExecutionInstanceLike]) -> list[str]:
+        values = [
+            *(str(item or "") for item in list(getattr(run, "target_device_ids", ()) or ())),
+            *(str(getattr(instance, "device_id", "") or "") for instance in instances),
+        ]
+        return sorted({item.strip() for item in values if item.strip()})
 
     def _execute_instance(
         self,
@@ -271,6 +474,26 @@ class RunExecutionService(ExecutionLoopMixin, RetryHelpersMixin, MonitoringHelpe
         execution_attempts: list[dict[str, Any]] = []
         cleanup_events: list[dict[str, Any]] = []
         try:
+            if self._run_stop_requested(run):
+                return self._cancel_instance_due_to_stop(
+                    task=task,
+                    run=run,
+                    instance=instance,
+                    layout=layout,
+                    log_path=log_path,
+                    report_path=report_path,
+                    html_report_path=html_report_path,
+                    package_name=package_name,
+                    monitoring_error=monitoring_error,
+                    monitoring_stop_event=monitoring_stop_event,
+                    monitoring_thread=monitoring_thread,
+                    snapshot_payload=snapshot_payload,
+                    scenario_result=scenario_result,
+                    cleanup_events=cleanup_events,
+                    execution_attempts=execution_attempts,
+                    retry_count=retry_count,
+                    collect_snapshot=collect_snapshot,
+                )
             if collect_snapshot and self._monitoring_adapter is not None:
                 try:
                     # 监控是最佳努力能力，失败时只记录错误，不阻断主执行链路。
@@ -306,6 +529,26 @@ class RunExecutionService(ExecutionLoopMixin, RetryHelpersMixin, MonitoringHelpe
                 log_path,
                 [f"[{_display_now()}] instance entered running state"],
             )
+            if self._run_stop_requested(run):
+                return self._cancel_instance_due_to_stop(
+                    task=task,
+                    run=run,
+                    instance=instance,
+                    layout=layout,
+                    log_path=log_path,
+                    report_path=report_path,
+                    html_report_path=html_report_path,
+                    package_name=package_name,
+                    monitoring_error=monitoring_error,
+                    monitoring_stop_event=monitoring_stop_event,
+                    monitoring_thread=monitoring_thread,
+                    snapshot_payload=snapshot_payload,
+                    scenario_result=scenario_result,
+                    cleanup_events=cleanup_events,
+                    execution_attempts=execution_attempts,
+                    retry_count=retry_count,
+                    collect_snapshot=collect_snapshot,
+                )
 
             scenario_runner = self._resolve_scenario_runner(task)
             if scenario_runner is not None:
@@ -321,6 +564,26 @@ class RunExecutionService(ExecutionLoopMixin, RetryHelpersMixin, MonitoringHelpe
                     execution_attempts=execution_attempts,
                     package_name=package_name,
                 )
+                if self._run_stop_requested(run):
+                    return self._cancel_instance_due_to_stop(
+                        task=task,
+                        run=run,
+                        instance=instance,
+                        layout=layout,
+                        log_path=log_path,
+                        report_path=report_path,
+                        html_report_path=html_report_path,
+                        package_name=package_name,
+                        monitoring_error=monitoring_error,
+                        monitoring_stop_event=monitoring_stop_event,
+                        monitoring_thread=monitoring_thread,
+                        snapshot_payload=snapshot_payload,
+                        scenario_result=scenario_result,
+                        cleanup_events=cleanup_events,
+                        execution_attempts=execution_attempts,
+                        retry_count=retry_count,
+                        collect_snapshot=collect_snapshot,
+                    )
                 for issue in self._issue_detector.detect(task, run, instance, scenario_result):
                     instance.add_issue(issue)
 
@@ -441,6 +704,26 @@ class RunExecutionService(ExecutionLoopMixin, RetryHelpersMixin, MonitoringHelpe
                 log_path,
                 [f"[{_display_now()}] execution failed: {exc}"],
             )
+            if self._run_stop_requested(run):
+                return self._cancel_instance_due_to_stop(
+                    task=task,
+                    run=run,
+                    instance=instance,
+                    layout=layout,
+                    log_path=log_path,
+                    report_path=report_path,
+                    html_report_path=html_report_path,
+                    package_name=package_name,
+                    monitoring_error=monitoring_error or str(exc),
+                    monitoring_stop_event=monitoring_stop_event,
+                    monitoring_thread=monitoring_thread,
+                    snapshot_payload=snapshot_payload,
+                    scenario_result=scenario_result,
+                    cleanup_events=cleanup_events,
+                    execution_attempts=execution_attempts,
+                    retry_count=retry_count,
+                    collect_snapshot=collect_snapshot,
+                )
             self._cleanup_interrupted_execution(
                 instance=instance,
                 package_name=package_name,
@@ -516,6 +799,95 @@ class RunExecutionService(ExecutionLoopMixin, RetryHelpersMixin, MonitoringHelpe
                 except Exception:
                     pass
 
+    def _cancel_instance_due_to_stop(
+        self,
+        *,
+        task: TaskDefinitionLike,
+        run: TaskRunLike,
+        instance: ExecutionInstanceLike,
+        layout: Any,
+        log_path: Any,
+        report_path: Any,
+        html_report_path: Any,
+        package_name: str,
+        monitoring_error: str,
+        monitoring_stop_event: threading.Event | None,
+        monitoring_thread: threading.Thread | None,
+        snapshot_payload: Dict[str, Any] | None,
+        scenario_result: Any,
+        cleanup_events: list[dict[str, Any]],
+        execution_attempts: list[dict[str, Any]],
+        retry_count: int,
+        collect_snapshot: bool,
+    ) -> ExecutionInstanceLike:
+        """Persist a cooperative user stop once the active execution reaches a check point."""
+        self._append_log(
+            log_path,
+            [f"[{_display_now()}] user stop requested; cancelling instance {getattr(instance, 'instance_id', '')}"],
+        )
+        self._stop_periodic_monitoring_sampler(monitoring_stop_event, monitoring_thread)
+        self._cleanup_interrupted_execution(
+            instance=instance,
+            package_name=package_name,
+            log_path=log_path,
+            cleanup_events=cleanup_events,
+            reason="user stop requested",
+        )
+        summary = {
+            "note": "用户请求停止 Run。",
+            "highlights": ["Run stopped by user"],
+            "metadata": {
+                "runtime_root": str(layout.root),
+                "report_path": str(report_path),
+                "html_report_path": str(html_report_path),
+                "execution_log_path": str(log_path),
+                "monitoring_enabled": bool(self._monitoring_adapter and collect_snapshot),
+                "monitoring_error": monitoring_error,
+                "monitoring_snapshot": snapshot_payload or {},
+                "scenario_result": dict(getattr(scenario_result, "metadata", {}) or {}),
+                "execution_attempts": execution_attempts,
+                "cleanup_events": cleanup_events,
+                "retry_policy": self._retry_policy_metadata(retry_count),
+                "analysis_ready": self._build_analysis_ready_metadata(
+                    task=task,
+                    run=run,
+                    instance=instance,
+                    scenario_result=scenario_result,
+                    report_path=report_path,
+                    html_report_path=html_report_path,
+                    log_path=log_path,
+                    monitoring_enabled=bool(self._monitoring_adapter and collect_snapshot),
+                    snapshot_payload=snapshot_payload,
+                ),
+            },
+        }
+        with self._lifecycle_lock:
+            instance = self._execution_service.cancel_instance(
+                task,
+                run,
+                instance,
+                exit_reason="user_stopped",
+                summary=summary,
+            )
+        metadata = getattr(instance, "metadata", {})
+        metadata["report_path"] = str(report_path)
+        metadata["html_report_path"] = str(html_report_path)
+        self._write_reports(
+            report_path=report_path,
+            html_report_path=html_report_path,
+            task=task,
+            run=run,
+            instance=instance,
+            monitoring_error=monitoring_error,
+            snapshot_payload=snapshot_payload,
+            scenario_result=scenario_result,
+        )
+        self._append_log(
+            log_path,
+            [f"[{_display_now()}] execution finished with status {getattr(instance, 'instance_status', '')}"],
+        )
+        return instance
+
     def _start_periodic_monitoring_sampler(
         self,
         *,
@@ -530,13 +902,19 @@ class RunExecutionService(ExecutionLoopMixin, RetryHelpersMixin, MonitoringHelpe
         def _sample_loop() -> None:
             while not stop_event.is_set():
                 try:
+                    if hasattr(monitoring_handle, "state"):
+                        monitoring_handle.state["skip_trace_snapshot"] = True
                     self._collect_and_store_monitoring_snapshot(
                         monitoring_handle=monitoring_handle,
                         layout=layout,
                         persist_monitoring=persist_monitoring,
                         samples=samples,
                     )
+                    if hasattr(monitoring_handle, "state"):
+                        monitoring_handle.state.pop("skip_trace_snapshot", None)
                 except Exception as exc:  # pragma: no cover - depends on connected devices
+                    if hasattr(monitoring_handle, "state"):
+                        monitoring_handle.state.pop("skip_trace_snapshot", None)
                     samples.append(
                         {
                             "timestamp": _display_now(),

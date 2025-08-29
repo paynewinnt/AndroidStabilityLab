@@ -478,6 +478,8 @@ class WebPortalReadOnlyPagesTest(unittest.TestCase):
         self.assertIn("/api/long-run-templates", html)
         self.assertIn("soak_2h", html)
         self.assertIn("预览计划", html)
+        self.assertIn("套用创建任务", html)
+        self.assertIn("/tasks?long_run_template=soak_2h", html)
         self.assertIn("去 Runner 配置", html)
         self.assertIn("类型", html)
         self.assertIn("间隔", html)
@@ -489,6 +491,25 @@ class WebPortalReadOnlyPagesTest(unittest.TestCase):
         manifest = json.loads(manifest_body.decode("utf-8"))
         self.assertIn("/api/long-run-templates", [item["path"] for item in manifest["read_endpoints"]])
         self.assertIn("/long-run-templates", [item["path"] for item in manifest["pages"]])
+
+    def test_tasks_page_can_apply_long_run_template_defaults(self) -> None:
+        app = WebPortalApplication(self._bundle())
+
+        status, content_type, body = app.handle_request(
+            "/tasks?long_run_template=soak_2h&override=package_name=com.example.demo&override=task_name=Demo%20Long%20Run"
+        )
+        html = body.decode("utf-8")
+
+        self.assertEqual(status, 200)
+        self.assertIn("text/html", content_type)
+        self.assertIn("data-task-auto-open='long-run-task'", html)
+        self.assertIn("已套用长稳模板", html)
+        self.assertIn("value='Demo Long Run'", html)
+        self.assertIn("value='com.example.demo'", html)
+        self.assertIn("name='runtime_hours' value='2'", html)
+        self.assertIn("name='interval_minutes' value='30'", html)
+        self.assertIn("name='desired_device_count' value='1'", html)
+        self.assertIn("name='long_run_template_key' value='soak_2h'", html)
 
     def test_runner_api_filters_failed_patrol_rounds(self) -> None:
         app = WebPortalApplication(self._bundle())
@@ -659,6 +680,74 @@ class WebPortalReadOnlyPagesTest(unittest.TestCase):
         self.assertIn("backend=solox", html)
         self.assertIn("Run 详情", html)
         self.assertIn("Run JSON", html)
+        self.assertIn("href='/runs'><strong>Run</strong>", html)
+        self.assertIn("Run 列表", html)
+        self.assertIn("产物列表", html)
+        self.assertIn("data-file-preview-title='Run JSON'", html)
+        self.assertIn("file-preview-modal", html)
+        self.assertIn("href='/artifacts'><strong>产物</strong>", html)
+        self.assertIn("href='/artifacts/run/run-1'>产物</a>", html)
+        self.assertNotIn("href='/json-api'><strong>产物</strong>", html)
+
+    def test_runs_page_renders_run_list(self) -> None:
+        app = WebPortalApplication(self._bundle())
+
+        status, content_type, body = app.handle_request("/runs")
+
+        html = body.decode("utf-8")
+        self.assertEqual(status, 200)
+        self.assertIn("text/html", content_type)
+        self.assertIn("Run 列表", html)
+        self.assertIn("Calculator Cold Start", html)
+        self.assertIn("href='/runs/run-1'>查看详情</a>", html)
+        self.assertIn("href='/artifacts/run/run-1'>产物</a>", html)
+        self.assertIn("data-file-preview-title='Run JSON'", html)
+        self.assertIn("href='/runs'><strong>Run</strong>", html)
+
+    def test_runs_api_returns_run_list_payload(self) -> None:
+        app = WebPortalApplication(self._bundle())
+
+        status, content_type, body = app.handle_request("/api/runs")
+
+        payload = json.loads(body.decode("utf-8"))
+        self.assertEqual(status, 200)
+        self.assertIn("application/json", content_type)
+        self.assertEqual(payload["page"], "runs")
+        self.assertEqual(payload["summary"]["run_count"], 1)
+        self.assertEqual(payload["summary"]["monitored_run_count"], 1)
+        self.assertEqual(payload["runs"][0]["detail_path"], "/runs/run-1")
+
+    def test_artifacts_page_renders_run_artifact_list(self) -> None:
+        app = WebPortalApplication(self._bundle())
+
+        status, content_type, body = app.handle_request("/artifacts")
+
+        html = body.decode("utf-8")
+        self.assertEqual(status, 200)
+        self.assertIn("text/html", content_type)
+        self.assertIn("产物中心", html)
+        self.assertIn("Run 产物列表", html)
+        self.assertIn("Calculator Cold Start", html)
+        self.assertIn("href='/artifacts/run/run-1'>查看详情</a>", html)
+        self.assertIn("href='/runs/run-1'>Run 详情</a>", html)
+        self.assertIn("data-file-preview-title='Run JSON'", html)
+        self.assertIn("报告", html)
+        self.assertIn("Trace", html)
+
+    def test_artifacts_api_returns_run_artifact_summary(self) -> None:
+        app = WebPortalApplication(self._bundle())
+
+        status, content_type, body = app.handle_request("/api/artifacts")
+
+        payload = json.loads(body.decode("utf-8"))
+        self.assertEqual(status, 200)
+        self.assertIn("application/json", content_type)
+        self.assertEqual(payload["page"], "artifacts")
+        self.assertEqual(payload["summary"]["run_count"], 1)
+        self.assertEqual(payload["summary"]["report_count"], 1)
+        self.assertEqual(payload["summary"]["trace_count"], 1)
+        self.assertEqual(payload["summary"]["monitoring_snapshot_count"], 1)
+        self.assertEqual(payload["items"][0]["artifact_path"], "/artifacts/run/run-1")
 
     def test_run_detail_api_returns_monitoring_payload(self) -> None:
         app = WebPortalApplication(self._bundle())
@@ -688,6 +777,11 @@ class WebPortalReadOnlyPagesTest(unittest.TestCase):
         self.assertIn("Execution Instances", html)
         self.assertIn("key metrics", html)
         self.assertIn("/artifacts/run/run-1", html)
+        self.assertIn("返回 Run 列表", html)
+        self.assertIn("返回任务大厅", html)
+        self.assertIn("返回任务详情", html)
+        self.assertIn("查看 Run 产物", html)
+        self.assertIn("data-file-preview-title='Run JSON'", html)
 
     def test_run_artifacts_page_groups_report_trace_monitoring_and_issues(self) -> None:
         app = WebPortalApplication(self._bundle())
@@ -699,11 +793,17 @@ class WebPortalReadOnlyPagesTest(unittest.TestCase):
         self.assertIn("text/html", content_type)
         self.assertIn("Run 产物", html)
         self.assertIn("任务 -> Run -> 性能 -> 产物", html)
+        self.assertIn("返回产物列表", html)
+        self.assertIn("返回 Run 列表", html)
+        self.assertIn("返回任务大厅", html)
+        self.assertIn("返回 Run 详情", html)
+        self.assertIn("返回任务详情", html)
         self.assertIn("Report", html)
         self.assertIn("Trace", html)
         self.assertIn("Monitoring Snapshot", html)
         self.assertIn("Issue Summary", html)
         self.assertIn("Snapshot JSON", html)
+        self.assertIn("data-file-preview-title='Snapshot JSON'", html)
         self.assertIn("startup_timeout", html)
 
     def test_run_artifacts_api_returns_grouped_payload(self) -> None:
@@ -850,6 +950,7 @@ class WebPortalReadOnlyPagesTest(unittest.TestCase):
         self.assertIn("基于当前任务创建 Run", detail_html)
         self.assertIn("目标设备", detail_html)
         self.assertIn("device-choice-card", detail_html)
+        self.assertIn("返回任务大厅", detail_html)
         self.assertNotIn("目标设备<input", detail_html)
 
     def test_json_api_menu_page_renders_html_index(self) -> None:
@@ -964,6 +1065,9 @@ class WebPortalReadOnlyPagesTest(unittest.TestCase):
         self.assertEqual(status, 200)
         self.assertIn("text/html", content_type)
         self.assertIn("性能采样", html)
+        self.assertIn("返回任务大厅", html)
+        self.assertIn("href='/runs'><strong>Run</strong>", html)
+        self.assertIn("href='/artifacts'><strong>产物</strong>", html)
         self.assertIn("sidebar-nav", html)
         self.assertIn("class='active'>性能采样</a>", html)
         self.assertNotIn('<section class="hero">', html)

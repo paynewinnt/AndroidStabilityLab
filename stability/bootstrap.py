@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Iterable, Protocol
 
 from stability.app import AdmissionCaseService, AnalysisService, AttributionService, CollaborationService, ComparisonService, ConfigProvider, DeviceService, ExecutionService, IntegrationOutboxService, PerformanceTrendService, PlatformHealthService, QualityGateService, RegressionService, ReleaseSubmissionService, RuleGovernanceService, RuleReplayAcceptanceService, RuleReplayGoldenDraftService, RuleReplayGoldenPromotionService, RuleReplayGoldenSuiteService, RuleReplayService, RuleReviewReportService, RuleReviewService, RunExecutionService, RunHistoryService, SnapshotService, TaskService, UnattendedPatrolRunnerService, UnattendedService
-from stability.domain import Device, QualityGateRiskItem, TaskTemplateType
+from stability.domain import AppError, AppErrorCode, Device, QualityGateRiskItem, TaskTemplateType
 from stability.execution import ExecutionStateMachine, LifecycleHookRegistry
 from stability.infrastructure import (
     ArtifactPathPlanner,
@@ -462,12 +462,13 @@ def create_v1_persistent_bootstrap(
             SQLAlchemyTaskRepository,
         )
     except ModuleNotFoundError as exc:  # pragma: no cover - depends on runtime environment
-        raise RuntimeError(
-            "Persistent V1 bootstrap requires optional database dependencies such as sqlalchemy."
+        raise AppError(
+            AppErrorCode.INTERNAL_ERROR,
+            "Persistent V1 bootstrap requires optional database dependencies such as sqlalchemy.",
         ) from exc
 
     if not db_manager.is_connected() and not db_manager.connect():
-        raise RuntimeError("Unable to connect to the configured database.")
+        raise AppError(AppErrorCode.INTERNAL_ERROR, "Unable to connect to the configured database.")
 
     task_repository = SQLAlchemyTaskRepository(db_manager)
     run_repository = SQLAlchemyRunRepository(db_manager)

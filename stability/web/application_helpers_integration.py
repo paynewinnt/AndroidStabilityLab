@@ -1,6 +1,9 @@
 from __future__ import annotations
 
-from .application_common import *
+from typing import Any, Mapping, Sequence
+from urllib.parse import quote
+from stability.domain import TaskTemplateType
+from stability.web.application_common import WebPortalApplication
 from stability.app.unattended.template_payloads import LONG_RUN_OVERRIDABLE_PARAMETERS, find_long_run_template
 from stability.time_utils import format_beijing_datetime_or_original
 

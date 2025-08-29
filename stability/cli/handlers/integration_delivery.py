@@ -27,7 +27,6 @@ from stability.application import (
     sync_ci_admission_decisions,
 )
 from stability.app import (
-    AggregatedIssueNotFound,
     DeviceRecordNotFound,
     RunRecordNotFound,
     SnapshotRecordNotFound,

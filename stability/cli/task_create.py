@@ -10,7 +10,9 @@ from typing import Sequence
 from stability import create_v1_bootstrap, create_v1_persistent_bootstrap
 from stability.domain import AppError, normalize_app_error
 from stability.cli.handlers.web import handle_serve_web as _web_handle_serve_web
+from stability.cli.handlers.web import _is_local_web_host
 from stability.cli.parser import build_parser as _build_parser
+from stability.cli.utils import _maybe_sync_devices
 from stability.web import serve_web_portal
 
 _IMPL_MODULE_NAMES = (

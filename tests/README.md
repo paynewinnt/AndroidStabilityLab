@@ -4,6 +4,14 @@ Run the unit tests from the repository root with:
 ./.venv/bin/python -m unittest discover -s tests -v
 ```
 
+Current local baseline:
+
+```text
+Ran 466 tests
+
+OK
+```
+
 The current baseline covers issue artifact capture and one end-to-end execution path that verifies issue detection, artifact persistence, and report rendering together. The issue evidence collector now also supports type-aware best-effort extended evidence capture for `dropbox`、`dumpsys meminfo`、`dumpsys SurfaceFlinger`、`screenshot`、`input events` and existing `Perfetto trace` files, and will attach those artifacts into the same issue evidence directory when the current issue type matches the configured capture policy. Display/system critical issues also fold captured artifact sources back into `evidence_signals / matched_sources / confirmation_level`.
 
 `execute-run` 现在支持 `--retry-count N`，会只对 `device_offline`、`startup_timeout`、`adb transport` 类可恢复失败做最多 `N` 次额外重试，并在重试前或异常中断后对目标包做 best-effort `am force-stop` 清理。报告中会新增 `Execution Attempts` 与 `Cleanup` 小节，并记录每次尝试是否可重试及其分类。

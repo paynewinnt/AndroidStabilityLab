@@ -2,7 +2,7 @@
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
 [![Entry](https://img.shields.io/badge/Entry-CLI%20%2B%20Web-2d7d46.svg)](#quick-start)
-[![Tests](https://img.shields.io/badge/tests-pytest-0a7f3f.svg)](#testing)
+[![Tests](https://img.shields.io/badge/tests-unittest-0a7f3f.svg)](#testing)
 
 English | [简体中文](README-CN.md)
 
@@ -145,8 +145,7 @@ Recommended interpretation:
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-pip install -r requirements.txt
-pip install pytest
+pip install -r requirements-dev.txt
 ```
 
 ### Verify the CLI
@@ -318,27 +317,30 @@ AndroidStabilityLab/
 ├── runtime/                   # Local reports, snapshots, runner state, artifacts (ignored)
 ├── runtime.example/           # Sanitized example runtime layout and notes
 ├── scripts/                   # Smoke and verification scripts
-├── tests/                     # Pytest test suite and helpers
+├── tests/                     # Python test suite and helpers
 ├── check_env.py               # Environment check helper
-└── requirements.txt           # Runtime dependencies
+├── requirements.txt           # Runtime dependencies
+└── requirements-dev.txt       # Runtime plus local developer tooling
 ```
 
-Compatibility-facing modules such as `core/`, `database/`, and `utils/` are
-kept for public wrappers, infrastructure helpers, and stable import surfaces.
-New stability features should generally land under `stability/`.
+The legacy `database/` package has been removed. Compatibility-facing modules
+such as `core/` and `utils/` remain only as compatibility or retired entry
+points. New stability features should land under `stability/`.
 
 ## Testing
 
 Run the full test suite from the repository root:
 
 ```bash
-PYTHONPATH=. pytest -q
+PYTHONPATH=. ./.venv/bin/python -m unittest discover -s tests -v
 ```
 
 Current local baseline:
 
 ```text
-447 passed, 12 subtests passed
+Ran 466 tests
+
+OK
 ```
 
 Run shell syntax checks for smoke scripts:
@@ -428,7 +430,7 @@ Suggested workflow:
 
 1. Open an issue or describe the change before large patches.
 2. Keep changes scoped and include tests when behavior changes.
-3. Run `PYTHONPATH=. pytest -q`.
+3. Run `PYTHONPATH=. ./.venv/bin/python -m unittest discover -s tests -v`.
 4. For device-facing changes, also run the relevant smoke script when possible.
 5. Avoid committing real secrets or private device data.
 
@@ -439,7 +441,7 @@ Suggested workflow:
 Run commands from the repository root and set `PYTHONPATH=.`:
 
 ```bash
-PYTHONPATH=. pytest -q
+PYTHONPATH=. ./.venv/bin/python -m unittest discover -s tests -v
 PYTHONPATH=. ./.venv/bin/python -m stability.cli --help
 ```
 

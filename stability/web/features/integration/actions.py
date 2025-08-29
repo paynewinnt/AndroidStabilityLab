@@ -16,7 +16,7 @@ from stability.application import (
     sync_ci_admission_decisions,
 )
 
-from ...application_common import *
+from typing import Any, Mapping
 
 
 class IntegrationActionsMixin:

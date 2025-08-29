@@ -14,6 +14,8 @@ class TaskDefinitionLike(Protocol):
     """Minimal task shape required by the execution service."""
 
     task_id: Optional[str]
+    task_name: str
+    target_app: str | None
 
 
 class TaskRunLike(Protocol):
@@ -28,7 +30,12 @@ class ExecutionInstanceLike(Protocol):
 
     instance_id: Optional[str]
     device_id: str
-    instance_status: Optional[str]
+    instance_status: str
+    issues: list | tuple
+    artifacts: list | tuple
+    summary: Any | None
+    exit_reason: str | None
+    result_level: str | None
 
 
 class TaskPlanner(Protocol):
@@ -213,6 +220,26 @@ class ExecutionService:
         self._state_machine.transition_instance(instance, "collecting")
         self._instance_repository.save(instance)
         self._emit("before_collect", task=task, run=run, instance=instance)
+        return instance
+
+    def mark_instance_stopping(
+        self,
+        task: TaskDefinitionLike,
+        run: TaskRunLike,
+        instance: ExecutionInstanceLike,
+        summary: Optional[Dict[str, Any]] = None,
+    ) -> ExecutionInstanceLike:
+        """Mark one active instance as stopping while device-side cleanup is requested."""
+        self._state_machine.transition_instance(instance, "stopping", summary=summary)
+        self._instance_repository.save(instance)
+        self._emit(
+            "on_finish",
+            task=task,
+            run=run,
+            instance=instance,
+            payload={"exit_reason": "user_stopped", "summary": summary or {}},
+        )
+        self.sync_run_status(run)
         return instance
 
     def complete_instance(

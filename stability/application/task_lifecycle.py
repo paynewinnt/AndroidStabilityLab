@@ -51,6 +51,13 @@ class ExecuteRunCommand:
     requested_monitoring_backend: str = ""
 
 
+@dataclass(frozen=True)
+class StopRunCommand:
+    run_id: str
+    requested_by: str = ""
+    reason: str = "user_stopped"
+
+
 def resolve_monitoring_backend_override(value: str) -> str | None:
     candidate = str(value or "").strip().lower()
     if candidate in {"", "default"}:
@@ -154,6 +161,17 @@ def execute_run(run_execution_service: object, command: ExecuteRunCommand) -> di
     )
 
 
+def stop_run(run_execution_service: object, command: StopRunCommand) -> dict[str, Any]:
+    if run_execution_service is None or not hasattr(run_execution_service, "stop_run"):
+        raise ValueError("Run stop service is unavailable.")
+    result = run_execution_service.stop_run(
+        str(command.run_id).strip(),
+        requested_by=str(command.requested_by or "").strip(),
+        reason=str(command.reason or "user_stopped").strip() or "user_stopped",
+    )
+    return _run_stop_payload(result=result)
+
+
 def _sync_devices_if_requested(bundle: object, *, enabled: bool) -> dict[str, Any] | None:
     service = getattr(bundle, "device_service", None)
     if not enabled or service is None or not hasattr(service, "sync_devices"):
@@ -238,6 +256,25 @@ def _run_execute_payload(
     if requested_monitoring_backend:
         payload["requested_monitoring_backend"] = requested_monitoring_backend
     return payload
+
+
+def _run_stop_payload(*, result: object) -> dict[str, Any]:
+    run = getattr(result, "run", None)
+    instances = list(getattr(result, "instances", ()) or ())
+    cleanup_results = list(getattr(result, "cleanup_results", ()) or ())
+    return {
+        "storage_mode": "persistent",
+        "action": "stop_run",
+        "run_id": str(getattr(run, "run_id", getattr(result, "run_id", "")) or ""),
+        "run_status": str(getattr(run, "run_status", getattr(result, "run_status", "")) or ""),
+        "requested_by": str(getattr(result, "requested_by", "") or ""),
+        "reason": str(getattr(result, "reason", "") or ""),
+        "instance_count": len(instances),
+        "stopped_instance_count": int(getattr(result, "stopped_instance_count", 0) or 0),
+        "already_terminal_instance_count": int(getattr(result, "already_terminal_instance_count", 0) or 0),
+        "instance_status_counts": _count_instance_statuses(instances),
+        "cleanup_results": cleanup_results,
+    }
 
 
 def _instance_payload(instance: object) -> dict[str, Any]:

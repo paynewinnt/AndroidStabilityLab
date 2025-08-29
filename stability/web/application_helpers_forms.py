@@ -1,6 +1,12 @@
 from __future__ import annotations
 
-from .application_common import *
+import json
+from html import escape
+from pathlib import Path
+from typing import Any, Mapping, Sequence
+from urllib.parse import quote
+from stability.web import renderers as portal_renderers
+from stability.web.application_common import WebPortalApplication
 from stability.time_utils import format_beijing_datetime_or_original
 
 
@@ -150,6 +156,10 @@ class ApplicationFormHelpersMixin:
     @staticmethod
     def _route_link(label: str, path: Any) -> str:
         return portal_renderers.route_link(label, path)
+
+    @staticmethod
+    def _route_link_new_tab(label: str, path: Any) -> str:
+        return portal_renderers.route_link_new_tab(label, path)
 
     @staticmethod
     def _inline_link(label: str, path: Any) -> str:

@@ -150,6 +150,7 @@ class ConfiguredMonitoringAdapter(MonitoringAdapter):
         else:
             try:
                 snapshot = metrics_adapter.collect_snapshot(metrics_handle)
+                snapshot = self._enrich_snapshot_with_fallback(handle, snapshot, warnings)
             except Exception as exc:
                 if fallback_adapter is None or fallback_handle is None:
                     raise
@@ -164,7 +165,7 @@ class ConfiguredMonitoringAdapter(MonitoringAdapter):
         metadata_payload["profile_name"] = str(handle.state.get("profile_name", "") or handle.config.profile_name)
         trace_adapter = handle.state.get("trace_adapter")
         trace_handle = handle.state.get("trace_handle")
-        if trace_adapter is not None and trace_handle is not None:
+        if trace_adapter is not None and trace_handle is not None and not bool(handle.state.get("skip_trace_snapshot", False)):
             try:
                 trace_snapshot = trace_adapter.collect_snapshot(trace_handle)
                 system_payload.update(dict(trace_snapshot.system or {}))
@@ -183,6 +184,79 @@ class ConfiguredMonitoringAdapter(MonitoringAdapter):
             apps=list(snapshot.apps),
             metadata=metadata_payload,
         )
+
+    def _enrich_snapshot_with_fallback(
+        self,
+        handle: MonitoringSessionHandle,
+        snapshot: MonitoringSnapshot,
+        warnings: list[str],
+    ) -> MonitoringSnapshot:
+        fallback_adapter = handle.state.get("fallback_adapter")
+        fallback_handle = handle.state.get("fallback_handle")
+        if fallback_adapter is None or fallback_handle is None:
+            return snapshot
+        if bool(dict(handle.config.extra).get("disable_fallback_metric_enrichment", False)):
+            return snapshot
+        try:
+            fallback_snapshot = fallback_adapter.collect_snapshot(fallback_handle)
+        except Exception as exc:
+            warnings.append(f"adb_collector fallback metric enrichment failed: {exc}")
+            return snapshot
+        return self._merge_missing_snapshot_metrics(snapshot, fallback_snapshot)
+
+    @classmethod
+    def _merge_missing_snapshot_metrics(
+        cls,
+        primary: MonitoringSnapshot,
+        fallback: MonitoringSnapshot,
+    ) -> MonitoringSnapshot:
+        system_payload = cls._merge_missing_mapping_values(primary.system or {}, fallback.system or {})
+        primary_apps = [dict(app) for app in (primary.apps or [])]
+        fallback_apps = [dict(app) for app in (fallback.apps or [])]
+        if not primary_apps:
+            primary_apps = fallback_apps
+        else:
+            app_index = {
+                cls._app_identity(app): app
+                for app in primary_apps
+                if cls._app_identity(app)
+            }
+            for fallback_app in fallback_apps:
+                identity = cls._app_identity(fallback_app)
+                if identity and identity in app_index:
+                    app_index[identity].update(
+                        cls._merge_missing_mapping_values(app_index[identity], fallback_app)
+                    )
+                else:
+                    primary_apps.append(fallback_app)
+        metadata_payload = dict(primary.metadata or {})
+        metadata_payload["fallback_metric_enriched"] = True
+        metadata_payload["fallback_metric_backend"] = str(dict(fallback.metadata or {}).get("backend", "adb_collector") or "adb_collector")
+        return MonitoringSnapshot(
+            timestamp=primary.timestamp,
+            system=system_payload or None,
+            apps=primary_apps,
+            metadata=metadata_payload,
+        )
+
+    @staticmethod
+    def _merge_missing_mapping_values(primary: Mapping[str, Any], fallback: Mapping[str, Any]) -> dict[str, Any]:
+        merged = dict(primary)
+        for key, value in dict(fallback).items():
+            if value in ("", None):
+                continue
+            if merged.get(key) in ("", None):
+                merged[key] = value
+        return merged
+
+    @staticmethod
+    def _app_identity(app: Mapping[str, Any]) -> str:
+        return str(
+            app.get("package_name", "")
+            or app.get("app_package", "")
+            or dict(app.get("app_info", {}) or {}).get("package_name", "")
+            or ""
+        ).strip()
 
     def persist_snapshot(self, handle: MonitoringSessionHandle, snapshot: MonitoringSnapshot) -> bool:
         metrics_adapter = handle.state.get("metrics_adapter")

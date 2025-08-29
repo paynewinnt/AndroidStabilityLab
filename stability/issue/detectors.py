@@ -1,9 +1,67 @@
 from __future__ import annotations
 
 import re
-from typing import Iterable
+from collections.abc import Callable
+from dataclasses import dataclass
+from typing import Any, ClassVar, Iterable
 
 from stability.domain import IssueRecord, IssueType, SeverityLevel
+
+# ---------------------------------------------------------------------------
+# Module-level regex patterns used by the detector registry
+# ---------------------------------------------------------------------------
+_RE_ANR = re.compile(
+    r"\bANR\b",
+    re.IGNORECASE,
+)
+_RE_JAVA_CRASH = re.compile(
+    r"(?P<exception>[A-Za-z0-9_.]+(?:Exception|Error))(?:\s*:.*?(?P<cause>[A-Za-z0-9_.]+(?:Exception|Error)))?",
+)
+_RE_NATIVE_CRASH = re.compile(
+    r"(?:signal\s+(?P<signal>\d+)|(?:SIGSEGV|SIGABRT|SIGFPE|SIGILL|SIGBUS))",
+)
+_RE_NULL_RECOVERY = re.compile(
+    r"(?:null|NULL|Null)(?:\s*pointer)?(?:\s*recovery)",
+    re.IGNORECASE,
+)
+_RE_TOMBSTONE = re.compile(
+    r"tombstone",
+    re.IGNORECASE,
+)
+_RE_LOW_MEMORY = re.compile(
+    r"(?:low\s+memory|lowmem|low-memory|LMK|kill\s+(?P<process>[A-Za-z0-9._:]+)|(?P<detail>mm[a-z_]*\s*:\s*\d+\s*[Mm]B))",
+    re.IGNORECASE,
+)
+_RE_WATCHDOG = re.compile(
+    r"WATCHDOG KILLING SYSTEM PROCESS",
+    re.IGNORECASE,
+)
+_RE_SCROLL_JANK = re.compile(
+    r"(?:scroll\s+jank|janky\s+scroll|dropped\s+frame)",
+    re.IGNORECASE,
+)
+_RE_STRICT_MODE = re.compile(
+    r"StrictMode\s+(?P<violation>[A-Za-z]+)",
+)
+_RE_PROCESS_EXIT = re.compile(
+    r"(?:"
+    r"am_proc_died"
+    r"|WIN DEATH"
+    r"|Process\s+[A-Za-z0-9._:]+\s+has died"
+    r"|Killing\s+\d+:[A-Za-z0-9._:]+"
+    r")(?P<reason>.*)",
+    re.IGNORECASE,
+)
+
+
+@dataclass
+class _DetectorEntry:
+    name: str
+    pattern: re.Pattern
+    issue_type: IssueType
+    severity: SeverityLevel
+    # Custom evidence key builder -- receives the Match object, returns str or None
+    evidence_key: Callable[[re.Match], str | None] = lambda m: m.lastgroup or (m.group(1) if m.lastindex and m.lastindex >= 1 else m.group(0))
 
 
 class MonkeyIssueDetector:
@@ -77,6 +135,36 @@ class MonkeyIssueDetector:
     )
     PID_PATTERN = re.compile(r"(?:PID|pid):\s*(\d+)", re.IGNORECASE)
 
+    _DETECTORS: ClassVar[list[_DetectorEntry]] = [
+        # ANR
+        _DetectorEntry("ANR", _RE_ANR, IssueType.ANR, SeverityLevel.HIGH,
+                       evidence_key=lambda m: m.group(0) if m else "unknown"),
+        # Java Crash
+        _DetectorEntry("JavaCrash", _RE_JAVA_CRASH, IssueType.JAVA_CRASH, SeverityLevel.HIGH,
+                       evidence_key=lambda m: (m.group("exception") or m.group("cause") or "unknown").strip()),
+        # Native Crash
+        _DetectorEntry("NativeCrash", _RE_NATIVE_CRASH, IssueType.NATIVE_CRASH, SeverityLevel.HIGH,
+                       evidence_key=lambda m: (m.group("signal") or "unknown").strip()),
+        # Null Recovery
+        _DetectorEntry("NullRecovery", _RE_NULL_RECOVERY, IssueType.NATIVE_CRASH, SeverityLevel.LOW,
+                       evidence_key=lambda m: (m.group("signal") or "unknown").strip()),
+        # Tombstone
+        _DetectorEntry("Tombstone", _RE_TOMBSTONE, IssueType.NATIVE_CRASH, SeverityLevel.HIGH),
+        # Low Memory
+        _DetectorEntry("LowMemory", _RE_LOW_MEMORY, IssueType.LOW_MEMORY, SeverityLevel.MEDIUM,
+                       evidence_key=lambda m: (m.group("process") or m.group("detail") or "unknown").strip()),
+        # Watchdog
+        _DetectorEntry("Watchdog", _RE_WATCHDOG, IssueType.WATCHDOG, SeverityLevel.HIGH),
+        # Scroll Jank
+        _DetectorEntry("ScrollJank", _RE_SCROLL_JANK, IssueType.SCROLL_JANK, SeverityLevel.MEDIUM),
+        # Strict Mode
+        _DetectorEntry("StrictMode", _RE_STRICT_MODE, IssueType.STRICT_MODE, SeverityLevel.LOW,
+                       evidence_key=lambda m: (m.group("violation") or "unknown").strip()),
+        # Custom Crash (ProcessExit)
+        _DetectorEntry("ProcessExit", _RE_PROCESS_EXIT, IssueType.PROCESS_EXIT, SeverityLevel.HIGH,
+                       evidence_key=lambda m: (m.group("reason") or "unknown").strip()),
+    ]
+
     def detect(self, task, run, instance, scenario_result) -> list[IssueRecord]:
         """Translate scenario outcomes into normalized V1 issue records."""
         if scenario_result is None:
@@ -138,7 +226,7 @@ class MonkeyIssueDetector:
             )
         issues.extend(self._detect_startup_issues(task, run, instance, metadata))
 
-        issues.extend(self._detect_from_output(task, run, instance, combined_output, metadata, detection_sources))
+        issues.extend(self._detect_from_output(combined_output.splitlines()))
         return self._deduplicate(issues)
 
     def _detect_startup_issues(self, task, run, instance, metadata: dict) -> list[IssueRecord]:
@@ -169,213 +257,106 @@ class MonkeyIssueDetector:
 
     def _detect_from_output(
         self,
-        task,
-        run,
-        instance,
-        combined_output: str,
-        metadata: dict,
-        detection_sources: list[dict[str, str]] | None = None,
+        lines: list[str],
+        *,
+        previous_state: dict[str, Any] | None = None,
     ) -> list[IssueRecord]:
-        """Match known crash/anr patterns from Monkey stdout and stderr."""
-        if not combined_output:
-            return []
+        issues: list[IssueRecord] = []
+        rebooting = bool(previous_state and previous_state.get("rebooting"))
+        for line_no, line in enumerate(lines, start=1):
+            # Reboot guard
+            if not rebooting and self._is_reboot_line(line):
+                rebooting = True
+                continue
+            if rebooting:
+                if self._is_boot_completed_line(line):
+                    rebooting = False
+                continue
 
-        detections: list[IssueRecord] = []
-        detection_sources = detection_sources or self._collect_detection_sources("", "", metadata)
-        context = self._extract_issue_context(combined_output, metadata)
-        reboot_detected = bool(metadata.get("reboot_detected")) or self._matches_any(self.REBOOT_PATTERNS, combined_output)
-        if reboot_detected:
-            detections.append(
-                self._build_issue(
-                    task,
-                    run,
-                    instance,
-                    issue_type=IssueType.REBOOT,
-                    severity=SeverityLevel.CRITICAL,
-                    title="检测到设备重启",
-                    summary=self._summarize_output(combined_output, "Reboot"),
-                    raw_key=f"reboot:{getattr(instance, 'device_id', '')}",
-                    metadata=metadata,
+            for entry in self._DETECTORS:
+                m = entry.pattern.search(line)
+                if not m:
+                    continue
+
+                # Crash guard: skip system_server crashes
+                if entry.name in ("JavaCrash", "NativeCrash"):
+                    if self._is_system_server_crash(m, line):
+                        continue
+
+                # Build evidence
+                evidence_raw = entry.evidence_key(m)
+                evidence = self._format_raw_key(evidence_raw) if evidence_raw else "unknown"
+
+                issue = self._create_issue(
+                    issue_type=entry.issue_type,
+                    severity=entry.severity,
+                    summary=self._format_issue_summary(entry.name, evidence),
+                    evidence_key=evidence,
+                    line_no=line_no,
+                    raw=line.rstrip("\n"),
                 )
-            )
-        if self._matches_any(self.WATCHDOG_PATTERNS, combined_output):
-            evidence = self._structured_evidence(self.WATCHDOG_PATTERNS, detection_sources, fallback_text=combined_output)
-            detections.append(
-                self._build_issue(
-                    task,
-                    run,
-                    instance,
-                    issue_type=IssueType.WATCHDOG,
-                    severity=SeverityLevel.CRITICAL,
-                    title="检测到 Watchdog",
-                    summary=self._summarize_output(combined_output, "Watchdog"),
-                    raw_key=f"watchdog:{getattr(instance, 'device_id', '')}",
-                    metadata=self._metadata_with_evidence(metadata, evidence),
-                    process_name="system_server" if "system_server" in combined_output else context["process_name"],
-                    pid=context["pid"],
-                )
-            )
-        system_server_crash_detected = self._matches_any(self.SYSTEM_SERVER_CRASH_PATTERNS, combined_output)
-        if system_server_crash_detected:
-            evidence = self._structured_evidence(
-                self.SYSTEM_SERVER_CRASH_PATTERNS,
-                detection_sources,
-                fallback_text=combined_output,
-            )
-            detections.append(
-                self._build_issue(
-                    task,
-                    run,
-                    instance,
-                    issue_type=IssueType.SYSTEM_SERVER_CRASH,
-                    severity=SeverityLevel.CRITICAL,
-                    title="检测到 system_server Crash",
-                    summary=self._summarize_output(combined_output, "System Server Crash"),
-                    raw_key=f"system_server_crash:{getattr(instance, 'device_id', '')}",
-                    metadata=self._metadata_with_evidence(metadata, evidence),
-                    process_name="system_server",
-                    pid=context["pid"],
-                )
-            )
-        if self._matches_any(self.ANR_PATTERNS, combined_output):
-            detections.append(
-                self._build_issue(
-                    task,
-                    run,
-                    instance,
-                    issue_type=IssueType.ANR,
-                    severity=SeverityLevel.HIGH,
-                    title="检测到 ANR",
-                    summary=self._summarize_output(combined_output, "ANR"),
-                    raw_key=f"anr:{getattr(task.target_app, 'package_name', '')}",
-                    metadata=metadata,
-                    process_name=context["process_name"],
-                    pid=context["pid"],
-                )
-            )
-        if self._matches_any(self.NATIVE_CRASH_PATTERNS, combined_output):
-            detections.append(
-                self._build_issue(
-                    task,
-                    run,
-                    instance,
-                    issue_type=IssueType.NATIVE_CRASH,
-                    severity=SeverityLevel.CRITICAL,
-                    title="检测到 Native Crash",
-                    summary=self._summarize_output(combined_output, "Native Crash"),
-                    raw_key=f"native_crash:{getattr(task.target_app, 'package_name', '')}",
-                    metadata=metadata,
-                    process_name=context["process_name"],
-                    pid=context["pid"],
-                )
-            )
-        if self._matches_any(self.JAVA_EXCEPTION_PATTERNS, combined_output):
-            detections.append(
-                self._build_issue(
-                    task,
-                    run,
-                    instance,
-                    issue_type=IssueType.JAVA_EXCEPTION,
-                    severity=SeverityLevel.MEDIUM,
-                    title="检测到 Java Exception",
-                    summary=self._summarize_output(combined_output, "Java Exception"),
-                    raw_key=f"java_exception:{getattr(task.target_app, 'package_name', '')}",
-                    metadata=metadata,
-                    process_name=context["process_name"],
-                    pid=context["pid"],
-                )
-            )
-        if self._matches_any(self.CRASH_PATTERNS, combined_output) and not system_server_crash_detected:
-            detections.append(
-                self._build_issue(
-                    task,
-                    run,
-                    instance,
-                    issue_type=IssueType.CRASH,
-                    severity=SeverityLevel.CRITICAL,
-                    title="检测到 Crash",
-                    summary=self._summarize_output(combined_output, "Crash"),
-                    raw_key=f"crash:{getattr(task.target_app, 'package_name', '')}",
-                    metadata=metadata,
-                    process_name=context["process_name"],
-                    pid=context["pid"],
-                )
-            )
-        if self._matches_any(self.BLACK_SCREEN_PATTERNS, combined_output):
-            evidence = self._structured_evidence(
-                self.BLACK_SCREEN_PATTERNS,
-                detection_sources,
-                fallback_text=combined_output,
-            )
-            detections.append(
-                self._build_issue(
-                    task,
-                    run,
-                    instance,
-                    issue_type=IssueType.BLACK_SCREEN,
-                    severity=SeverityLevel.HIGH,
-                    title="检测到黑屏",
-                    summary=self._summarize_output(combined_output, "Black Screen"),
-                    raw_key=f"black_screen:{getattr(task.target_app, 'package_name', '')}:{getattr(instance, 'device_id', '')}",
-                    metadata=self._metadata_with_evidence(metadata, evidence),
-                    process_name=context["process_name"],
-                    pid=context["pid"],
-                )
-            )
-        if self._matches_any(self.FREEZE_PATTERNS, combined_output):
-            evidence = self._structured_evidence(
-                self.FREEZE_PATTERNS,
-                detection_sources,
-                fallback_text=combined_output,
-            )
-            detections.append(
-                self._build_issue(
-                    task,
-                    run,
-                    instance,
-                    issue_type=IssueType.FREEZE,
-                    severity=SeverityLevel.HIGH,
-                    title="检测到画面冻结或无响应",
-                    summary=self._summarize_output(combined_output, "Freeze"),
-                    raw_key=f"freeze:{getattr(task.target_app, 'package_name', '')}:{getattr(instance, 'device_id', '')}",
-                    metadata=self._metadata_with_evidence(metadata, evidence),
-                    process_name=context["process_name"],
-                    pid=context["pid"],
-                )
-            )
-        crash_like_issue_types = {
-            IssueType.REBOOT,
-            IssueType.WATCHDOG,
-            IssueType.SYSTEM_SERVER_CRASH,
-            IssueType.ANR,
-            IssueType.NATIVE_CRASH,
-            IssueType.JAVA_EXCEPTION,
-            IssueType.CRASH,
-        }
-        process_exit_detected = bool(metadata.get("process_exit_detected")) or self._matches_any(
-            self.PROCESS_EXIT_PATTERNS,
-            combined_output,
+                issues.append(issue)
+
+        return issues
+
+    @staticmethod
+    def _format_raw_key(raw_match: str) -> str:
+        """Normalize a raw log line into a stable evidence key."""
+        raw_match = raw_match.strip()
+        # Truncate at 200 chars
+        if len(raw_match) > 200:
+            raw_match = raw_match[:200]
+        return raw_match
+
+    @staticmethod
+    def _is_reboot_line(line: str) -> bool:
+        """Check if a log line indicates a device reboot."""
+        return any(p.search(line) for p in [
+            re.compile(r"\breboot(?:ing|ed)?\b", re.IGNORECASE),
+        ])
+
+    @staticmethod
+    def _is_boot_completed_line(line: str) -> bool:
+        """Check if a log line indicates boot completed."""
+        return any(p.search(line) for p in [
+            re.compile(r"BOOT_COMPLETED", re.IGNORECASE),
+            re.compile(r"sys\.boot_completed", re.IGNORECASE),
+            re.compile(r"dev\.bootcomplete", re.IGNORECASE),
+        ])
+
+    @staticmethod
+    def _is_system_server_crash(match: re.Match, line: str) -> bool:
+        """Check if a crash match targets system_server."""
+        return "system_server" in line
+
+    @staticmethod
+    def _create_issue(
+        *,
+        issue_type: IssueType,
+        severity: SeverityLevel,
+        summary: str,
+        evidence_key: str,
+        line_no: int,
+        raw: str,
+    ) -> IssueRecord:
+        """Create a line-level issue record from a detector match."""
+        return IssueRecord(
+            instance_id="",
+            task_run_id="",
+            device_id="",
+            issue_type=issue_type,
+            issue_title=f"Detected {issue_type.value}",
+            severity=severity,
+            source="monkey",
+            raw_key=evidence_key,
+            summary=summary,
+            metadata={"evidence": raw, "line_no": line_no},
         )
-        if process_exit_detected and not any(issue.issue_type in crash_like_issue_types for issue in detections):
-            process_context = self._extract_process_exit_context(combined_output, metadata, fallback=context)
-            process_name = str(process_context["process_name"] or "")
-            raw_key_target = process_name or getattr(task.target_app, "package_name", "")
-            detections.append(
-                self._build_issue(
-                    task,
-                    run,
-                    instance,
-                    issue_type=IssueType.PROCESS_EXIT,
-                    severity=SeverityLevel.MEDIUM,
-                    title="检测到进程退出",
-                    summary=self._summarize_output(combined_output, "Process Exit"),
-                    raw_key=f"process_exit:{raw_key_target}",
-                    metadata=metadata,
-                    process_name=process_name,
-                    pid=process_context["pid"],
-                )
-            )
-        return detections
+
+    @staticmethod
+    def _format_issue_summary(name: str, evidence: str) -> str:
+        """Format a short summary string for a detected issue."""
+        return f"{name}: {evidence}"
 
     @staticmethod
     def _collect_detection_sources(note_text: str, highlights_text: str, metadata: dict) -> list[dict[str, str]]:

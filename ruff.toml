@@ -1,0 +1,57 @@
+# Ruff configuration for AndroidStabilityLab
+# Run: ruff check .          (lint)
+# Run: ruff check --fix .    (auto-fix safe issues)
+
+target-version = "py312"
+
+[lint]
+# Start with a small repository-wide gate that catches runtime-breaking Python
+# mistakes. Broader style and modernization rules are intentionally deferred
+# until the legacy modules and dynamic mixins have been cleaned up.
+select = [
+    "E9",    # syntax and indentation errors
+    "F63",   # invalid print/assert patterns
+    "F7",    # logic errors in comprehensions/control flow
+    "F821",  # undefined names
+    "F822",  # undefined names in __all__
+    "F823",  # local variable referenced before assignment
+    "F601",  # repeated dictionary keys
+]
+
+# Rules we specifically care about for this cleanup:
+# F401: imported but unused  (auto-fixable: ruff --fix removes them)
+# F403: from module import * (wildcard imports — banned)
+# F405: name from wildcard import (undefined name from star import)
+# F811: redefinition of unused variable
+# F821: undefined name
+# F822: undefined name in __all__
+# F841: local variable assigned but not used
+
+ignore = [
+    "E501",  # line too long (handled by formatter)
+]
+
+# Exclude generated/vendored/third-party code
+exclude = [
+    ".venv",
+    ".git",
+    "__pycache__",
+    "*.egg-info",
+    "build",
+    "dist",
+]
+
+# Per-file rule overrides
+[lint.per-file-ignores]
+"tests/**/*.py" = ["S101", "F841"]
+"**/__init__.py" = ["F401"]  # allow unused imports in __init__.py (re-exports)
+
+[lint.isort]
+# Import sorting: known first-party packages
+known-first-party = ["stability", "core", "utils"]
+
+[format]
+# Use ruff formatter (similar to black)
+quote-style = "double"
+indent-style = "space"
+line-ending = "auto"

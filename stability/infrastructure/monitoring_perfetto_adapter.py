@@ -9,6 +9,7 @@ from typing import Any, Callable, Optional, Sequence
 
 from stability.infrastructure.command_runner import SubprocessCommandRunner
 from stability.infrastructure.monitoring_base import MonitoringAdapter
+from stability.infrastructure.monitoring_config import DEFAULT_PERFETTO_REMOTE_PATH_TEMPLATE
 from stability.infrastructure.monitoring_models import (
     MonitoringSessionConfig,
     MonitoringSessionHandle,
@@ -45,8 +46,8 @@ class PerfettoTraceCaptureAdapter(MonitoringAdapter):
         runtime_monitoring_dir.mkdir(parents=True, exist_ok=True)
         local_trace_path = runtime_monitoring_dir / f"{resolved_session_name}.perfetto-trace"
         remote_template = str(
-            session_config.extra.get("perfetto_remote_path_template", "/data/local/tmp/{session_name}.perfetto-trace")
-            or "/data/local/tmp/{session_name}.perfetto-trace"
+            session_config.extra.get("perfetto_remote_path_template", DEFAULT_PERFETTO_REMOTE_PATH_TEMPLATE)
+            or DEFAULT_PERFETTO_REMOTE_PATH_TEMPLATE
         )
         remote_trace_path = remote_template.format(session_name=resolved_session_name, device_id=device_id)
         config_text = self._resolve_config_text(

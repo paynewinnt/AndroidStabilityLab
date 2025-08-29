@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from ...application_common import *
+import json
+from html import escape
+from typing import Any, Mapping, Sequence
 
 
 class PerformancePageMixin:
@@ -10,11 +12,17 @@ class PerformancePageMixin:
         entries = list(payload.get("entries", []) or [])
         help_buttons, help_sections = self._page_help_sections("性能采样", summary=summary)
         body = [
+            self._task_page_return_strip(
+                current="性能采样",
+                links=[("返回任务大厅", "/tasks")],
+            ),
             self._workflow_nav_bar(
                 active="performance",
-                run_path=str((entries[0] or {}).get("run_detail_path", "") or "/tasks") if entries else "/tasks",
-                artifact_path=self._performance_artifact_path(entries[0] if entries else {}),
+                run_path="/runs",
+                artifact_path="/artifacts",
                 artifact_items=self._performance_artifact_items(entries[0] if entries else {}),
+                run_hint="Run 列表",
+                artifact_hint="产物列表",
             ),
             self._performance_compact_header(
                 summary=summary,
@@ -22,6 +30,7 @@ class PerformancePageMixin:
                 risk_detail_fields=list(payload.get("risk_detail_fields", []) or []),
             ),
             self._section("任务性能趋势", [self._performance_task_panels(entries)]),
+            self._section("最近监控快照", [self._performance_entry_cards(entries[:12])]),
             self._section("Backend 分布图", [self._performance_backend_chart(summary)]),
         ]
         return self._layout(
@@ -50,16 +59,6 @@ class PerformancePageMixin:
             ("Report Markdown", instance.get("report_path", "")),
             ("Report HTML", instance.get("html_report_path", "")),
         ]
-
-    @staticmethod
-    def _performance_artifact_path(entry: Mapping[str, Any]) -> str:
-        explicit = str(entry.get("artifact_path", "") or "").strip()
-        if explicit:
-            return explicit
-        run_id = str(entry.get("run_id", "") or "").strip()
-        if not run_id:
-            return ""
-        return f"/artifacts/run/{quote(run_id, safe='')}"
 
     def _performance_compact_header(
         self,

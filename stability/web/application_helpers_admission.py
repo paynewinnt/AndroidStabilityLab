@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from .application_common import *
+from pathlib import Path
+from typing import Any, Mapping
+from stability.web.application_common import WebPortalApplication
 
 
 class ApplicationAdmissionHelpersMixin:

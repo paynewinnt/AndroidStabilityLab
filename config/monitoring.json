@@ -72,7 +72,7 @@
         "trace_backend": "perfetto",
         "metadata": {
           "perfetto_buffer_size_kb": 32768,
-          "perfetto_remote_path_template": "/data/local/tmp/{session_name}.perfetto-trace",
+          "perfetto_remote_path_template": "/data/misc/perfetto-traces/{session_name}.perfetto-trace",
           "perfetto_enable_network_packets": false
         }
       },
@@ -91,7 +91,7 @@
           "solox_surfaceview": true,
           "solox_wifi": true,
           "perfetto_buffer_size_kb": 32768,
-          "perfetto_remote_path_template": "/data/local/tmp/{session_name}.perfetto-trace",
+          "perfetto_remote_path_template": "/data/misc/perfetto-traces/{session_name}.perfetto-trace",
           "perfetto_enable_network_packets": false
         }
       }

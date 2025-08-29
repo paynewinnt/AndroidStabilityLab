@@ -10,8 +10,8 @@ import unittest
 from unittest.mock import patch
 
 from stability.app import DeviceRecordNotFound
-from stability.app.analysis_service import AggregatedIssueNotFound
 from stability.app.task_service import TaskRecordNotFound
+from stability.domain import AppError
 from stability.cli import task_create
 from tests.helpers.cli import run_main_with_bundle
 
@@ -164,7 +164,7 @@ class CLIAnalysisCommandsTest(unittest.TestCase):
         bundle = SimpleNamespace(
             analysis_service=SimpleNamespace(
                 get_issue_group=lambda fingerprint, **kwargs: (_ for _ in ()).throw(
-                    AggregatedIssueNotFound(f"Aggregated issue '{fingerprint}' was not found.")
+                    AppError.not_found(f"Aggregated issue '{fingerprint}' was not found.")
                 )
             )
         )

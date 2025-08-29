@@ -1,11 +1,14 @@
 from __future__ import annotations
 
-from ...application_common import *
-from ...pages_runner import ApplicationRunnerPagesMixin as RunnerPageMixin
-from ...pages_cards_runner import ApplicationRunnerCardsPagesMixin as RunnerCardsPageMixin
+from html import escape
+from typing import Any, Mapping
+from urllib.parse import quote
+
+from .cards_page import RunnerCardsPageMixin
+from .core_page import RunnerCorePageMixin
 
 
-class RunnerPageMixin(RunnerPageMixin):  # type: ignore[misc, no-redef]
+class RunnerPageMixin(RunnerCorePageMixin):
     def _unattended_task_cards(self, items: list[dict[str, Any]]) -> str:
         if not items:
             return self._notice("当前还没有无人值守配置。")

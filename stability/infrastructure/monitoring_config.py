@@ -10,6 +10,7 @@ from typing import Any, Mapping
 from stability.infrastructure.monitoring_utils import deep_merge_mapping
 
 SUPPORTED_MONITORING_BACKENDS = ("adb_collector", "solox", "perfetto", "auto", "disabled")
+DEFAULT_PERFETTO_REMOTE_PATH_TEMPLATE = "/data/misc/perfetto-traces/{session_name}.perfetto-trace"
 _MONITORING_BACKEND_ALIASES = {
     "adb": "adb_collector",
     "legacy": "adb_collector",
@@ -39,7 +40,7 @@ _DEFAULT_MONITORING_PROFILES: dict[str, dict[str, Any]] = {
         "trace_backend": "perfetto",
         "metadata": {
             "perfetto_buffer_size_kb": 32768,
-            "perfetto_remote_path_template": "/data/local/tmp/{session_name}.perfetto-trace",
+            "perfetto_remote_path_template": DEFAULT_PERFETTO_REMOTE_PATH_TEMPLATE,
         },
     },
     "solox_perfetto": {
@@ -49,7 +50,7 @@ _DEFAULT_MONITORING_PROFILES: dict[str, dict[str, Any]] = {
             "solox_surfaceview": True,
             "solox_wifi": True,
             "perfetto_buffer_size_kb": 32768,
-            "perfetto_remote_path_template": "/data/local/tmp/{session_name}.perfetto-trace",
+            "perfetto_remote_path_template": DEFAULT_PERFETTO_REMOTE_PATH_TEMPLATE,
         },
     },
 }

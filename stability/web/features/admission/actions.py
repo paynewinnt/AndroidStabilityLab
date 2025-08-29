@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from ...application_common import *
+from typing import Any, Mapping
 
 
 class AdmissionActionsMixin:

@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 import time
 from dataclasses import dataclass
-from typing import Callable
+from typing import Callable, Sequence
 
 from stability.domain import TaskTemplateType
 from stability.infrastructure.adb import ADBCollector

@@ -3,7 +3,7 @@ from __future__ import annotations
 from stability.application import DevicePoolQuery, list_device_pools as list_device_pools_use_case
 from stability.time_utils import now_beijing_string
 
-from ...application_common import *
+from typing import Any, Mapping, Sequence
 
 
 def _generated_at_now() -> str:
@@ -11,6 +11,23 @@ def _generated_at_now() -> str:
 
 
 class DevicesPayloadMixin:
+    def _maybe_sync_devices(self, query: dict[str, list[str]]) -> dict[str, Any] | None:
+        device_service = getattr(self._bundle, "device_service", None)
+        if device_service is None:
+            return None
+        sync_enabled = self._bool_query(query, "sync_devices", default=False)
+        if not sync_enabled:
+            return None
+        result = device_service.sync_devices(include_unavailable=True, mark_missing_offline=True)
+        return {
+            "mode": "full_registry",
+            "scanned_count": int(getattr(result, "scanned_count", 0) or 0),
+            "created_count": len(getattr(result, "created", ()) or ()),
+            "updated_count": len(getattr(result, "updated", ()) or ()),
+            "refreshed_count": len(getattr(result, "refreshed", ()) or ()),
+            "marked_offline_count": len(getattr(result, "marked_offline", ()) or ()),
+        }
+
     def _device_pools_payload(
         self,
         query: dict[str, list[str]],

@@ -3,7 +3,8 @@ from __future__ import annotations
 from datetime import datetime
 import unittest
 
-from stability.app.analysis_service import AggregatedIssueNotFound, AnalysisService
+from stability.domain import AppError
+from stability.app.analysis_service import AnalysisService
 from stability.domain import (
     ArtifactCaptureStatus,
     ArtifactRecord,
@@ -65,7 +66,7 @@ class AnalysisServiceTest(unittest.TestCase):
     def test_get_issue_group_raises_for_missing_fingerprint(self) -> None:
         service = build_service_fixture()
 
-        with self.assertRaises(AggregatedIssueNotFound):
+        with self.assertRaises(AppError):
             service.get_issue_group("ifp_missing")
 
 

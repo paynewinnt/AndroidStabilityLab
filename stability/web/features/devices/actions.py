@@ -11,7 +11,7 @@ from stability.application import (
     update_device_profile as update_device_profile_use_case,
 )
 
-from ...application_common import *
+from typing import Any, Mapping
 
 
 class DevicesActionsMixin:

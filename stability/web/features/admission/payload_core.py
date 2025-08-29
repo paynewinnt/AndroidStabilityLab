@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from typing import Any, Mapping
-from ...application_payload_integration_acceptance import ApplicationPayloadIntegrationAcceptanceMixin
+from ..integration.acceptance_payload import IntegrationAcceptancePayloadMixin
 from stability.time_utils import now_beijing_string
 
 
@@ -9,7 +9,7 @@ def _generated_at_now() -> str:
     return now_beijing_string()
 
 
-class AdmissionPayloadMixin(ApplicationPayloadIntegrationAcceptanceMixin):
+class AdmissionPayloadMixin(IntegrationAcceptancePayloadMixin):
     def _runner_snapshot(self) -> dict[str, Any]:
         service = getattr(self._bundle, "unattended_runner_service", None)
         if service is None or not hasattr(service, "show_status"):

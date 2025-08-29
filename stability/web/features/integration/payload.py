@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from ...application_common import *
-from ...application_payload_integration_acceptance import ApplicationPayloadIntegrationAcceptanceMixin
+from typing import Any, Mapping, Sequence
+from .acceptance_payload import IntegrationAcceptancePayloadMixin
 from stability.time_utils import now_beijing_string
 
 
@@ -9,7 +9,7 @@ def _generated_at_now() -> str:
     return now_beijing_string()
 
 
-class IntegrationPayloadMixin(ApplicationPayloadIntegrationAcceptanceMixin):
+class IntegrationPayloadMixin(IntegrationAcceptancePayloadMixin):
     def _integration_payload(
         self,
         query: dict[str, list[str]],

@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from ...application_common import *
+import json
+from html import escape
+from typing import Any, Mapping
 
 
 class DevicesPageMixin:
