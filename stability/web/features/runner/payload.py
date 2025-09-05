@@ -39,6 +39,9 @@ class RunnerPayloadMixin:
         last_patrol = self._runner_patrol_with_severity(dict(runner.get("last_patrol", {}) or {}))
         patrol_filter = self._str_query(query, "patrol_filter").lower()
         severity_filter = self._str_query(query, "severity_filter").lower()
+        keyword = self._str_query(query, "keyword")
+        page = max(self._int_query(query, "page", default=1), 1)
+        page_size = min(max(self._int_query(query, "page_size", default=20), 1), 100)
         recent_patrols_all = [
             self._runner_patrol_with_severity(dict(item or {}))
             for item in list(runner.get("recent_patrols", []) or [])
@@ -48,7 +51,9 @@ class RunnerPayloadMixin:
             recent_patrols_all,
             patrol_filter=patrol_filter,
             severity_filter=severity_filter,
+            keyword=keyword,
         )
+        recent_patrols_page = recent_patrols[(page - 1) * page_size:page * page_size]
         latest_daily_report = dict(runner.get("latest_daily_report", {}) or {})
         latest_weekly_report = dict(runner.get("latest_weekly_report", {}) or {})
         latest_patrol_severity = dict(latest_patrol.get("severity", {}) or {})
@@ -106,7 +111,7 @@ class RunnerPayloadMixin:
             "latest_daily_report": latest_daily_report,
             "latest_weekly_report": latest_weekly_report,
             "last_patrol": last_patrol,
-            "recent_patrols": recent_patrols,
+            "recent_patrols": recent_patrols_page,
             "latest_patrol_relation": self._runner_latest_patrol_relation(latest_patrol),
             "unattended_tasks": unattended_tasks,
             "long_run_templates": {
@@ -117,12 +122,20 @@ class RunnerPayloadMixin:
                 "page_path": "/long-run-templates",
             },
             "filters": {
+                "keyword": keyword,
                 "patrol_filter": patrol_filter,
                 "severity_filter": severity_filter,
+                "page": page,
+                "page_size": page_size,
                 "history_count_total": len(recent_patrols_all),
                 "history_count_filtered": len(recent_patrols),
                 "filter_counts": filter_counts,
                 "severity_counts": severity_counts,
+            },
+            "pagination": {
+                "page": page,
+                "page_size": page_size,
+                "total": len(recent_patrols),
             },
         }
 
@@ -135,6 +148,11 @@ class RunnerPayloadMixin:
         service = getattr(self._bundle, "unattended_service", None)
         template_key = self._str_query(query, "template_key")
         overrides = self._query_overrides(query)
+        preview_only = self._str_query(query, "preview_only").lower() in {"1", "true", "yes"}
+        keyword = self._str_query(query, "keyword")
+        template_type = self._str_query(query, "template_type")
+        page = max(self._int_query(query, "page", default=1), 1)
+        page_size = min(max(self._int_query(query, "page_size", default=20), 1), 100)
         source = "fallback"
         templates: list[dict[str, Any]] = []
         if service is not None and hasattr(service, "list_long_run_templates"):
@@ -150,6 +168,17 @@ class RunnerPayloadMixin:
                 templates = []
         if not templates:
             templates = normalize_long_run_templates(self._fallback_long_run_templates())
+        all_templates = list(templates)
+        filtered_templates = [
+            item
+            for item in all_templates
+            if self._long_run_template_matches_admin_filters(
+                item,
+                keyword=keyword,
+                template_type=template_type,
+            )
+        ]
+        templates_page = filtered_templates[(page - 1) * page_size:page * page_size]
         selected = find_long_run_template(templates, template_key) if template_key else None
         if selected is None and template_key and source == "service":
             selected = self._service_long_run_template(service, template_key)
@@ -175,18 +204,73 @@ class RunnerPayloadMixin:
                 dict(dict(request_context or {}).get("current_actor", {}) or {})
             ),
             "source": source,
-            "template_count": len(templates),
-            "templates": templates,
+            "template_count": len(filtered_templates),
+            "total_template_count": len(all_templates),
+            "templates": templates_page,
             "template_key": template_key,
             "template": selected,
             "overrides": overrides,
             "plan": plan,
+            "preview_only": preview_only,
+            "filters": {
+                "keyword": keyword,
+                "template_type": template_type,
+                "page": page,
+                "page_size": page_size,
+            },
+            "filter_options": {
+                "template_types": sorted(
+                    {
+                        str(dict(item.get("defaults", {}) or {}).get("template_type", "") or item.get("template_type", "") or "")
+                        for item in all_templates
+                        if str(dict(item.get("defaults", {}) or {}).get("template_type", "") or item.get("template_type", "") or "").strip()
+                    }
+                ),
+            },
+            "pagination": {
+                "page": page,
+                "page_size": page_size,
+                "total": len(filtered_templates),
+            },
             "links": {
                 "page": "/long-run-templates",
                 "api": "/api/long-run-templates",
                 "runner": "/runner",
             },
         }
+
+    @staticmethod
+    def _long_run_template_matches_admin_filters(
+        item: Mapping[str, Any],
+        *,
+        keyword: str,
+        template_type: str,
+    ) -> bool:
+        template = dict(item or {})
+        defaults = dict(template.get("defaults", {}) or {})
+        expected_type = str(template_type or "").lower()
+        actual_type = str(defaults.get("template_type", "") or template.get("template_type", "") or "").lower()
+        if expected_type and expected_type != actual_type:
+            return False
+        query = str(keyword or "").lower()
+        if query:
+            haystack = " ".join(
+                str(value or "")
+                for value in (
+                    template.get("template_key", ""),
+                    template.get("template_id", ""),
+                    template.get("key", ""),
+                    template.get("name", ""),
+                    template.get("description", ""),
+                    template.get("chinese_explanation", ""),
+                    template.get("chinese_purpose", ""),
+                    actual_type,
+                    " ".join(str(tag) for tag in list(template.get("default_tags", []) or defaults.get("tags", []) or [])),
+                )
+            ).lower()
+            if query not in haystack:
+                return False
+        return True
 
 
 __all__ = ["RunnerPayloadMixin"]

@@ -249,7 +249,7 @@ class PerformanceMetricsCardsMixin:
                     ],
                 )
                 + "<div>"
-                + self._route_link("Run 详情", item.get("run_detail_path", ""))
+                + self._route_link_new_tab("Run 详情", item.get("run_detail_path", ""))
                 + (
                     " / " + self._route_link_new_tab("Run JSON", item.get("run_api_path", ""))
                     if item.get("run_api_path", "")

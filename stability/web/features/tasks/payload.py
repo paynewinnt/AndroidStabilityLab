@@ -15,13 +15,20 @@ class TasksPayloadMixin(MonitoringPayloadMixin):
     def _tasks_payload(self, query: dict[str, list[str]], *, request_context: Mapping[str, Any] | None = None) -> dict[str, Any]:
         device_sync = self._maybe_sync_devices(query)
         show_archived = self._str_query(query, "show_archived") in {"1", "true", "yes"}
+        filters = self._admin_list_filters(query, default_page_size=20)
         active_tasks = self._task_summaries(limit=0)
         all_tasks = self._task_summaries(limit=0, include_archived=True)
         archived_tasks = [item for item in all_tasks if bool(item.get("archived") or item.get("hidden"))]
-        tasks = all_tasks[:50] if show_archived else active_tasks[:50]
         runs = self._decorate_runs_with_monitoring(self._run_summaries(limit=200))
         runs_by_task_id = self._runs_by_task_id(runs)
-        tasks = [self._task_with_runs(item, runs_by_task_id.get(str(item.get("task_id", "") or ""), ())) for item in tasks]
+        source_tasks = all_tasks if show_archived else active_tasks
+        enriched_tasks = [
+            self._task_with_runs(item, runs_by_task_id.get(str(item.get("task_id", "") or ""), ()))
+            for item in source_tasks
+        ]
+        filtered_tasks = [item for item in enriched_tasks if self._task_matches_admin_filters(item, filters)]
+        total_task_count = len(filtered_tasks)
+        tasks = self._page_slice(filtered_tasks, page=int(filters["page"]), page_size=int(filters["page_size"]))
         devices = self._device_summaries()
         schedulable_devices = [dict(item) for item in devices if bool(dict(item).get("is_schedulable", False))]
         status_counts: dict[str, int] = {}
@@ -44,7 +51,7 @@ class TasksPayloadMixin(MonitoringPayloadMixin):
             "current_actor": dict(request_context or {}).get("current_actor", {}),
             "device_sync": device_sync,
             "summary": {
-                "task_count": len(tasks),
+                "task_count": total_task_count,
                 "active_task_count": len(active_tasks),
                 "archived_task_count": len(archived_tasks),
                 "show_archived": show_archived,
@@ -52,6 +59,12 @@ class TasksPayloadMixin(MonitoringPayloadMixin):
                 "run_status_counts": status_counts,
                 "monitored_run_count": monitored_run_count,
                 "trace_run_count": trace_run_count,
+            },
+            "filters": filters,
+            "pagination": {
+                "page": int(filters["page"]),
+                "page_size": int(filters["page_size"]),
+                "total": total_task_count,
             },
             "tasks": tasks,
             "runs": runs,
@@ -199,28 +212,163 @@ class TasksPayloadMixin(MonitoringPayloadMixin):
         *,
         request_context: Mapping[str, Any] | None = None,
     ) -> dict[str, Any]:
-        del request_context
-        limit = min(max(self._int_query(query, "limit", default=100), 1), 300)
-        runs = self._decorate_runs_with_monitoring(self._run_summaries(limit=limit))
+        filters = self._admin_list_filters(query, default_page_size=20)
+        limit = min(max(self._int_query(query, "limit", default=200), 1), 500)
+        tasks_by_id = {
+            str(item.get("task_id", "") or ""): dict(item)
+            for item in self._task_summaries(limit=0, include_archived=True)
+            if str(item.get("task_id", "") or "")
+        }
+        all_runs = [
+            self._run_with_task_metadata(run, tasks_by_id=tasks_by_id)
+            for run in self._decorate_runs_with_monitoring(self._run_summaries(limit=limit))
+        ]
+        filtered_runs = [item for item in all_runs if self._run_matches_admin_filters(item, filters)]
+        total_run_count = len(filtered_runs)
+        runs = self._page_slice(filtered_runs, page=int(filters["page"]), page_size=int(filters["page_size"]))
         status_counts: dict[str, int] = {}
-        for item in runs:
+        for item in filtered_runs:
             status = str(item.get("run_status", "") or "unknown")
             status_counts[status] = status_counts.get(status, 0) + 1
-        monitored_run_count = sum(1 for item in runs if dict(item.get("monitoring_summary", {}) or {}).get("sample_count", 0))
-        trace_run_count = sum(1 for item in runs if dict(item.get("monitoring_summary", {}) or {}).get("trace_count", 0))
+        monitored_run_count = sum(1 for item in filtered_runs if dict(item.get("monitoring_summary", {}) or {}).get("sample_count", 0))
+        trace_run_count = sum(1 for item in filtered_runs if dict(item.get("monitoring_summary", {}) or {}).get("trace_count", 0))
         return {
             "page": "runs",
             "title": "Run 列表",
             "generated_at": _generated_at_now(),
-            "filters": {"limit": limit},
+            "current_actor": dict(request_context or {}).get("current_actor", {}),
+            "filters": {**filters, "limit": limit},
+            "pagination": {
+                "page": int(filters["page"]),
+                "page_size": int(filters["page_size"]),
+                "total": total_run_count,
+            },
             "summary": {
-                "run_count": len(runs),
+                "run_count": total_run_count,
                 "run_status_counts": status_counts,
                 "monitored_run_count": monitored_run_count,
                 "trace_run_count": trace_run_count,
             },
             "runs": runs,
         }
+
+    @staticmethod
+    def _run_with_task_metadata(run: Mapping[str, Any], *, tasks_by_id: Mapping[str, Mapping[str, Any]]) -> dict[str, Any]:
+        payload = dict(run)
+        task = dict(tasks_by_id.get(str(payload.get("task_id", "") or ""), {}) or {})
+        if task:
+            payload.setdefault("task_name", task.get("task_name", ""))
+            payload.setdefault("package_name", task.get("package_name", ""))
+            payload.setdefault("template_type", task.get("template_type", ""))
+        return payload
+
+    def _admin_list_filters(self, query: dict[str, list[str]], *, default_page_size: int) -> dict[str, Any]:
+        return {
+            "keyword": self._str_query(query, "keyword"),
+            "status": self._str_query(query, "status"),
+            "device_id": self._str_query(query, "device_id"),
+            "package_name": self._str_query(query, "package_name"),
+            "scenario": self._str_query(query, "scenario") or self._str_query(query, "template_type"),
+            "backend": self._str_query(query, "backend") or self._str_query(query, "monitoring_backend"),
+            "created_from": self._str_query(query, "created_from"),
+            "created_to": self._str_query(query, "created_to"),
+            "page": max(self._int_query(query, "page", default=1), 1),
+            "page_size": min(max(self._int_query(query, "page_size", default=default_page_size), 1), 100),
+        }
+
+    @staticmethod
+    def _page_slice(items: list[dict[str, Any]], *, page: int, page_size: int) -> list[dict[str, Any]]:
+        start = max(page - 1, 0) * max(page_size, 1)
+        return items[start:start + max(page_size, 1)]
+
+    @classmethod
+    def _task_matches_admin_filters(cls, task: Mapping[str, Any], filters: Mapping[str, Any]) -> bool:
+        keyword = str(filters.get("keyword", "") or "").lower()
+        if keyword:
+            haystack = " ".join(
+                str(value or "")
+                for value in (
+                    task.get("task_id", ""),
+                    task.get("task_name", ""),
+                    task.get("package_name", ""),
+                    task.get("template_type", ""),
+                    task.get("latest_run_status", ""),
+                )
+            ).lower()
+            if keyword not in haystack:
+                return False
+        status = str(filters.get("status", "") or "").lower()
+        if status and status != str(task.get("latest_run_status", "") or "no_run").lower():
+            return False
+        package_name = str(filters.get("package_name", "") or "").lower()
+        if package_name and package_name not in str(task.get("package_name", "") or "").lower():
+            return False
+        scenario = str(filters.get("scenario", "") or "").lower()
+        if scenario and scenario != str(task.get("template_type", "") or "").lower():
+            return False
+        device_id = str(filters.get("device_id", "") or "").lower()
+        if device_id:
+            device_values = [str(value or "").lower() for value in list(task.get("selected_device_ids", []) or [])]
+            for run in list(task.get("runs", []) or []):
+                device_values.extend(str(value or "").lower() for value in list(dict(run).get("target_device_ids", []) or []))
+            if not any(device_id in value for value in device_values):
+                return False
+        backend = str(filters.get("backend", "") or "").lower()
+        if backend and not any(cls._run_monitoring_backend_matches(dict(run), backend) for run in list(task.get("runs", []) or [])):
+            return False
+        return cls._created_at_in_range(str(task.get("created_at", "") or ""), filters)
+
+    @classmethod
+    def _run_matches_admin_filters(cls, run: Mapping[str, Any], filters: Mapping[str, Any]) -> bool:
+        keyword = str(filters.get("keyword", "") or "").lower()
+        if keyword:
+            haystack = " ".join(
+                str(value or "")
+                for value in (
+                    run.get("run_id", ""),
+                    run.get("task_id", ""),
+                    run.get("task_name", ""),
+                    run.get("package_name", ""),
+                    run.get("template_type", ""),
+                    run.get("run_status", ""),
+                )
+            ).lower()
+            if keyword not in haystack:
+                return False
+        status = str(filters.get("status", "") or "").lower()
+        if status and status != str(run.get("run_status", "") or "").lower():
+            return False
+        package_name = str(filters.get("package_name", "") or "").lower()
+        if package_name and package_name not in str(run.get("package_name", "") or "").lower():
+            return False
+        scenario = str(filters.get("scenario", "") or "").lower()
+        if scenario and scenario != str(run.get("template_type", "") or "").lower():
+            return False
+        device_id = str(filters.get("device_id", "") or "").lower()
+        if device_id and not any(device_id in str(value or "").lower() for value in list(run.get("target_device_ids", []) or [])):
+            return False
+        backend = str(filters.get("backend", "") or "").lower()
+        if backend and not cls._run_monitoring_backend_matches(run, backend):
+            return False
+        return cls._created_at_in_range(str(run.get("created_at", "") or ""), filters)
+
+    @staticmethod
+    def _run_monitoring_backend_matches(run: Mapping[str, Any], backend: str) -> bool:
+        monitoring = dict(run.get("monitoring_summary", {}) or {})
+        backend_counts = dict(monitoring.get("backend_counts", {}) or {})
+        summary_line = str(monitoring.get("summary_line", "") or "")
+        return backend in summary_line.lower() or any(backend == str(key or "").lower() for key in backend_counts)
+
+    @staticmethod
+    def _created_at_in_range(value: str, filters: Mapping[str, Any]) -> bool:
+        date_text = str(value or "")[:10]
+        created_from = str(filters.get("created_from", "") or "")[:10]
+        created_to = str(filters.get("created_to", "") or "")[:10]
+        if created_from and date_text and date_text < created_from:
+            return False
+        if created_to and date_text and date_text > created_to:
+            return False
+        return True
 
     def _run_detail_payload(self, run_id: str, *, query: dict[str, list[str]] | None = None) -> dict[str, Any]:
         service = getattr(self._bundle, "run_history_service", None)
@@ -252,17 +400,25 @@ class TasksPayloadMixin(MonitoringPayloadMixin):
         request_context: Mapping[str, Any] | None = None,
     ) -> dict[str, Any]:
         del request_context
-        limit = min(max(self._int_query(query, "limit", default=50), 1), 200)
+        filters = self._admin_list_filters(query, default_page_size=20)
+        limit = min(max(self._int_query(query, "limit", default=200), 1), 500)
         service = getattr(self._bundle, "run_history_service", None)
         runs = list(service.list_runs(limit=limit)) if service is not None and hasattr(service, "list_runs") else []
         items = [self._artifact_list_item(dict(run or {}), service=service) for run in runs]
+        filtered_items = [item for item in items if self._run_matches_admin_filters(item, filters)]
+        paged_items = self._page_slice(filtered_items, page=int(filters["page"]), page_size=int(filters["page_size"]))
         return {
             "page": "artifacts",
             "title": "产物中心",
             "generated_at": _generated_at_now(),
-            "filters": {"limit": limit},
-            "summary": self._artifact_list_summary(items),
-            "items": items,
+            "filters": {**filters, "limit": limit},
+            "pagination": {
+                "page": int(filters["page"]),
+                "page_size": int(filters["page_size"]),
+                "total": len(filtered_items),
+            },
+            "summary": self._artifact_list_summary(filtered_items),
+            "items": paged_items,
         }
 
     def _artifact_list_item(self, run: dict[str, Any], *, service: Any) -> dict[str, Any]:
@@ -281,10 +437,14 @@ class TasksPayloadMixin(MonitoringPayloadMixin):
         artifact_summary = self._artifact_summary_for_run(detail=detail, run=run, instances=instances)
         task_id = str(detail.get("task_id", run.get("task_id", "")) or "")
         task_name = str(detail.get("task_name", task.get("task_name", run.get("task_name", ""))) or "")
+        package_name = str(detail.get("package_name", task.get("package_name", run.get("package_name", ""))) or "")
+        template_type = str(detail.get("template_type", task.get("template_type", run.get("template_type", ""))) or "")
         return {
             "run_id": run_id,
             "task_id": task_id,
             "task_name": task_name,
+            "package_name": package_name,
+            "template_type": template_type,
             "run_status": str(detail.get("run_status", run.get("run_status", "")) or "unknown"),
             "target_device_ids": list(detail.get("target_device_ids", run.get("target_device_ids", [])) or []),
             "created_at": str(detail.get("created_at", run.get("created_at", "")) or ""),

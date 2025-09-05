@@ -56,7 +56,7 @@ class RunnerPageMixin(RunnerCorePageMixin):
             "<h3>配置无人值守</h3>"
             f"<form method='post' action='{escape(self._actor_scoped_path('/runner/actions/configure-unattended', current_actor=current_actor), quote=True)}' class='stack unattended-config-form'>"
             "<div class='unattended-config-grid'>"
-            "<label>任务<select name='task_id'>" + task_options + "</select></label>"
+            "<label>任务<select name='task_id' required>" + task_options + "</select></label>"
             "<label>间隔(分钟)<input type='number' name='interval_minutes' value='30' min='1' /></label>"
             "</div>"
             "<div class='unattended-device-grid'>"

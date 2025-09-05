@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from html import escape
-from typing import Any, Mapping
+from typing import Any, Mapping, Sequence
 
 
 class DevicesPageMixin:
@@ -20,9 +20,16 @@ class DevicesPageMixin:
             ]
             if item
         ) or "全部设备"
+        flash_html = self._notice(str(flash.get("message", "") or ""), tone=str(flash.get("tone", "ok") or "ok")) if flash else ""
         body = [
-            self._notice(str(flash.get("message", "") or ""), tone=str(flash.get("tone", "ok") or "ok")) if flash else "",
-            self._metric_grid(
+            flash_html,
+            self._admin_page_header(
+                "设备池",
+                subtitle="按 group/team/tag 管理可调度设备，刷新、连接和标记编辑都留在列表上下文内。",
+                breadcrumbs=[("首页", "/"), ("设备池", "")],
+                actions=[self._route_link("API", "/api/device-pools")],
+            ),
+            self._admin_summary_strip(
                 [
                     ("设备池", summary.get("pool_count", 0)),
                     ("设备总数", summary.get("device_count", 0)),
@@ -32,50 +39,132 @@ class DevicesPageMixin:
                     ("当前过滤", filter_hint),
                 ]
             ),
-            self._section(
-                "过滤入口",
-                [
-                    "<form method='get' action='/device-pools' class='compact-filter-form'>"
-                    "<div class='device-filter-row'>"
-                    f"<label>Group<input type='text' name='group' value='{escape(str(filters.get('group', '') or ''), quote=True)}' placeholder='例如 lab-a' /></label>"
-                    f"<label>Team<input type='text' name='team' value='{escape(str(filters.get('team', '') or ''), quote=True)}' placeholder='例如 app-team' /></label>"
-                    f"<label>Tag<input type='text' name='tag' value='{escape(','.join(filters.get('tags', []) or []), quote=True)}' placeholder='例如 smoke,android14' /></label>"
-                    "<button type='submit'>查看</button>"
-                    "<a class='action-link device-filter-api-link' href='/api/device-pools'>API</a>"
-                    "</div>"
-                    "</form>"
-                ],
-            ),
-            self._section("设备状态刷新", [self._device_refresh_controls(payload)]),
-            self._section(
-                "设备池列表",
-                [self._device_pool_cards(pools, current_actor=dict(payload.get("current_actor", {}) or {}))],
-            ),
-            self._section(
-                "统计明细",
-                [
-                    "<pre class='mono'>"
-                    + escape(
-                        json.dumps(
-                            {
-                                "group_counts": summary.get("group_counts", {}),
-                                "team_counts": summary.get("team_counts", {}),
-                                "tag_counts": summary.get("tag_counts", {}),
-                                "unschedulable_reason_counts": summary.get("unschedulable_reason_counts", {}),
-                            },
-                            ensure_ascii=False,
-                            indent=2,
-                        )
-                    )
-                    + "</pre>"
-                ],
-            ),
+            self._device_pool_filter_bar(filters),
+            self._device_pool_admin_workspace(payload, pools=pools),
         ]
         return self._layout(
             "设备池",
             "按 group/team/tag 汇总设备池，让团队在创建任务或巡检前先看到可调度设备与不可调度原因。",
             "".join(body),
         )
+
+    def _device_pool_filter_bar(self, filters: Mapping[str, Any]) -> str:
+        values = dict(filters or {})
+        values["tag"] = ",".join(values.get("tags", []) or [])
+        return self._admin_filter_bar(
+            action="/device-pools",
+            values=values,
+            fields=[
+                {"name": "group", "label": "Group", "placeholder": "例如 lab-a"},
+                {"name": "team", "label": "Team", "placeholder": "例如 app-team"},
+                {"name": "tag", "label": "Tag", "placeholder": "例如 smoke,android14"},
+            ],
+        )
+
+    def _device_pool_admin_workspace(self, payload: Mapping[str, Any], *, pools: Sequence[Mapping[str, Any]]) -> str:
+        table_id = "device-pools-admin-table"
+        columns = self._device_pool_admin_columns()
+        summary = dict(payload.get("summary", {}) or {})
+        toolbar = self._admin_toolbar(
+            title="设备池列表",
+            description="刷新 ADB、连接无线设备和编辑设备标记。",
+            table_id=table_id,
+            columns=columns,
+            actions=[
+                "<a class='button secondary' href='/device-pools'>刷新页面</a>",
+                self._route_link("任务大厅", "/tasks"),
+            ],
+        )
+        table_html, drawers = self._device_pool_admin_table(payload, pools=pools, table_id=table_id, columns=columns)
+        stats_json = escape(
+            json.dumps(
+                {
+                    "group_counts": summary.get("group_counts", {}),
+                    "team_counts": summary.get("team_counts", {}),
+                    "tag_counts": summary.get("tag_counts", {}),
+                    "unschedulable_reason_counts": summary.get("unschedulable_reason_counts", {}),
+                },
+                ensure_ascii=False,
+                indent=2,
+            )
+        )
+        return (
+            "<section class='panel admin-list-panel'>"
+            + toolbar
+            + "<details class='compact-details device-refresh-drawer'><summary>设备状态刷新</summary>"
+            + self._device_refresh_controls(payload)
+            + "</details>"
+            + table_html
+            + "<details class='compact-details'><summary>统计明细</summary><pre class='mono compact-pre'>"
+            + stats_json
+            + "</pre></details>"
+            + "</section>"
+            + drawers
+        )
+
+    @staticmethod
+    def _device_pool_admin_columns() -> list[dict[str, Any]]:
+        return [
+            {"key": "select", "label": "", "locked": True},
+            {"key": "pool", "label": "设备池"},
+            {"key": "devices", "label": "设备"},
+            {"key": "online", "label": "在线"},
+            {"key": "schedulable", "label": "可调度"},
+            {"key": "blocked", "label": "不可调度"},
+            {"key": "tags", "label": "Tag"},
+            {"key": "reasons", "label": "阻塞原因"},
+            {"key": "actions", "label": "操作", "locked": True},
+        ]
+
+    def _device_pool_admin_table(
+        self,
+        payload: Mapping[str, Any],
+        *,
+        pools: Sequence[Mapping[str, Any]],
+        table_id: str,
+        columns: Sequence[Mapping[str, Any]],
+    ) -> tuple[str, str]:
+        actor = dict(payload.get("current_actor", {}) or {})
+        rows: list[dict[str, str]] = []
+        drawers: list[str] = []
+        for pool in pools:
+            item = dict(pool or {})
+            group_name = str(item.get("group_name", "") or "ungrouped")
+            team = str(item.get("team", "") or "unassigned")
+            pool_key = str(item.get("pool_key", "") or f"{group_name}:{team}")
+            drawer_id = f"admin-device-pool-{self._dom_id_fragment(pool_key)}"
+            tags = ", ".join(str(tag) for tag in list(item.get("tags", []) or [])) or "n/a"
+            reason_counts = dict(item.get("unschedulable_reason_counts", {}) or {})
+            reasons = ", ".join(f"{key}:{value}" for key, value in sorted(reason_counts.items())) or "无"
+            blocked_count = int(item.get("unschedulable_device_count", 0) or 0)
+            rows.append(
+                {
+                    "select": f"<input type='checkbox' name='pool_key' value='{escape(pool_key, quote=True)}' />",
+                    "pool": (
+                        f"<strong>{escape(group_name)} / {escape(team)}</strong>"
+                        f"<div class='mono'>{escape(pool_key)}</div>"
+                    ),
+                    "devices": escape(str(item.get("device_count", 0) or 0)),
+                    "online": escape(str(item.get("online_device_count", 0) or 0)),
+                    "schedulable": self._admin_status(str(item.get("schedulable_device_count", 0) or 0), tone="ok"),
+                    "blocked": self._admin_status(str(blocked_count), tone="warning" if blocked_count else "muted"),
+                    "tags": f"<span title='{escape(tags, quote=True)}'>{escape(tags)}</span>",
+                    "reasons": f"<span title='{escape(reasons, quote=True)}'>{escape(reasons)}</span>",
+                    "actions": (
+                        "<div class='admin-table-actions'>"
+                        + self._admin_drawer_button("详情/编辑", drawer_id)
+                        + "</div>"
+                    ),
+                }
+            )
+            drawers.append(
+                self._admin_drawer(
+                    drawer_id,
+                    f"设备池 · {group_name} / {team}",
+                    self._device_pool_cards([item], current_actor=actor),
+                )
+            )
+        return self._admin_table(table_id=table_id, columns=columns, rows=rows, empty_text="当前过滤条件下没有设备池。"), "".join(drawers)
 
     def _device_refresh_controls(self, payload: Mapping[str, Any]) -> str:
         actions = dict(payload.get("device_actions", {}) or {})

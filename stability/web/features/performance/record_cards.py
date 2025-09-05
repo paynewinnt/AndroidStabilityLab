@@ -35,7 +35,7 @@ class PerformanceRecordCardsMixin:
                 f"{archive_meta}"
                 "</div>"
                 "<div class='record-list-actions'>"
-                + self._route_link("任务详情", f"/tasks/task/{quote(task_id, safe='')}" if task_id else "")
+                + self._route_link_new_tab("任务详情", f"/tasks/task/{quote(task_id, safe='')}" if task_id else "")
                 + (" / " + self._route_link_new_tab("Task JSON", f"/api/tasks/task/{quote(task_id, safe='')}") if task_id else "")
                 + archive_action
                 + "</div>"
@@ -77,7 +77,7 @@ class PerformanceRecordCardsMixin:
                 f"<div class='record-list-wide'><b>监控</b><span title='{escape(monitor_line, quote=True)}'>{escape(monitor_line)}</span></div>"
                 "</div>"
                 "<div class='record-list-actions'>"
-                + self._route_link("Run 详情", item.get("detail_path", ""))
+                + self._route_link_new_tab("Run 详情", item.get("detail_path", ""))
                 + (" / " + self._route_link_new_tab("Run JSON", item.get("api_path", "")) if item.get("api_path", "") else "")
                 + "</div>"
                 "</article>"

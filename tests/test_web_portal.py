@@ -303,6 +303,10 @@ class WebPortalApplicationTest(unittest.TestCase):
         self.assertIn("suspected_regression", html)
         self.assertIn("质量门禁摘要", html)
         self.assertIn("触发规则", html)
+        self.assertIn("select name='final_decision' required", html)
+        self.assertIn("name='reason' value='' placeholder='必填，例如 已知风险已签字放行' required", html)
+        self.assertIn("name='assignee_id' value='developer' placeholder='developer' required", html)
+        self.assertIn("textarea name='body' rows='3' placeholder='记录放行依据、风险备注或补充证据' required", html)
         self.assertIn("风险提示", html)
         self.assertIn("覆盖不足", html)
         self.assertIn("人工覆盖", html)
@@ -639,12 +643,22 @@ class WebPortalApplicationTest(unittest.TestCase):
         self.assertIn("提测平台", html)
         self.assertIn("Webhook 注册", html)
         self.assertIn("注册 Webhook", html)
+        self.assertIn("name='name' value='' placeholder='例如 ci-sync' required", html)
+        self.assertIn("data-webhook-url='1' required", html)
+        self.assertIn("data-required-conditional='external-webhook' data-required-label='外部必填'", html)
+        self.assertIn("validateWebhookSecrets", html)
         self.assertIn("name='delivery_channel' value='generic'", html)
         self.assertIn("创建提测请求", html)
+        self.assertIn("name='source_platform' value='' placeholder='例如 release-center' required", html)
+        self.assertIn("name='source_request_id' value='' placeholder='例如 REL-2026-001' required", html)
+        self.assertIn("name='package_name' value='' placeholder='com.example.app' required", html)
         self.assertIn("cards integration-release-stack", html)
         self.assertIn("同步提测准入", html)
+        self.assertIn("name='submission_id' value='' placeholder='release_submission_...' required", html)
+        self.assertIn("name='baseline_key' value='' placeholder='例如 device_offline_default' required", html)
         self.assertIn("注册提测 Webhook", html)
         self.assertIn("提测同步 Worker", html)
+        self.assertIn("name='webhook_name' value='' placeholder='ci-sync' required", html)
         self.assertIn("metric-choice-grid", html)
         self.assertIn("name='metrics' value='cpu' checked", html)
         self.assertIn("name='metrics' value='memory' checked", html)
@@ -654,6 +668,54 @@ class WebPortalApplicationTest(unittest.TestCase):
         self.assertIn("查看参数", html)
         self.assertIn("data-task-param-builder", html)
         self.assertIn("data-task-param-key='loop_count'", html)
+
+    def test_integration_event_filters_apply_to_visible_event_columns(self) -> None:
+        bundle = self._writable_bundle()
+        outbox = bundle.integration_outbox_service
+        outbox.publish_event(
+            event_type="admission_case.updated",
+            target_type="admission_case",
+            target_id="case-1",
+            created_by="tester",
+            payload={"package_name": "com.example.app", "monitoring_backend": "solox"},
+        )
+        outbox.publish_event(
+            event_type="manual.outbox.check",
+            target_type="run",
+            target_id="run-1",
+            created_by="tester",
+            payload={"package_name": "com.other.app", "backend": "adb_collector"},
+        )
+        outbox.register_im_webhook(
+            name="team-im",
+            url="https://im.example.invalid/webhook",
+            created_by="tester",
+        )
+        app = WebPortalApplication(bundle)
+
+        status, _, body = app.handle_request(
+            "/api/integration/outbox?delivery_channel=im_notify&package_name=com.example&backend=solox"
+        )
+        payload = json.loads(body.decode("utf-8"))
+
+        self.assertEqual(status, 200)
+        self.assertEqual(payload["pagination"]["total"], 1)
+        self.assertEqual(payload["events"][0]["event_type"], "admission_case.updated")
+        self.assertEqual(payload["events"][0]["delivery_channels"], ["im_notify"])
+
+        status, content_type, body = app.handle_request(
+            "/integration?delivery_channel=im_notify&package_name=com.example&backend=solox"
+        )
+        html = body.decode("utf-8")
+
+        self.assertEqual(status, 200)
+        self.assertIn("text/html", content_type)
+        self.assertIn("Channel", html)
+        self.assertIn("包名 / Backend", html)
+        self.assertIn("im_notify", html)
+        self.assertIn("com.example.app", html)
+        self.assertIn("backend=solox", html)
+        self.assertNotIn("manual.outbox.check", html)
 
     def test_response_boundary_headers_include_request_id_and_security_headers(self) -> None:
         app = WebPortalApplication(self._bundle())
@@ -693,6 +755,11 @@ class WebPortalApplicationTest(unittest.TestCase):
         self.assertIn("activity launch gap and timeout marker", html)
         self.assertIn("check device load", html)
         self.assertIn("confirm against monitoring snapshot", html)
+        self.assertIn("name='assignee_id' value='developer' placeholder='developer' required", html)
+        self.assertIn("select name='workflow_state' required", html)
+        self.assertIn("textarea name='body' rows='3' placeholder='记录复现、风险说明或处理结论' required", html)
+        self.assertIn("name='system_key' value='defect_system' placeholder='例如 jira / zentao' required", html)
+        self.assertIn("name='title' value='Cold start timeout' placeholder='缺陷标题' required", html)
 
     def test_issue_actions_update_collaboration_state_and_emit_outbox_event(self) -> None:
         bundle = self._bundle()

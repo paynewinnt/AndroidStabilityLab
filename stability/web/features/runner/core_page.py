@@ -22,6 +22,18 @@ class RunnerCorePageMixin:
         flash = dict(payload.get("flash", {}) or {})
         if flash:
             body.append(self._notice(str(flash.get("message", "") or ""), tone=str(flash.get("tone", "ok") or "ok")))
+        body.append(
+            self._admin_page_header(
+                "后台巡检状态",
+                subtitle="查看 patrol runner 锁、心跳、最近轮次、日报/周报和无人值守配置。",
+                breadcrumbs=[("首页", "/"), ("巡检状态", "")],
+                actions=[
+                    self._route_link("JSON API", "/api/runner"),
+                    self._route_link("长稳模板", "/long-run-templates"),
+                    self._route_link("任务大厅", "/tasks"),
+                ],
+            )
+        )
         body.append(self._runner_compact_summary(summary, unattended_task_count=len(unattended_tasks)))
         body.append(self._workflow_nav_bar(active="run", artifact_items=self._runner_artifact_items(runner)))
         body.append(self._section("最新心跳关联提示", [self._runner_latest_patrol_relation_notice(latest_patrol_relation)]))
@@ -52,13 +64,8 @@ class RunnerCorePageMixin:
                     "最近一轮 Patrol",
                     ["<pre class='mono'>" + escape(json.dumps(last_patrol, ensure_ascii=False, indent=2)) + "</pre>"],
                 ),
-                self._section(
-                    "最近 Patrol 历史",
-                    [
-                        self._runner_patrol_filter_bar(filters=filters),
-                        self._runner_patrol_history_table(recent_patrols),
-                    ],
-                ),
+                self._runner_patrol_filter_bar(filters=filters),
+                self._runner_patrol_admin_workspace(payload, recent_patrols),
                 self._section(
                     "路径与心跳",
                     [
@@ -89,8 +96,173 @@ class RunnerCorePageMixin:
         )
         return self._layout(
             "后台巡检状态",
-            "这里直接看 patrol runner 的锁、心跳和最近一轮巡检摘要，先判断后台是否真的在稳定运行。",
+            "展示 patrol runner 的锁、心跳和最近一轮巡检摘要。",
             "".join(body),
+        )
+
+    def _runner_patrol_admin_workspace(
+        self,
+        payload: Mapping[str, Any],
+        patrols: Sequence[Mapping[str, Any]],
+    ) -> str:
+        table_id = "runner-patrol-admin-table"
+        columns = self._runner_patrol_columns()
+        toolbar = self._admin_toolbar(
+            title="最近 Patrol 历史",
+            description="按轮次展示巡检状态，支持列设置和分页，详情在抽屉内查看。",
+            table_id=table_id,
+            columns=columns,
+            actions=[
+                "<a class='button secondary' href='/runner'>刷新</a>",
+                "<a class='button secondary' href='/api/runner'>导出 JSON</a>",
+            ],
+        )
+        filter_bar = self._runner_patrol_admin_filter_bar(dict(payload.get("filters", {}) or {}))
+        table_html, drawers = self._runner_patrol_admin_table(patrols, table_id=table_id, columns=columns)
+        pagination = self._admin_pagination(
+            base_path="/runner",
+            filters=dict(payload.get("filters", {}) or {}),
+            page=int(dict(payload.get("pagination", {}) or {}).get("page", 1) or 1),
+            page_size=int(dict(payload.get("pagination", {}) or {}).get("page_size", 20) or 20),
+            total=int(dict(payload.get("pagination", {}) or {}).get("total", 0) or 0),
+        )
+        return (
+            "<section class='panel admin-list-panel'>"
+            + toolbar
+            + filter_bar
+            + table_html
+            + pagination
+            + "</section>"
+            + drawers
+        )
+
+    def _runner_patrol_admin_filter_bar(self, filters: Mapping[str, Any]) -> str:
+        return self._admin_filter_bar(
+            action="/runner",
+            values=filters,
+            fields=[
+                {"name": "keyword", "label": "关键词", "placeholder": "cycle / 时间 / 严重度"},
+                {
+                    "name": "patrol_filter",
+                    "label": "异常类型",
+                    "type": "select",
+                    "options": [
+                        {"value": "", "label": "全部"},
+                        {"value": "failed", "label": "失败轮次"},
+                        {"value": "offline", "label": "掉线轮次"},
+                        {"value": "quarantined", "label": "隔离轮次"},
+                    ],
+                },
+                {
+                    "name": "severity_filter",
+                    "label": "严重度",
+                    "type": "select",
+                    "options": [
+                        {"value": "", "label": "全部严重度"},
+                        {"value": "normal", "label": "正常"},
+                        {"value": "medium", "label": "中"},
+                        {"value": "high", "label": "高"},
+                        {"value": "critical", "label": "严重"},
+                    ],
+                },
+                {
+                    "name": "page_size",
+                    "label": "每页",
+                    "type": "select",
+                    "options": [{"value": "10", "label": "10"}, {"value": "20", "label": "20"}, {"value": "50", "label": "50"}],
+                },
+            ],
+        )
+
+    @staticmethod
+    def _runner_patrol_columns() -> list[dict[str, Any]]:
+        return [
+            {"key": "select", "label": "", "locked": True},
+            {"key": "cycle", "label": "Cycle"},
+            {"key": "finished_at", "label": "Finished At"},
+            {"key": "severity", "label": "严重度"},
+            {"key": "tasks", "label": "任务"},
+            {"key": "failed_rate", "label": "失败率"},
+            {"key": "offline_rate", "label": "掉线率"},
+            {"key": "recovery_rate", "label": "恢复率", "default_visible": False},
+            {"key": "quarantine", "label": "隔离"},
+            {"key": "actions", "label": "操作", "locked": True},
+        ]
+
+    def _runner_patrol_admin_table(
+        self,
+        patrols: Sequence[Mapping[str, Any]],
+        *,
+        table_id: str,
+        columns: Sequence[Mapping[str, Any]],
+    ) -> tuple[str, str]:
+        rows: list[dict[str, str]] = []
+        drawers: list[str] = []
+        for item_raw in patrols:
+            item = dict(item_raw or {})
+            cycle = int(item.get("cycle_index", 0) or 0)
+            drawer_id = f"admin-runner-patrol-{self._dom_id_fragment(str(cycle))}"
+            severity = dict(item.get("severity", {}) or self._runner_patrol_severity(item))
+            finished_at = str(item.get("finished_at", "") or item.get("generated_at", "") or "n/a")
+            rows.append(
+                {
+                    "select": f"<input type='checkbox' name='cycle_index' value='{escape(str(cycle), quote=True)}' />",
+                    "cycle": escape(str(cycle)),
+                    "finished_at": escape(finished_at),
+                    "severity": self._admin_status(str(severity.get("label", "正常") or "正常"), tone=str(severity.get("tone", "ok") or "ok")),
+                    "tasks": (
+                        f"exec={escape(str(item.get('executed_task_count', 0) or 0))}"
+                        f"<div class='meta'>due={escape(str(item.get('due_task_count', 0) or 0))} / skipped={escape(str(item.get('skipped_task_count', 0) or 0))}</div>"
+                    ),
+                    "failed_rate": escape(str(item.get("failed_rate", 0.0) or 0.0)),
+                    "offline_rate": escape(str(item.get("offline_rate", 0.0) or 0.0)),
+                    "recovery_rate": escape(str(item.get("recovery_success_rate", 0.0) or 0.0)),
+                    "quarantine": escape(str(item.get("quarantined_device_count", 0) or 0)),
+                    "actions": "<div class='admin-table-actions'>" + self._admin_drawer_button("详情", drawer_id) + "</div>",
+                }
+            )
+            drawers.append(
+                self._admin_drawer(
+                    drawer_id,
+                    f"Patrol 详情 · Cycle {cycle}",
+                    self._runner_patrol_admin_detail(item),
+                )
+            )
+        return self._admin_table(table_id=table_id, columns=columns, rows=rows, empty_text="当前还没有可展示的 patrol 历史。"), "".join(drawers)
+
+    def _runner_patrol_admin_detail(self, item: Mapping[str, Any]) -> str:
+        severity = dict(item.get("severity", {}) or self._runner_patrol_severity(item))
+        fields = [
+            ("Cycle", item.get("cycle_index", 0)),
+            ("Generated At", item.get("generated_at", "")),
+            ("Started At", item.get("started_at", "")),
+            ("Finished At", item.get("finished_at", "")),
+            ("严重度", severity.get("label", "正常")),
+            ("任务数", item.get("task_count", 0)),
+            ("Due", item.get("due_task_count", 0)),
+            ("Executed", item.get("executed_task_count", 0)),
+            ("Skipped", item.get("skipped_task_count", 0)),
+            ("Failed Rate", item.get("failed_rate", 0.0)),
+            ("Offline Rate", item.get("offline_rate", 0.0)),
+            ("Recovery Rate", item.get("recovery_success_rate", 0.0)),
+            ("Quarantined", item.get("quarantined_device_count", 0)),
+            ("probe_attempts", item.get("quarantine_probe_attempt_count", 0)),
+            ("probe_recovered", item.get("quarantine_probe_recovered_count", 0)),
+        ]
+        return (
+            "<div class='admin-detail-grid'>"
+            + "".join(
+                "<div class='admin-detail-item'>"
+                f"<small>{escape(str(label))}</small>"
+                f"<strong>{escape(str(value or 'n/a'))}</strong>"
+                "</div>"
+                for label, value in fields
+            )
+            + "</div>"
+            + (self._runner_patrol_detail_block(item) or "<span class='meta'>正常轮次</span>")
+            + "<details class='compact-details'><summary>原始 JSON</summary><pre class='mono compact-pre'>"
+            + escape(json.dumps(dict(item), ensure_ascii=False, indent=2))
+            + "</pre></details>"
         )
 
     @staticmethod
@@ -532,6 +704,7 @@ class RunnerCorePageMixin:
         *,
         patrol_filter: str,
         severity_filter: str,
+        keyword: str = "",
     ) -> list[dict[str, Any]]:
         filtered = list(items)
         if patrol_filter == "failed":
@@ -545,5 +718,30 @@ class RunnerCorePageMixin:
                 item
                 for item in filtered
                 if str(dict(item.get("severity", {}) or {}).get("level", "") or "") == severity_filter
+            ]
+        query = str(keyword or "").lower()
+        if query:
+            filtered = [
+                item
+                for item in filtered
+                if query
+                in " ".join(
+                    str(value or "")
+                    for value in (
+                        item.get("cycle_index", ""),
+                        item.get("generated_at", ""),
+                        item.get("started_at", ""),
+                        item.get("finished_at", ""),
+                        item.get("task_count", ""),
+                        item.get("executed_task_count", ""),
+                        item.get("failed_rate", ""),
+                        item.get("offline_rate", ""),
+                        item.get("recovery_success_rate", ""),
+                        item.get("quarantined_device_count", ""),
+                        dict(item.get("severity", {}) or {}).get("level", ""),
+                        dict(item.get("severity", {}) or {}).get("label", ""),
+                        dict(item.get("severity", {}) or {}).get("reason", ""),
+                    )
+                ).lower()
             ]
         return filtered

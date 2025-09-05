@@ -87,7 +87,7 @@ class TaskDetailPageMixin(TaskFormsMixin):
         ]
         return self._layout(
             "任务详情",
-            "这里对应 CLI 的 show-task，先确认任务定义，再从同页直接创建新的 Run。",
+            "展示任务定义、关联 Run 和创建 Run 入口。",
             "".join(body),
         )
 
@@ -172,7 +172,7 @@ class TaskDetailPageMixin(TaskFormsMixin):
         ]
         return self._layout(
             "无人值守详情",
-            "这里对应 CLI 的 show-unattended-task，先看配置，再决定是否手动跑一轮或执行 patrol。",
+            "展示无人值守配置、日报周报和手动执行入口。",
             "".join(body),
         )
 

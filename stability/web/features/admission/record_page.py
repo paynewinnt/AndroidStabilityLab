@@ -2,13 +2,15 @@ from __future__ import annotations
 
 import json
 from html import escape
-from typing import Any, Mapping
+from typing import Any, Mapping, Sequence
 from urllib.parse import quote
 
+from stability.scenario.registry import list_scenario_definitions
 
 from .detail_page import AdmissionDetailPageMixin
 from .golden_page import GoldenAdmissionPageMixin
 from .quality_page import QualityPageMixin
+
 
 class AdmissionRecordPageMixin(AdmissionDetailPageMixin, GoldenAdmissionPageMixin, QualityPageMixin):
     def _render_issues(self, payload: dict[str, Any]) -> str:
@@ -18,7 +20,13 @@ class AdmissionRecordPageMixin(AdmissionDetailPageMixin, GoldenAdmissionPageMixi
         if flash:
             body.append(self._notice(str(flash.get("message", "") or ""), tone=str(flash.get("tone", "ok") or "ok")))
         body.extend([
-            self._metric_grid(
+            self._admin_page_header(
+                "问题中心",
+                subtitle="聚合问题以台账方式管理，认领、流转、评论和缺陷同步都在详情抽屉内完成。",
+                breadcrumbs=[("首页", "/"), ("问题中心", "")],
+                actions=[self._route_link("JSON API", "/api/issues")],
+            ),
+            self._admin_summary_strip(
                 [
                     ("聚合问题数", summary["issue_count"]),
                     ("Critical", summary["severity_counts"].get("critical", 0)),
@@ -29,17 +37,18 @@ class AdmissionRecordPageMixin(AdmissionDetailPageMixin, GoldenAdmissionPageMixi
                     ("协作参与者", summary["actor_count"]),
                 ]
             ),
-            self._section(
-                "当前身份",
-                [
-                    self._current_actor_card(
-                        current_actor=dict(payload.get("current_actor", {}) or {}),
-                        actors=list(payload.get("actors", []) or []),
-                        current_path="/issues",
-                    )
-                ],
-            ),
-            self._section("Top Issue", [self._issue_cards(payload["issues"])]),
+            "<section class='panel admin-list-panel'>"
+            + "<div class='admin-toolbar'>"
+            + "<div class='admin-toolbar-heading'><strong>当前身份</strong><span>写操作会用当前身份记录协作动作。</span></div>"
+            + "</div>"
+            + self._current_actor_card(
+                current_actor=dict(payload.get("current_actor", {}) or {}),
+                actors=list(payload.get("actors", []) or []),
+                current_path="/issues",
+            )
+            + "</section>",
+            self._issue_admin_filter_bar(payload),
+            self._issue_admin_workspace(payload),
         ])
         return self._layout(
             "问题中心",
@@ -47,51 +56,242 @@ class AdmissionRecordPageMixin(AdmissionDetailPageMixin, GoldenAdmissionPageMixi
             "".join(body),
         )
 
+    def _issue_admin_filter_bar(self, payload: Mapping[str, Any]) -> str:
+        filters = dict(payload.get("filters", {}) or {})
+        return self._admin_filter_bar(
+            action="/issues",
+            values=filters,
+            fields=[
+                {"name": "keyword", "label": "关键词", "placeholder": "标题 / 指纹 / 责任人"},
+                {
+                    "name": "status",
+                    "label": "状态",
+                    "type": "select",
+                    "options": [
+                        {"value": "", "label": "全部"},
+                        {"value": "new", "label": "new"},
+                        {"value": "assigned", "label": "assigned"},
+                        {"value": "processing", "label": "processing"},
+                        {"value": "confirmed", "label": "confirmed"},
+                        {"value": "resolved", "label": "resolved"},
+                        {"value": "ignored", "label": "ignored"},
+                    ],
+                },
+                {
+                    "name": "issue_type",
+                    "label": "类型",
+                    "type": "select",
+                    "options": [
+                        {"value": "", "label": "全部"},
+                        {"value": "crash", "label": "crash"},
+                        {"value": "anr", "label": "anr"},
+                        {"value": "performance", "label": "performance"},
+                        {"value": "functional", "label": "functional"},
+                        {"value": "compatibility", "label": "compatibility"},
+                    ],
+                },
+                {
+                    "name": "severity",
+                    "label": "严重级别",
+                    "type": "select",
+                    "options": [
+                        {"value": "", "label": "全部"},
+                        {"value": "critical", "label": "critical"},
+                        {"value": "high", "label": "high"},
+                        {"value": "medium", "label": "medium"},
+                        {"value": "low", "label": "low"},
+                    ],
+                },
+                {"name": "package_name", "label": "包名", "placeholder": "com.example"},
+                {"name": "device_id", "label": "设备", "placeholder": "device id"},
+                {
+                    "name": "scenario",
+                    "label": "场景",
+                    "type": "select",
+                    "options": [{"value": "", "label": "全部"}]
+                    + [
+                        {"value": str(item.value), "label": str(item.plain_label)}
+                        for item in list_scenario_definitions()
+                    ],
+                },
+                {"name": "created_from", "label": "开始日期", "type": "date"},
+                {"name": "created_to", "label": "结束日期", "type": "date"},
+            ],
+        )
+
+    def _issue_admin_workspace(self, payload: Mapping[str, Any]) -> str:
+        table_id = "issues-admin-table"
+        columns = self._issue_admin_columns()
+        toolbar = self._admin_toolbar(
+            title="Top Issue",
+            description="列表按聚合问题展示，点击详情后在抽屉里处理协作动作。",
+            table_id=table_id,
+            columns=columns,
+            actions=[
+                "<a class='button secondary' href='/issues'>刷新</a>",
+            ],
+        )
+        table_html, drawers = self._issue_admin_table(payload, table_id=table_id, columns=columns)
+        pagination = self._admin_pagination(
+            base_path="/issues",
+            filters=dict(payload.get("filters", {}) or {}),
+            page=int(dict(payload.get("pagination", {}) or {}).get("page", 1) or 1),
+            page_size=int(dict(payload.get("pagination", {}) or {}).get("page_size", 20) or 20),
+            total=int(dict(payload.get("pagination", {}) or {}).get("total", 0) or 0),
+        )
+        return "<section class='panel admin-list-panel'>" + toolbar + table_html + pagination + "</section>" + drawers
+
+    @staticmethod
+    def _issue_admin_columns() -> list[dict[str, Any]]:
+        return [
+            {"key": "select", "label": "", "locked": True},
+            {"key": "issue", "label": "问题"},
+            {"key": "type", "label": "类型"},
+            {"key": "severity", "label": "级别"},
+            {"key": "state", "label": "状态"},
+            {"key": "owner", "label": "责任人"},
+            {"key": "scope", "label": "包名 / 设备 / 场景"},
+            {"key": "occurrence", "label": "出现"},
+            {"key": "affected", "label": "影响面"},
+            {"key": "last_seen", "label": "最近出现"},
+            {"key": "actions", "label": "操作", "locked": True},
+        ]
+
+    def _issue_admin_table(
+        self,
+        payload: Mapping[str, Any],
+        *,
+        table_id: str,
+        columns: Sequence[Mapping[str, Any]],
+    ) -> tuple[str, str]:
+        issues = list(payload.get("issues", []) or [])
+        rows: list[dict[str, str]] = []
+        drawers: list[str] = []
+        for item_raw in issues:
+            item = dict(item_raw or {})
+            fingerprint = str(item.get("fingerprint", "") or "")
+            title = str(item.get("title", "") or fingerprint or "未命名问题")
+            drawer_id = f"admin-issue-detail-{self._dom_id_fragment(fingerprint)}"
+            state = str(item.get("workflow_state", "") or "new")
+            severity = str(item.get("severity", "") or "unknown")
+            owner = str(item.get("assignee_display_name", "") or item.get("assignee_id", "") or "unassigned")
+            packages = self._issue_scope_value(item.get("affected_packages", []) or [])
+            devices = self._issue_scope_value(item.get("affected_devices", []) or [])
+            scenarios = self._issue_scope_value(item.get("affected_scenarios", []) or [])
+            affected = (
+                f"{escape(str(item.get('affected_device_count', 0) or 0))} 设备 / "
+                f"{escape(str(item.get('affected_run_count', 0) or 0))} Run / "
+                f"{escape(str(item.get('affected_scenario_count', 0) or 0))} 场景"
+            )
+            rows.append(
+                {
+                    "select": f"<input type='checkbox' name='fingerprint' value='{escape(fingerprint, quote=True)}' />",
+                    "issue": (
+                        f"<strong title='{escape(title, quote=True)}'>{escape(title)}</strong>"
+                        f"<div class='mono' title='{escape(fingerprint, quote=True)}'>{escape(fingerprint)}</div>"
+                    ),
+                    "type": self._admin_status(str(item.get("issue_type", "") or "n/a"), tone="muted"),
+                    "severity": self._admin_status(severity, tone=self._issue_severity_tone(severity)),
+                    "state": self._admin_status(state, tone=self._workflow_state_tone(state)),
+                    "owner": escape(owner),
+                    "scope": (
+                        f"<span class='mono' title='{escape(packages, quote=True)}'>{escape(packages)}</span>"
+                        f"<div class='meta' title='{escape(devices, quote=True)}'>device={escape(devices)}</div>"
+                        f"<div class='meta' title='{escape(scenarios, quote=True)}'>scenario={escape(scenarios)}</div>"
+                    ),
+                    "occurrence": escape(str(item.get("occurrence_count", 0) or 0)),
+                    "affected": affected,
+                    "last_seen": escape(self._display_datetime(item.get("last_seen_at", "")) or "n/a"),
+                    "actions": "<div class='admin-table-actions'>" + self._admin_drawer_button("详情 / 处理", drawer_id) + "</div>",
+                }
+            )
+            drawers.append(
+                self._admin_drawer(
+                    drawer_id,
+                    f"问题详情 · {title}",
+                    self._issue_admin_detail(item),
+                )
+            )
+        return self._admin_table(table_id=table_id, columns=columns, rows=rows, empty_text="当前没有匹配问题。"), "".join(drawers)
+
+    @staticmethod
+    def _issue_scope_value(values: Sequence[Any], *, limit: int = 3) -> str:
+        seen: list[str] = []
+        for value in values:
+            text = str(value or "").strip()
+            if text and text not in seen:
+                seen.append(text)
+        if not seen:
+            return "n/a"
+        suffix = f" +{len(seen) - limit}" if len(seen) > limit else ""
+        return ", ".join(seen[:limit]) + suffix
+
+    def _issue_admin_detail(self, item: Mapping[str, Any]) -> str:
+        fields = [
+            ("指纹", item.get("fingerprint", "")),
+            ("类型", item.get("issue_type", "")),
+            ("级别", item.get("severity", "")),
+            ("状态", item.get("workflow_state", "new") or "new"),
+            ("责任人", item.get("assignee_display_name", "") or item.get("assignee_id", "") or "unassigned"),
+            ("出现次数", item.get("occurrence_count", 0)),
+            ("影响设备", item.get("affected_device_count", 0)),
+            ("影响包名", ", ".join(item.get("affected_packages", [])[:4])),
+            ("影响场景", ", ".join(item.get("affected_scenarios", [])[:4])),
+            ("最近出现", self._display_datetime(item.get("last_seen_at", "")) or "n/a"),
+        ]
+        details = "".join(
+            "<div class='admin-detail-item'>"
+            f"<small>{escape(str(label))}</small>"
+            f"<strong>{escape(str(value or 'n/a'))}</strong>"
+            "</div>"
+            for label, value in fields
+        )
+        return (
+            "<div class='admin-detail-grid'>"
+            + details
+            + "</div>"
+            + self._issue_cards([dict(item)])
+        )
+
+    @staticmethod
+    def _issue_severity_tone(value: str) -> str:
+        severity = str(value or "").lower()
+        if severity in {"critical", "high"}:
+            return "danger"
+        if severity in {"medium", "warning"}:
+            return "warning"
+        if severity in {"low", "info"}:
+            return "muted"
+        return "ok"
+
     def _render_goldens(self, payload: dict[str, Any]) -> str:
         summary = payload["summary"]
-        filters = payload.get("filters", {})
-        filter_bits = [
-            f"suite={payload.get('suite_version', '') or 'n/a'}",
-            f"issue_type={filters.get('issue_type', '') or 'all'}",
-            f"layer={filters.get('layer', '') or 'all'}",
-            f"expectation={filters.get('expectation', '') or 'all'}",
-            f"limit={filters.get('limit', 0)}",
-        ]
         body = [
-            self._metric_grid(
+            self._admin_page_header(
+                "Golden Suite",
+                subtitle="以列表方式查看 golden case，可按类型、链路和期望结果快速筛选，再在抽屉内看明细。",
+                breadcrumbs=[("首页", "/"), ("Golden Suite", "")],
+                actions=[
+                    self._route_link("JSON API", "/api/goldens"),
+                    self._route_link("Diff", "/goldens/diff"),
+                ],
+            ),
+            self._admin_summary_strip(
                 [
                     ("Case 总数", summary["case_count"]),
+                    ("全部 Case", summary.get("total_case_count", summary["case_count"])),
                     ("Layer 数", summary["layer_count"]),
                     ("Issue Type 数", summary["issue_type_count"]),
                     ("Expectation 数", summary["expectation_count"]),
                 ]
             ),
-            self._section(
-                "Suite 概览",
-                [
-                    f"<p>suite_path：<span class='mono'>{escape(str(payload.get('suite_path', '')))}</span></p>",
-                    f"<p>{escape(' / '.join(filter_bits))}</p>",
-                    "<p><a href='/goldens/diff'>打开 Golden Suite Diff 只读页</a></p>",
-                    "<details class='compact-details'><summary>查看统计 JSON</summary><pre class='mono compact-pre'>"
-                    + escape(
-                        json.dumps(
-                            {
-                                "layer_counts": summary.get("layer_counts", {}),
-                                "issue_type_counts": summary.get("issue_type_counts", {}),
-                                "expectation_counts": summary.get("expectation_counts", {}),
-                            },
-                            ensure_ascii=False,
-                            indent=2,
-                        )
-                    )
-                    + "</pre></details>",
-                ],
-            ),
-            self._section("Golden Cases", [self._golden_case_cards(list(payload.get("cases", []) or []))]),
+            self._golden_suite_overview(payload),
+            self._golden_admin_filter_bar(payload),
+            self._golden_case_workspace(payload),
         ]
         return self._layout(
             "Golden Suite",
-            "这里用只读方式查看正式样本库，先看有哪些 case，再按单条样本下钻到完整 payload。",
+            "查看正式样本库、case 列表和单条样本 payload。",
             "".join(body),
         )
 
@@ -147,7 +347,7 @@ class AdmissionRecordPageMixin(AdmissionDetailPageMixin, GoldenAdmissionPageMixi
             )
         return self._layout(
             "Golden Suite Diff",
-            "这里用只读方式对比两份 golden suite，直接看新增、删除、修改和字段级变化。",
+            "对比两份 golden suite 的新增、删除、修改和字段级变化。",
             "".join(body),
         )
 
@@ -155,7 +355,16 @@ class AdmissionRecordPageMixin(AdmissionDetailPageMixin, GoldenAdmissionPageMixi
         summary = payload["summary"]
         views = dict(payload.get("views", {}) or {})
         body = [
-            self._metric_grid(
+            self._admin_page_header(
+                "准入中心",
+                subtitle="以基线为主列表查看准入结果、风险和协作状态，详情与处理动作留在当前页面抽屉内。",
+                breadcrumbs=[("首页", "/"), ("准入中心", "")],
+                actions=[
+                    self._route_link("JSON API", "/api/admission"),
+                    self._route_link("Admission Cases", "/api/admission/cases"),
+                ],
+            ),
+            self._admin_summary_strip(
                 [
                     ("基线数", summary["baseline_count"]),
                     ("自动 Fail", summary["auto_decision_counts"].get("fail", 0)),
@@ -172,25 +381,24 @@ class AdmissionRecordPageMixin(AdmissionDetailPageMixin, GoldenAdmissionPageMixi
                     ("Set 记录", summary["action_counts"].get("set", 0)),
                 ]
             ),
-            self._section(
-                "当前身份",
-                [
-                    self._current_actor_card(
-                        current_actor=dict(payload.get("current_actor", {}) or {}),
-                        actors=list(payload.get("actors", []) or []),
-                        current_path="/admission",
-                    )
-                ],
-            ),
-            self._section(
-                "协作视图",
-                [self._admission_view_cards(views)],
-            ),
-            self._section("质量门禁与准入 Case", [self._baseline_cards(payload["baselines"])]),
+            "<section class='panel admin-list-panel'>"
+            + self._admin_toolbar(title="当前身份", description="写操作会用当前身份记录协作动作。")
+            + self._current_actor_card(
+                current_actor=dict(payload.get("current_actor", {}) or {}),
+                actors=list(payload.get("actors", []) or []),
+                current_path="/admission",
+            )
+            + "</section>",
+            "<section class='panel admin-list-panel'>"
+            + self._admin_toolbar(title="协作视图", description="按当前筛选结果聚合待处理、待确认和带风险放行。")
+            + self._admission_view_cards(views)
+            + "</section>",
+            self._admission_admin_filter_bar(payload),
+            self._admission_admin_workspace(payload),
         ]
         return self._layout(
             "准入中心",
-            "这里先看准入单协作视图和质量门禁结果，再继续下钻到当前报告、latest audit 和基线历史。",
+            "查看准入单协作视图、质量门禁结果、当前报告、latest audit 和基线历史。",
             "".join(body),
         )
 

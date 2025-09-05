@@ -2,11 +2,20 @@ from __future__ import annotations
 
 import json
 from html import escape
-from typing import Any, Mapping
+from typing import Any, Mapping, Sequence
 from urllib.parse import quote
 
 
 class GoldenAdmissionPageMixin:
+    @staticmethod
+    def _admin_select_options(values: Sequence[str], *, labels: Mapping[str, str] | None = None) -> list[dict[str, str]]:
+        label_map = dict(labels or {})
+        return [{"value": "", "label": "全部"}] + [
+            {"value": str(value), "label": label_map.get(str(value), str(value))}
+            for value in values
+            if str(value or "").strip()
+        ]
+
     def _admission_view_cards(self, payload: Mapping[str, Any]) -> str:
         summary = dict(payload.get("summary", {}) or {})
         cards = [
@@ -38,6 +47,405 @@ class GoldenAdmissionPageMixin:
             )
         return "<div class='cards'>" + "".join(markup) + "</div>"
 
+    def _golden_suite_overview(self, payload: Mapping[str, Any]) -> str:
+        summary = dict(payload.get("summary", {}) or {})
+        filters = dict(payload.get("filters", {}) or {})
+        fields = [
+            ("Suite Version", payload.get("suite_version", "") or "n/a"),
+            ("Suite Path", payload.get("suite_path", "") or "n/a"),
+            ("Issue Type", filters.get("issue_type", "") or "全部"),
+            ("Layer", filters.get("layer", "") or "全部"),
+            ("Expectation", filters.get("expectation", "") or "全部"),
+            ("加载上限", filters.get("limit", 0)),
+        ]
+        detail_grid = "".join(
+            "<div class='admin-detail-item'>"
+            f"<small>{escape(str(label))}</small>"
+            f"<strong>{escape(str(value))}</strong>"
+            "</div>"
+            for label, value in fields
+        )
+        stats_json = {
+            "layer_counts": summary.get("layer_counts", {}),
+            "issue_type_counts": summary.get("issue_type_counts", {}),
+            "expectation_counts": summary.get("expectation_counts", {}),
+        }
+        return (
+            "<section class='panel admin-list-panel'>"
+            + self._admin_toolbar(
+                title="Suite 概览",
+                description="样本库路径、版本和当前筛选统计。",
+                actions=["<a class='button secondary' href='/goldens/diff'>打开 Diff</a>"],
+            )
+            + "<div class='admin-detail-grid'>"
+            + detail_grid
+            + "</div>"
+            "<details class='compact-details'><summary>查看统计 JSON</summary><pre class='mono compact-pre'>"
+            + escape(json.dumps(stats_json, ensure_ascii=False, indent=2))
+            + "</pre></details></section>"
+        )
+
+    def _golden_admin_filter_bar(self, payload: Mapping[str, Any]) -> str:
+        filters = dict(payload.get("filters", {}) or {})
+        options = dict(payload.get("filter_options", {}) or {})
+        page_size_options = [
+            {"value": "10", "label": "10"},
+            {"value": "20", "label": "20"},
+            {"value": "50", "label": "50"},
+            {"value": "100", "label": "100"},
+        ]
+        return self._admin_filter_bar(
+            action="/goldens",
+            values=filters,
+            fields=[
+                {"name": "keyword", "label": "关键词", "placeholder": "case / package / run"},
+                {"name": "issue_type", "label": "类型", "type": "select", "options": self._admin_select_options(list(options.get("issue_types", []) or []))},
+                {"name": "layer", "label": "链路", "type": "select", "options": self._admin_select_options(list(options.get("layers", []) or []))},
+                {"name": "expectation", "label": "期望", "type": "select", "options": self._admin_select_options(list(options.get("expectations", []) or []))},
+                {"name": "suite_path", "label": "Suite Path", "placeholder": "默认正式样本库"},
+                {"name": "page_size", "label": "每页", "type": "select", "options": page_size_options},
+            ],
+        )
+
+    def _golden_case_workspace(self, payload: Mapping[str, Any]) -> str:
+        table_id = "goldens-admin-table"
+        columns = self._golden_case_columns()
+        toolbar = self._admin_toolbar(
+            title="Golden Cases",
+            description="按 case 维度展示样本，操作列的详情在当前页抽屉内打开。",
+            table_id=table_id,
+            columns=columns,
+            actions=[
+                "<a class='button secondary' href='/goldens'>刷新</a>",
+                "<a class='button secondary' href='/goldens/diff'>Diff</a>",
+            ],
+        )
+        table_html, drawers = self._golden_case_admin_table(payload, table_id=table_id, columns=columns)
+        pagination = self._admin_pagination(
+            base_path="/goldens",
+            filters=dict(payload.get("filters", {}) or {}),
+            page=int(dict(payload.get("pagination", {}) or {}).get("page", 1) or 1),
+            page_size=int(dict(payload.get("pagination", {}) or {}).get("page_size", 20) or 20),
+            total=int(dict(payload.get("pagination", {}) or {}).get("total", 0) or 0),
+        )
+        return "<section class='panel admin-list-panel'>" + toolbar + table_html + pagination + "</section>" + drawers
+
+    @staticmethod
+    def _golden_case_columns() -> list[dict[str, Any]]:
+        return [
+            {"key": "select", "label": "", "locked": True},
+            {"key": "case", "label": "Case"},
+            {"key": "issue_type", "label": "类型"},
+            {"key": "layer", "label": "链路"},
+            {"key": "expectation", "label": "期望"},
+            {"key": "package", "label": "包名"},
+            {"key": "template", "label": "模板", "default_visible": False},
+            {"key": "source_run", "label": "Source Run", "default_visible": False},
+            {"key": "issue_count", "label": "Issue"},
+            {"key": "actions", "label": "操作", "locked": True},
+        ]
+
+    def _golden_case_admin_table(
+        self,
+        payload: Mapping[str, Any],
+        *,
+        table_id: str,
+        columns: Sequence[Mapping[str, Any]],
+    ) -> tuple[str, str]:
+        rows: list[dict[str, str]] = []
+        drawers: list[str] = []
+        for item_raw in list(payload.get("cases", []) or []):
+            item = dict(item_raw or {})
+            case_id = str(item.get("case_id", "") or "")
+            drawer_id = f"admin-golden-detail-{self._dom_id_fragment(case_id)}"
+            detail_url = f"/goldens/case/{quote(case_id, safe='')}"
+            rows.append(
+                {
+                    "select": f"<input type='checkbox' name='case_id' value='{escape(case_id, quote=True)}' />",
+                    "case": (
+                        f"<strong title='{escape(case_id, quote=True)}'>{escape(case_id)}</strong>"
+                        f"<div class='meta'>{escape(str(item.get('description', '') or '暂无描述'))}</div>"
+                    ),
+                    "issue_type": self._admin_status(str(item.get("issue_type", "") or "n/a"), tone="muted"),
+                    "layer": escape(str(item.get("layer", "") or "n/a")),
+                    "expectation": escape(str(item.get("expectation", "") or "n/a")),
+                    "package": f"<span class='mono'>{escape(str(item.get('package_name', '') or 'n/a'))}</span>",
+                    "template": escape(str(item.get("template_type", "") or "n/a")),
+                    "source_run": f"<span class='mono'>{escape(str(item.get('source_run_id', '') or 'n/a'))}</span>",
+                    "issue_count": escape(str(item.get("issue_count", 0) or 0)),
+                    "actions": (
+                        "<div class='admin-table-actions'>"
+                        + self._admin_drawer_button("详情", drawer_id)
+                        + self._route_link_new_tab("完整页", detail_url)
+                        + "</div>"
+                    ),
+                }
+            )
+            drawers.append(
+                self._admin_drawer(
+                    drawer_id,
+                    f"Golden Case · {case_id}",
+                    self._golden_case_admin_detail(item),
+                )
+            )
+        return self._admin_table(table_id=table_id, columns=columns, rows=rows, empty_text="当前没有匹配 Golden Case。"), "".join(drawers)
+
+    def _golden_case_admin_detail(self, item: Mapping[str, Any]) -> str:
+        fields = [
+            ("Case ID", item.get("case_id", "")),
+            ("Issue Type", item.get("issue_type", "")),
+            ("Layer", item.get("layer", "")),
+            ("Expectation", item.get("expectation", "")),
+            ("Package", item.get("package_name", "")),
+            ("Template", item.get("template_type", "")),
+            ("Source Run", item.get("source_run_id", "")),
+            ("Issue Count", item.get("issue_count", 0)),
+            ("Include Unchanged", "yes" if item.get("include_unchanged") else "no"),
+        ]
+        details = "".join(
+            "<div class='admin-detail-item'>"
+            f"<small>{escape(str(label))}</small>"
+            f"<strong>{escape(str(value or 'n/a'))}</strong>"
+            "</div>"
+            for label, value in fields
+        )
+        case_id = str(item.get("case_id", "") or "")
+        return (
+            "<div class='admin-detail-grid'>"
+            + details
+            + "</div>"
+            f"<p>{escape(str(item.get('description', '') or '暂无描述'))}</p>"
+            f"<p><a href='/goldens/case/{quote(case_id, safe='')}'>打开完整 payload 页面</a></p>"
+            "<details class='compact-details'><summary>查看列表原始 JSON</summary><pre class='mono compact-pre'>"
+            + escape(json.dumps(dict(item), ensure_ascii=False, indent=2))
+            + "</pre></details>"
+        )
+
+    def _admission_admin_filter_bar(self, payload: Mapping[str, Any]) -> str:
+        filters = dict(payload.get("filters", {}) or {})
+        options = dict(payload.get("filter_options", {}) or {})
+        risk_labels = {
+            "any": "有风险",
+            "performance": "性能风险",
+            "coverage": "覆盖不足",
+            "golden_failed": "Golden 失败",
+            "override": "人工覆盖",
+        }
+        page_size_options = [
+            {"value": "10", "label": "10"},
+            {"value": "20", "label": "20"},
+            {"value": "50", "label": "50"},
+            {"value": "100", "label": "100"},
+        ]
+        return self._admin_filter_bar(
+            action="/admission",
+            values=filters,
+            fields=[
+                {"name": "keyword", "label": "关键词", "placeholder": "baseline / report / case"},
+                {"name": "status", "label": "状态", "type": "select", "options": self._admin_select_options(list(options.get("statuses", []) or []))},
+                {"name": "final_decision", "label": "最终决策", "type": "select", "options": self._admin_select_options(list(options.get("final_decisions", []) or []))},
+                {"name": "risk", "label": "风险", "type": "select", "options": self._admin_select_options(list(options.get("risks", []) or []), labels=risk_labels)},
+                {"name": "owner", "label": "责任人", "type": "select", "options": self._admin_select_options(list(options.get("owners", []) or []))},
+                {"name": "page_size", "label": "每页", "type": "select", "options": page_size_options},
+            ],
+        )
+
+    def _admission_admin_workspace(self, payload: Mapping[str, Any]) -> str:
+        table_id = "admission-admin-table"
+        columns = self._admission_admin_columns()
+        toolbar = self._admin_toolbar(
+            title="质量门禁与准入 Case",
+            description="按基线展示准入状态、风险、Golden 结果和下钻入口。",
+            table_id=table_id,
+            columns=columns,
+            actions=[
+                "<a class='button secondary' href='/admission'>刷新</a>",
+                "<a class='button secondary' href='/api/admission'>导出 JSON</a>",
+            ],
+        )
+        table_html, drawers = self._admission_admin_table(payload, table_id=table_id, columns=columns)
+        pagination = self._admin_pagination(
+            base_path="/admission",
+            filters=dict(payload.get("filters", {}) or {}),
+            page=int(dict(payload.get("pagination", {}) or {}).get("page", 1) or 1),
+            page_size=int(dict(payload.get("pagination", {}) or {}).get("page_size", 20) or 20),
+            total=int(dict(payload.get("pagination", {}) or {}).get("total", 0) or 0),
+        )
+        return "<section class='panel admin-list-panel'>" + toolbar + table_html + pagination + "</section>" + drawers
+
+    @staticmethod
+    def _admission_admin_columns() -> list[dict[str, Any]]:
+        return [
+            {"key": "select", "label": "", "locked": True},
+            {"key": "baseline", "label": "基线"},
+            {"key": "status", "label": "状态"},
+            {"key": "decision", "label": "决策"},
+            {"key": "owner", "label": "责任人"},
+            {"key": "reviewer", "label": "评审人", "default_visible": False},
+            {"key": "risk", "label": "风险"},
+            {"key": "golden", "label": "Golden"},
+            {"key": "runs", "label": "Runs"},
+            {"key": "updated", "label": "更新时间"},
+            {"key": "actions", "label": "操作", "locked": True},
+        ]
+
+    def _admission_admin_table(
+        self,
+        payload: Mapping[str, Any],
+        *,
+        table_id: str,
+        columns: Sequence[Mapping[str, Any]],
+    ) -> tuple[str, str]:
+        rows: list[dict[str, str]] = []
+        drawers: list[str] = []
+        current_actor = dict(payload.get("current_actor", {}) or {})
+        for item_raw in list(payload.get("baselines", []) or []):
+            item = dict(item_raw or {})
+            item["current_actor"] = current_actor
+            case = dict(item.get("admission_case", {}) or {})
+            evidence = dict(item.get("evidence", {}) or {})
+            gate = dict(evidence.get("quality_gate", {}) or {})
+            rule_review = dict(evidence.get("rule_review_report", {}) or {})
+            golden_suite = dict(evidence.get("golden_suite", {}) or {})
+            execution = dict(case.get("execution_summary", {}) or {})
+            baseline_key = str(item.get("baseline_key", "") or "")
+            drawer_id = f"admin-admission-detail-{self._dom_id_fragment(baseline_key)}"
+            detail_url = f"/admission/baseline/{quote(baseline_key, safe='')}"
+            auto_decision = str(gate.get("automatic_decision", "") or "n/a")
+            final_decision = str(case.get("final_decision", "") or gate.get("final_decision", "") or auto_decision)
+            status = str(item.get("status", "") or case.get("status", "") or "new")
+            owner = str(item.get("assignee_display_name", "") or item.get("assignee_id", "") or "unassigned")
+            reviewer = str(
+                item.get("final_reviewer_display_name", "")
+                or item.get("final_reviewer_id", "")
+                or case.get("final_reviewer_display_name", "")
+                or case.get("final_reviewer_id", "")
+                or "n/a"
+            )
+            risk_count = int(gate.get("risk_count", 0) or 0)
+            perf_count = int(gate.get("performance_risk_count", case.get("performance_risk_count", 0)) or 0)
+            coverage_count = int(gate.get("coverage_gap_count", 0) or 0)
+            golden_failed = int(golden_suite.get("failed_case_count_total", 0) or 0)
+            golden_total = int(golden_suite.get("case_count_total", 0) or 0)
+            golden_label = "n/a" if not golden_suite else "pass" if golden_failed == 0 else "fail"
+            updated_at = str(
+                case.get("updated_at", "")
+                or gate.get("updated_at", "")
+                or rule_review.get("updated_at", "")
+                or item.get("updated_at", "")
+                or ""
+            )
+            rows.append(
+                {
+                    "select": f"<input type='checkbox' name='baseline_key' value='{escape(baseline_key, quote=True)}' />",
+                    "baseline": (
+                        f"<strong title='{escape(baseline_key, quote=True)}'>{escape(baseline_key)}</strong>"
+                        f"<div class='meta'>{escape(str(item.get('report_name', '') or rule_review.get('report_name', '') or 'n/a'))}</div>"
+                    ),
+                    "status": self._admin_status(status, tone=self._workflow_state_tone(status)),
+                    "decision": (
+                        self._admin_status(final_decision, tone=self._admission_decision_tone(final_decision))
+                        + f"<div class='meta'>auto: {escape(auto_decision)}</div>"
+                    ),
+                    "owner": escape(owner),
+                    "reviewer": escape(reviewer),
+                    "risk": (
+                        f"<strong>{escape(str(risk_count))}</strong>"
+                        f"<div class='meta'>perf={escape(str(perf_count))} / coverage={escape(str(coverage_count))}</div>"
+                    ),
+                    "golden": (
+                        self._admin_status(golden_label, tone="danger" if golden_label == "fail" else "ok" if golden_label == "pass" else "muted")
+                        + f"<div class='meta'>{escape(str(golden_failed))}/{escape(str(golden_total))}</div>"
+                    ),
+                    "runs": (
+                        f"<strong>{escape(str(execution.get('total_runs', 0) or 0))}</strong>"
+                        f"<div class='meta'>failed={escape(str(execution.get('failed_run_count', 0) or 0))}</div>"
+                    ),
+                    "updated": escape(self._display_datetime(updated_at) or "n/a"),
+                    "actions": (
+                        "<div class='admin-table-actions'>"
+                        + self._admin_drawer_button("详情", drawer_id)
+                        + self._route_link_new_tab("完整页", detail_url)
+                        + "</div>"
+                    ),
+                }
+            )
+            drawers.append(
+                self._admin_drawer(
+                    drawer_id,
+                    f"准入详情 · {baseline_key}",
+                    self._admission_admin_detail(item),
+                )
+            )
+        return self._admin_table(table_id=table_id, columns=columns, rows=rows, empty_text="当前没有匹配准入基线。"), "".join(drawers)
+
+    @staticmethod
+    def _admission_decision_tone(value: str) -> str:
+        decision = str(value or "").lower()
+        if "fail" in decision or "reject" in decision or "block" in decision:
+            return "danger"
+        if "conditional" in decision or "risk" in decision or "manual" in decision:
+            return "warning"
+        if "pass" in decision or "approve" in decision:
+            return "ok"
+        return "muted"
+
+    def _admission_admin_detail(self, item: Mapping[str, Any]) -> str:
+        case = dict(item.get("admission_case", {}) or {})
+        evidence = dict(item.get("evidence", {}) or {})
+        gate = dict(evidence.get("quality_gate", {}) or {})
+        rule_review = dict(evidence.get("rule_review_report", {}) or {})
+        golden_suite = dict(evidence.get("golden_suite", {}) or {})
+        execution = dict(case.get("execution_summary", {}) or {})
+        baseline_key = str(item.get("baseline_key", "") or "")
+        fields = [
+            ("基线", baseline_key),
+            ("报告", item.get("report_name", "") or rule_review.get("report_name", "")),
+            ("Case", case.get("case_id", "") or item.get("case_id", "")),
+            ("状态", item.get("status", "") or case.get("status", "")),
+            ("自动决策", gate.get("automatic_decision", "")),
+            ("最终决策", case.get("final_decision", "") or gate.get("final_decision", "")),
+            ("风险数", gate.get("risk_count", 0)),
+            ("性能风险", gate.get("performance_risk_count", case.get("performance_risk_count", 0))),
+            ("覆盖不足", gate.get("coverage_gap_count", 0)),
+            ("Top Issue", case.get("top_issue_count", 0)),
+            ("Run 数", execution.get("total_runs", 0)),
+            ("Golden", f"{golden_suite.get('failed_case_count_total', 0)}/{golden_suite.get('case_count_total', 0)}"),
+            ("责任人", item.get("assignee_display_name", "") or item.get("assignee_id", "") or "unassigned"),
+            ("评审人", item.get("final_reviewer_display_name", "") or item.get("final_reviewer_id", "") or "n/a"),
+        ]
+        details = "".join(
+            "<div class='admin-detail-item'>"
+            f"<small>{escape(str(label))}</small>"
+            f"<strong>{escape(str(value or 'n/a'))}</strong>"
+            "</div>"
+            for label, value in fields
+        )
+        artifact_links = self._artifact_links(
+            "产物",
+            [
+                ("Latest Audit HTML", rule_review.get("latest_audit_html_path", "")),
+                ("Latest Audit Markdown", rule_review.get("latest_audit_markdown_path", "")),
+                ("Report HTML", rule_review.get("html_path", "")),
+                ("Report Markdown", rule_review.get("markdown_path", "")),
+            ],
+        )
+        return (
+            "<div class='admin-detail-grid'>"
+            + details
+            + "</div>"
+            + (f"<div class='admission-case-links'>{artifact_links}</div>" if artifact_links else "")
+            + "<details class='compact-details'><summary>协作处理</summary><div class='stack'>"
+            + self._admission_case_assign_form(item)
+            + self._admission_case_transition_form(item)
+            + self._admission_case_comment_form(item)
+            + "</div></details>"
+            + f"<p><a href='/admission/baseline/{quote(baseline_key, safe='')}'>打开完整准入详情页</a></p>"
+            + "<details class='compact-details'><summary>查看列表原始 JSON</summary><pre class='mono compact-pre'>"
+            + escape(json.dumps({key: value for key, value in dict(item).items() if key != "current_actor"}, ensure_ascii=False, indent=2))
+            + "</pre></details>"
+        )
+
     def _golden_case_cards(self, items: list[dict[str, Any]]) -> str:
         if not items:
             return self._notice("当前没有可展示的 golden case。")
@@ -60,8 +468,8 @@ class GoldenAdmissionPageMixin:
                 f"<span><b>source_run</b><span class='mono'>{escape(str(item.get('source_run_id', '') or 'n/a'))}</span></span>"
                 f"<span><b>issue_count</b>{escape(str(item.get('issue_count', 0)))}</span>"
                 "</div>"
-                f"<a class='action-link' href='/goldens/case/{quote(case_id, safe='')}'>查看详情</a>"
-                "</article>"
+                + self._route_link_new_tab("查看详情", f"/goldens/case/{quote(case_id, safe='')}" if case_id else "")
+                + "</article>"
             )
         return "<div class='golden-case-list'>" + "".join(cards) + "</div>"
 
@@ -278,7 +686,9 @@ class GoldenAdmissionPageMixin:
                         else ""
                     )
                     + (f"<div class='admission-case-links'>{artifact_links}</div>" if artifact_links else "")
-                    + f"<div class='admission-case-actions'><a class='action-link' href='/admission/baseline/{quote(baseline_key, safe='')}'>查看详情</a></div>"
+                    + "<div class='admission-case-actions'>"
+                    + self._route_link_new_tab("查看详情", f"/admission/baseline/{quote(baseline_key, safe='')}" if baseline_key else "")
+                    + "</div>"
                     + (
                         f"<details class='compact-details admission-case-versions'><summary>最近版本</summary><ul class='link-list'>{version_markup}</ul></details>"
                         if version_markup
@@ -358,7 +768,7 @@ class GoldenAdmissionPageMixin:
             f"<form method='post' action='{escape(self._actor_scoped_path('/admission/actions/assign', current_actor=current_actor), quote=True)}' class='stack'>"
             f"<input type='hidden' name='baseline_key' value='{escape(baseline_key, quote=True)}' />"
             f"<div class='meta'>当前操作人：{escape(str(current_actor.get('display_name', current_actor.get('actor_id', 'tester')) or 'tester'))}</div>"
-            "<label>责任人<input type='text' name='assignee_id' value='developer' placeholder='developer' /></label>"
+            "<label>责任人<input type='text' name='assignee_id' value='developer' placeholder='developer' required /></label>"
             "<div><button type='submit'>提交认领</button></div>"
             "</form></details>"
         )
@@ -384,7 +794,7 @@ class GoldenAdmissionPageMixin:
             f"<form method='post' action='{escape(self._actor_scoped_path('/admission/actions/transition', current_actor=current_actor), quote=True)}' class='stack'>"
             f"<input type='hidden' name='baseline_key' value='{escape(baseline_key, quote=True)}' />"
             f"<div class='meta'>当前操作人：{escape(str(current_actor.get('display_name', current_actor.get('actor_id', 'tester')) or 'tester'))}</div>"
-            f"<label>目标状态<select name='workflow_state'>{options}</select></label>"
+            f"<label>目标状态<select name='workflow_state' required>{options}</select></label>"
             "<label>原因<input type='text' name='reason' value='' placeholder='例如 进入待确认准入或已签字放行' /></label>"
             "<div><button type='submit'>更新状态</button></div>"
             "</form></details>"
@@ -398,7 +808,7 @@ class GoldenAdmissionPageMixin:
             f"<form method='post' action='{escape(self._actor_scoped_path('/admission/actions/comment', current_actor=current_actor), quote=True)}' class='stack'>"
             f"<input type='hidden' name='baseline_key' value='{escape(baseline_key, quote=True)}' />"
             f"<div class='meta'>当前操作人：{escape(str(current_actor.get('display_name', current_actor.get('actor_id', 'tester')) or 'tester'))}</div>"
-            "<label>评论<textarea name='body' rows='3' placeholder='记录放行依据、风险备注或补充证据'></textarea></label>"
+            "<label>评论<textarea name='body' rows='3' placeholder='记录放行依据、风险备注或补充证据' required></textarea></label>"
             "<div><button type='submit'>提交评论</button></div>"
             "</form></details>"
         )

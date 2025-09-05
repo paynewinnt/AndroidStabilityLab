@@ -51,6 +51,7 @@ class WebPortalReadOnlyPagesTest(unittest.TestCase):
         self.assertIn("今日日报已经出现失败轮次或隔离设备", html)
         self.assertIn("打开 /runner", html)
         self.assertIn("查看 /api/runner", html)
+        self.assertNotIn("可用 API", html)
 
     def test_home_page_shows_local_ops_console_notice_by_default(self) -> None:
         app = WebPortalApplication(self._bundle())
@@ -83,12 +84,31 @@ class WebPortalReadOnlyPagesTest(unittest.TestCase):
         self.assertIn("团队共享入口模式", html)
         self.assertIn("team-shared", html)
         self.assertIn("https://stability.example.internal", html)
-        self.assertIn("value metric-text metric-compact", html)
+        self.assertIn("admin-page-header", html)
+        self.assertIn("平台定位", html)
+        self.assertIn("面向 Android 稳定性验证和值班排障", html)
+        self.assertIn("平台用途", html)
+        self.assertIn("覆盖链路", html)
+        self.assertIn("边界原则", html)
+        self.assertIn("运行边界", html)
+        self.assertIn("就绪检查", html)
+        self.assertIn("安全与合同", html)
         self.assertIn("/ready", html)
-        self.assertIn("/api/platform", html)
-        self.assertIn("/api/platform-health", html)
+        self.assertIn("/health", html)
         self.assertIn("/api/manifest", html)
         self.assertIn("/api/openapi.json", html)
+        self.assertNotIn("不再重复提供各模块跳转入口", html)
+        self.assertNotIn("左侧菜单是唯一主导航", html)
+        self.assertNotIn("不作为二级导航中心", html)
+        self.assertNotIn("核心使用链路", html)
+        self.assertNotIn("JSON/API 入口", html)
+        self.assertNotIn("写操作入口", html)
+        self.assertNotIn("platform-pages-table", html)
+        self.assertNotIn("platform-api-table", html)
+        self.assertNotIn("platform-write-table", html)
+        self.assertNotIn("页面与 API 清单", html)
+        self.assertNotIn("<h3>页面入口</h3>", html)
+        self.assertNotIn("<h3>API 入口</h3>", html)
 
     def test_doctor_page_and_api_render_diagnostics(self) -> None:
         fake_report = DoctorReport(
@@ -478,6 +498,8 @@ class WebPortalReadOnlyPagesTest(unittest.TestCase):
         self.assertIn("/api/long-run-templates", html)
         self.assertIn("soak_2h", html)
         self.assertIn("预览计划", html)
+        self.assertIn("/long-run-templates?template_key=soak_2h&amp;preview_only=1", html)
+        self.assertIn("data-file-preview-link='1'", html)
         self.assertIn("套用创建任务", html)
         self.assertIn("/tasks?long_run_template=soak_2h", html)
         self.assertIn("去 Runner 配置", html)
@@ -491,6 +513,20 @@ class WebPortalReadOnlyPagesTest(unittest.TestCase):
         manifest = json.loads(manifest_body.decode("utf-8"))
         self.assertIn("/api/long-run-templates", [item["path"] for item in manifest["read_endpoints"]])
         self.assertIn("/long-run-templates", [item["path"] for item in manifest["pages"]])
+
+    def test_long_run_template_preview_only_page_omits_template_list(self) -> None:
+        app = WebPortalApplication(self._bundle())
+
+        status, content_type, body = app.handle_request("/long-run-templates?template_key=soak_2h&preview_only=1")
+        html = body.decode("utf-8")
+
+        self.assertEqual(status, 200)
+        self.assertIn("text/html", content_type)
+        self.assertIn("模板计划预览", html)
+        self.assertIn("soak_2h", html)
+        self.assertIn("name='preview_only' value='1'", html)
+        self.assertNotIn("模板列表", html)
+        self.assertNotIn("long-run-templates-admin-table", html)
 
     def test_tasks_page_can_apply_long_run_template_defaults(self) -> None:
         app = WebPortalApplication(self._bundle())
@@ -686,7 +722,10 @@ class WebPortalReadOnlyPagesTest(unittest.TestCase):
         self.assertIn("data-file-preview-title='Run JSON'", html)
         self.assertIn("file-preview-modal", html)
         self.assertIn("href='/artifacts'><strong>产物</strong>", html)
-        self.assertIn("href='/artifacts/run/run-1'>产物</a>", html)
+        self.assertIn(
+            "href='/artifacts/run/run-1' data-file-preview-link='1' data-file-preview-title='产物'",
+            html,
+        )
         self.assertNotIn("href='/json-api'><strong>产物</strong>", html)
 
     def test_runs_page_renders_run_list(self) -> None:
@@ -699,8 +738,14 @@ class WebPortalReadOnlyPagesTest(unittest.TestCase):
         self.assertIn("text/html", content_type)
         self.assertIn("Run 列表", html)
         self.assertIn("Calculator Cold Start", html)
-        self.assertIn("href='/runs/run-1'>查看详情</a>", html)
-        self.assertIn("href='/artifacts/run/run-1'>产物</a>", html)
+        self.assertIn(
+            "href='/runs/run-1' data-file-preview-link='1' data-file-preview-title='查看详情'",
+            html,
+        )
+        self.assertIn(
+            "href='/artifacts/run/run-1' data-file-preview-link='1' data-file-preview-title='产物'",
+            html,
+        )
         self.assertIn("data-file-preview-title='Run JSON'", html)
         self.assertIn("href='/runs'><strong>Run</strong>", html)
 
@@ -728,8 +773,14 @@ class WebPortalReadOnlyPagesTest(unittest.TestCase):
         self.assertIn("产物中心", html)
         self.assertIn("Run 产物列表", html)
         self.assertIn("Calculator Cold Start", html)
-        self.assertIn("href='/artifacts/run/run-1'>查看详情</a>", html)
-        self.assertIn("href='/runs/run-1'>Run 详情</a>", html)
+        self.assertIn(
+            "href='/artifacts/run/run-1' data-file-preview-link='1' data-file-preview-title='查看详情'",
+            html,
+        )
+        self.assertIn(
+            "href='/runs/run-1' data-file-preview-link='1' data-file-preview-title='Run 详情'",
+            html,
+        )
         self.assertIn("data-file-preview-title='Run JSON'", html)
         self.assertIn("报告", html)
         self.assertIn("Trace", html)
@@ -922,6 +973,14 @@ class WebPortalReadOnlyPagesTest(unittest.TestCase):
         self.assertIn("syncTaskParamsBuilder", html)
         self.assertIn("JSON.stringify(payload, null, 2)", html)
         self.assertIn("select[name=\"template_type\"]", html)
+        self.assertIn("label:has(input[required]", html)
+        self.assertIn('content:"必填"', html)
+        self.assertIn("validateRequiredGroups", html)
+        self.assertIn("name='task_name' value='' placeholder='例如 首页冷启动回归' required", html)
+        self.assertIn("name='package_name' value='' placeholder='com.example.app' required", html)
+        self.assertIn("<label>模板<select name='template_type' required>", html)
+        self.assertIn("<label>任务<select name='task_id' required>", html)
+        self.assertIn("data-required-group='1' data-required-message='请至少选择一台设备。'", html)
         self.assertIn("source", html)
         self.assertIn("build_id", html)
         self.assertNotIn("name='devices' value='192.168.31.99:5555' required", html)
@@ -962,7 +1021,8 @@ class WebPortalReadOnlyPagesTest(unittest.TestCase):
         self.assertEqual(status, 200)
         self.assertIn("text/html", content_type)
         self.assertIn("JSON API", html)
-        self.assertIn("接口中心先给你展示可读入口", html)
+        self.assertNotIn("接口中心先给你展示可读入口", html)
+        self.assertNotIn("不会再直接弹出一大串 JSON", html)
         self.assertIn("打开 JSON", html)
         self.assertIn("/api/platform", html)
         self.assertIn("/api/manifest", html)

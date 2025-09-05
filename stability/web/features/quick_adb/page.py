@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import shlex
 from html import escape
-from typing import Any
+from typing import Any, Mapping, Sequence
 from urllib.parse import quote
 
 
@@ -14,17 +14,27 @@ class QuickAdbPageMixin:
         operation_result = dict(payload.get("operation_result", {}) or {})
         body = [
             self._notice(str(flash.get("message", "") or ""), tone=str(flash.get("tone", "ok") or "ok")) if flash else "",
-            self._metric_grid(
+            self._admin_page_header(
+                "快捷 ADB",
+                subtitle="按 Android 调用链路组织常用诊断命令；目标选择、包名选择、执行和结果查看都在当前页完成。",
+                breadcrumbs=[("首页", "/"), ("快捷 ADB", "")],
+                actions=[self._route_link("设备池", "/device-pools"), self._route_link("JSON API", "/api/quick-adb")],
+            ),
+            self._admin_summary_strip(
                 [
                     ("链路层级", summary.get("layer_count", 0)),
                     ("当前命令", summary.get("command_count", 0)),
                     ("命令总数", summary.get("total_command_count", 0)),
-                    ("执行策略", "预置模板"),
+                    ("可用设备", summary.get("available_device_count", 0)),
+                    ("执行策略", "白名单模板"),
                 ]
             ),
-            self._section("Android 调用链路", [self._quick_adb_layer_flow(payload)]),
+            "<details class='panel quick-adb-layer-panel'><summary><strong>Android 调用链路</strong><span>点击链路只做命令过滤</span></summary>"
+            + self._quick_adb_layer_flow(payload)
+            + "</details>",
+            self._quick_adb_filter_bar(payload),
             self._quick_adb_target_section(payload),
-            self._section("快捷命令", [self._quick_adb_command_cards(payload)]),
+            self._quick_adb_command_workspace(payload),
             self._quick_adb_result_modal(operation_result),
         ]
         help_buttons, help_sections = self._quick_adb_help_sections()
@@ -44,6 +54,37 @@ class QuickAdbPageMixin:
             + self._quick_adb_target_controls(payload)
             + "</div>"
             "</details>"
+        )
+
+    def _quick_adb_filter_bar(self, payload: Mapping[str, Any]) -> str:
+        filters = dict(payload.get("filters", {}) or {})
+        layer_options = [{"value": "", "label": "全部"}] + [
+            {"value": str(item.get("key", "") or ""), "label": str(item.get("label", "") or "")}
+            for item in list(payload.get("layers", []) or [])
+        ]
+        group_options = [{"value": "", "label": "全部"}] + [
+            {"value": str(item), "label": str(item)}
+            for item in list(payload.get("group_options", []) or [])
+        ]
+        risk_options = [{"value": "", "label": "全部"}] + [
+            {"value": str(item), "label": str(item)}
+            for item in list(payload.get("risk_options", []) or [])
+        ]
+        param_options = [{"value": "", "label": "全部"}] + [
+            {"value": str(item), "label": str(item)}
+            for item in list(payload.get("param_options", []) or [])
+        ]
+        return self._admin_filter_bar(
+            action="/quick-adb",
+            values=filters,
+            fields=[
+                {"name": "keyword", "label": "关键词", "placeholder": "命令 / dumpsys / binder / meminfo"},
+                {"name": "layer", "label": "链路", "type": "select", "options": layer_options},
+                {"name": "group", "label": "分类", "type": "select", "options": group_options},
+                {"name": "risk", "label": "风险", "type": "select", "options": risk_options},
+                {"name": "param", "label": "参数", "type": "select", "options": param_options},
+                {"name": "page_size", "label": "每页", "type": "number"},
+            ],
         )
 
     def _quick_adb_help_sections(self) -> tuple[list[tuple[str, str]], dict[str, str]]:
@@ -181,8 +222,10 @@ class QuickAdbPageMixin:
             "</label>"
             f"<div class='meta'>{escape(hint)} 这个入口会应用到下方所有命令，多选后会按设备逐条执行并汇总输出。</div>"
             f"{selected_device_summary}"
-            "<div class='quick-adb-package-panel'>"
-            "<div class='quick-adb-package-head'><strong>包名选择</strong><span>Package 类命令会使用这里选择或手动输入的包名。</span></div>"
+            f"{selected_package_summary}"
+            "<details class='quick-adb-package-panel'>"
+            "<summary><strong>包名选择</strong><span>展开加载、搜索或手动输入包名</span></summary>"
+            "<div class='quick-adb-package-body'>"
             "<div class='quick-adb-package-controls'>"
             "<label>包类型<select id='quick-adb-package-scope'>"
             "<option value='third_party'>第三方包</option>"
@@ -196,12 +239,11 @@ class QuickAdbPageMixin:
             "<select id='quick-adb-package-select' multiple size='8' data-empty-label='选择设备后自动加载包名；也可以点击“加载包名”。'>"
             f"{package_options}"
             "</select></label>"
-            f"{selected_package_summary}"
             "<label>手动输入包名"
             "<textarea id='quick-adb-manual-packages' rows='2' placeholder='可选。多个包名用逗号、空格或换行分隔，例如 com.android.settings, com.example.app'></textarea>"
             "</label>"
             "<div id='quick-adb-package-status' class='meta'>下拉包名来自当前选中的第一个设备；多选包名会按设备和包名组合逐条执行。</div>"
-            "</div>"
+            "</div></details>"
             "</div>"
         )
 
@@ -246,66 +288,198 @@ class QuickAdbPageMixin:
         device_id = str(item.get("device_id", "") or "")
         return f"{label} ({device_id}) - {suffix}" if suffix else f"{label} ({device_id})"
 
-    def _quick_adb_command_cards(self, payload: dict[str, Any]) -> str:
+    def _quick_adb_command_workspace(self, payload: Mapping[str, Any]) -> str:
+        table_id = "quick-adb-admin-table"
+        columns = self._quick_adb_command_columns()
+        toolbar = self._admin_toolbar(
+            title="快捷命令",
+            description="命令按表格扫描；执行使用上方统一目标，多设备和多包名会自动拆分执行。",
+            table_id=table_id,
+            columns=columns,
+            actions=[
+                "<a class='button secondary' href='/quick-adb'>全部链路</a>",
+                self._route_link("设备池", "/device-pools"),
+            ],
+        )
+        table_html, drawers = self._quick_adb_command_table(payload, table_id=table_id, columns=columns)
+        pagination = self._admin_pagination(
+            base_path="/quick-adb",
+            filters=dict(payload.get("filters", {}) or {}),
+            page=int(dict(payload.get("pagination", {}) or {}).get("page", 1) or 1),
+            page_size=int(dict(payload.get("pagination", {}) or {}).get("page_size", 20) or 20),
+            total=int(dict(payload.get("pagination", {}) or {}).get("total", 0) or 0),
+        )
+        return (
+            "<section class='panel admin-list-panel quick-adb-command-panel'>"
+            + toolbar
+            + table_html
+            + pagination
+            + "</section>"
+            + drawers
+        )
+
+    @staticmethod
+    def _quick_adb_command_columns() -> list[dict[str, Any]]:
+        return [
+            {"key": "select", "label": "", "locked": True},
+            {"key": "command", "label": "名称"},
+            {"key": "layer", "label": "链路"},
+            {"key": "group", "label": "分类"},
+            {"key": "adb_command", "label": "命令"},
+            {"key": "params", "label": "参数"},
+            {"key": "risk", "label": "风险"},
+            {"key": "timeout", "label": "超时"},
+            {"key": "actions", "label": "操作", "locked": True},
+        ]
+
+    def _quick_adb_command_table(
+        self,
+        payload: Mapping[str, Any],
+        *,
+        table_id: str,
+        columns: Sequence[Mapping[str, Any]],
+    ) -> tuple[str, str]:
         commands = list(payload.get("commands", []) or [])
         if not commands:
-            return self._notice("当前过滤条件下没有命令。", tone="warning")
+            return self._admin_table(table_id=table_id, columns=columns, rows=[], empty_text="当前过滤条件下没有命令。"), ""
         current_actor = dict(payload.get("current_actor", {}) or {})
-        grouped: dict[str, list[dict[str, Any]]] = {}
+        rows: list[dict[str, str]] = []
+        drawers: list[str] = []
+        layer_labels = {
+            str(item.get("key", "") or ""): str(item.get("label", "") or "")
+            for item in list(payload.get("layers", []) or [])
+        }
         for command in commands:
-            grouped.setdefault(str(command.get("group", "") or "未分类"), []).append(dict(command))
-        return "<div class='quick-adb-groups'>" + "".join(
-            "<section class='quick-adb-group'>"
-            f"<h3>{escape(group)}</h3>"
-            "<div class='quick-adb-command-grid'>"
-            + "".join(self._quick_adb_command_card(command, current_actor=current_actor) for command in group_commands)
-            + "</div></section>"
-            for group, group_commands in grouped.items()
-        ) + "</div>"
+            item = dict(command or {})
+            command_id = str(item.get("command_id", "") or "")
+            title = str(item.get("title", "") or command_id)
+            layer = str(item.get("layer", "") or "")
+            params = [str(value) for value in list(item.get("params", []) or []) if str(value)]
+            risk = str(item.get("risk", "") or "safe")
+            drawer_id = f"quick-adb-command-{self._quick_adb_dom_id(command_id)}"
+            args = shlex.join(["adb", *[str(arg) for arg in list(item.get("args", []) or [])]])
+            rows.append(
+                {
+                    "select": f"<input type='checkbox' name='command_id' value='{escape(command_id, quote=True)}' />",
+                    "command": (
+                        f"<strong title='{escape(title, quote=True)}'>{escape(title)}</strong>"
+                        f"<div class='mono' title='{escape(args, quote=True)}'>{escape(command_id)}</div>"
+                    ),
+                    "layer": escape(layer_labels.get(layer, layer) or "n/a"),
+                    "group": escape(str(item.get("group", "") or "未分类")),
+                    "adb_command": f"<span class='mono quick-adb-command-text' title='{escape(args, quote=True)}'>{escape(args)}</span>",
+                    "params": self._quick_adb_param_chips(params),
+                    "risk": self._quick_adb_risk_label(risk),
+                    "timeout": escape(str(item.get("timeout_seconds", 20))) + "s",
+                    "actions": (
+                        "<div class='admin-table-actions quick-adb-table-actions'>"
+                        + self._admin_drawer_button("详情", drawer_id)
+                        + self._quick_adb_execute_form(item, current_actor=current_actor, compact=True)
+                        + "</div>"
+                    ),
+                }
+            )
+            drawers.append(
+                self._admin_drawer(
+                    drawer_id,
+                    f"ADB 命令 · {title}",
+                    self._quick_adb_command_detail(item, current_actor=current_actor),
+                )
+            )
+        return self._admin_table(table_id=table_id, columns=columns, rows=rows, empty_text="当前过滤条件下没有命令。"), "".join(drawers)
 
-    def _quick_adb_command_card(self, command: dict[str, Any], *, current_actor: dict[str, Any]) -> str:
+    @staticmethod
+    def _quick_adb_dom_id(value: str) -> str:
+        return "".join(ch if ch.isalnum() or ch in {"-", "_"} else "-" for ch in str(value or "")) or "unknown"
+
+    @staticmethod
+    def _quick_adb_param_chips(params: Sequence[str]) -> str:
+        if not params:
+            return "<span class='admin-status admin-status-muted'>无</span>"
+        return "".join(
+            f"<span class='admin-status admin-status-warning'>{escape(str(param))}</span>"
+            for param in params
+        )
+
+    @staticmethod
+    def _quick_adb_risk_label(risk: str) -> str:
+        tone = "muted" if risk == "safe" else "warning"
+        return f"<span class='admin-status admin-status-{tone}'>{escape(risk or 'safe')}</span>"
+
+    def _quick_adb_execute_form(
+        self,
+        command: Mapping[str, Any],
+        *,
+        current_actor: Mapping[str, Any],
+        compact: bool = False,
+    ) -> str:
         params = set(command.get("params", []) or [])
         needs_package = "package" in params
         command_id = str(command.get("command_id", "") or "")
-        args = shlex.join(["adb", *[str(item) for item in list(command.get("args", []) or [])]])
         package_help = (
             "<details class='quick-adb-package-help'>"
             "<summary aria-label='Package 参数说明' title='Package 参数说明'>?</summary>"
             "<div class='quick-adb-package-help-body'>使用上方“包名选择”。可从设备包名下拉多选，也可以手动输入包名。</div>"
             "</details>"
-            if needs_package
+            if needs_package and not compact
             else ""
         )
         risk = str(command.get("risk", "safe") or "safe")
-        risk_html = "" if risk == "safe" else f"<span class='pill'>{escape(risk)}</span>"
-        command_actions = (
-            f"<div class='quick-adb-command-actions'>{package_help}{risk_html}</div>"
-            if package_help or risk_html
-            else ""
-        )
+        risk_html = "" if compact or risk == "safe" else f"<span class='pill'>{escape(risk)}</span>"
         action_path = self._actor_scoped_path("/quick-adb/actions/execute", current_actor=current_actor)
         package_hidden = (
             "<input type='hidden' name='package_names' value='' data-quick-adb-package-target='1' />"
             if needs_package
             else ""
         )
+        form_class = "quick-adb-form quick-adb-table-form" if compact else "quick-adb-form"
+        timeout_label = "Timeout" if not compact else "超时"
+        timeout_value = escape(str(command.get("timeout_seconds", 20)), quote=True)
+        timeout_control = (
+            f"<input type='hidden' name='timeout_seconds' value='{timeout_value}' />"
+            if compact
+            else f"<label>{timeout_label}<input type='number' min='3' max='180' name='timeout_seconds' value='{timeout_value}' /></label>"
+        )
         return (
-            "<article class='card quick-adb-command-card'>"
-            "<div class='quick-adb-command-head'>"
-            f"<h4>{escape(str(command.get('title', '') or command_id))}</h4>{command_actions}"
-            "</div>"
-            f"<p>{escape(str(command.get('description', '') or ''))}</p>"
-            f"<pre class='mono compact-pre'>{escape(args)}</pre>"
-            f"<form method='post' action='{escape(action_path, quote=True)}' class='quick-adb-form'>"
+            f"<form method='post' action='{escape(action_path, quote=True)}' class='{form_class}'>"
             f"<input type='hidden' name='command_id' value='{escape(command_id, quote=True)}' />"
             "<input type='hidden' name='device_ids' value='' data-quick-adb-device-target='1' />"
             f"{package_hidden}"
-            "<div class='form-grid'>"
-            f"<label>Timeout<input type='number' min='3' max='180' name='timeout_seconds' value='{escape(str(command.get('timeout_seconds', 20)), quote=True)}' /></label>"
+            "<div class='quick-adb-command-actions'>"
+            f"{package_help}{risk_html}"
+            f"{timeout_control}"
+            "<button type='submit'>执行</button>"
             "</div>"
-            "<div class='form-actions compact-form-actions'><button type='submit'>执行</button></div>"
             "</form>"
-            "</article>"
+        )
+
+    def _quick_adb_command_detail(self, command: Mapping[str, Any], *, current_actor: Mapping[str, Any]) -> str:
+        args = shlex.join(["adb", *[str(item) for item in list(command.get("args", []) or [])]])
+        fields = [
+            ("命令 ID", command.get("command_id", "")),
+            ("标题", command.get("title", "")),
+            ("链路", command.get("layer", "")),
+            ("分类", command.get("group", "")),
+            ("风险", command.get("risk", "")),
+            ("默认超时", f"{command.get('timeout_seconds', 20)}s"),
+            ("参数", ", ".join(str(item) for item in list(command.get("params", []) or [])) or "无"),
+        ]
+        detail_grid = "".join(
+            "<div class='admin-detail-item'>"
+            f"<small>{escape(str(label))}</small>"
+            f"<strong>{escape(str(value or 'n/a'))}</strong>"
+            "</div>"
+            for label, value in fields
+        )
+        return (
+            "<div class='admin-detail-grid'>"
+            + detail_grid
+            + "</div>"
+            f"<p>{escape(str(command.get('description', '') or ''))}</p>"
+            "<pre class='mono compact-pre'>"
+            + escape(args)
+            + "</pre>"
+            + self._quick_adb_execute_form(command, current_actor=current_actor)
         )
 
     def _quick_adb_result(self, result: dict[str, Any]) -> str:

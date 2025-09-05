@@ -7,27 +7,29 @@ from urllib.parse import quote
 
 def sidebar_nav(page_title: str) -> str:
     links = [
-        ("首页", "/", "首页"),
-        ("平台说明", "/platform", "平台说明"),
-        ("诊断中心", "/doctor", "诊断中心"),
-        ("设备池", "/device-pools", "设备池"),
-        ("快捷 ADB", "/quick-adb", "快捷 ADB"),
-        ("任务大厅", "/tasks", "任务大厅"),
-        ("Run 列表", "/runs", "Run 列表"),
-        ("长稳模板", "/long-run-templates", "长稳运行模板"),
-        ("巡检状态", "/runner", "巡检状态"),
-        ("性能采样", "/performance", "性能采样"),
-        ("产物中心", "/artifacts", "产物中心"),
-        ("问题中心", "/issues", "问题中心"),
-        ("集成 Outbox", "/integration", "集成 Outbox"),
-        ("Golden Suite", "/goldens", "Golden Suite"),
-        ("准入中心", "/admission", "准入中心"),
-        ("规则中心", "/rules", "规则中心"),
-        ("接口中心", "/json-api", "JSON API"),
+        ("首页", "/", "首页", "首"),
+        ("平台说明", "/platform", "平台说明", "平"),
+        ("诊断中心", "/doctor", "诊断中心", "诊"),
+        ("设备池", "/device-pools", "设备池", "设"),
+        ("快捷 ADB", "/quick-adb", "快捷 ADB", "ADB"),
+        ("任务大厅", "/tasks", "任务大厅", "任"),
+        ("Run 列表", "/runs", "Run 列表", "Run"),
+        ("长稳模板", "/long-run-templates", "长稳运行模板", "长"),
+        ("巡检状态", "/runner", "巡检状态", "巡"),
+        ("性能采样", "/performance", "性能采样", "性"),
+        ("产物中心", "/artifacts", "产物中心", "产"),
+        ("问题中心", "/issues", "问题中心", "问"),
+        ("集成 Outbox", "/integration", "集成 Outbox", "Out"),
+        ("Golden Suite", "/goldens", "Golden Suite", "GS"),
+        ("准入中心", "/admission", "准入中心", "准"),
+        ("规则中心", "/rules", "规则中心", "规"),
+        ("接口中心", "/json-api", "JSON API", "API"),
     ]
     return "".join(
-        f"<a href='{escape(path, quote=True)}' class='{'active' if current_title == page_title else ''}'>{escape(label)}</a>"
-        for label, path, current_title in links
+        f"<a href='{escape(path, quote=True)}' title='{escape(label, quote=True)}' "
+        f"aria-label='{escape(label, quote=True)}' data-short='{escape(short, quote=True)}' "
+        f"class='{'active' if current_title == page_title else ''}'>{escape(label)}</a>"
+        for label, path, current_title, short in links
     )
 
 
@@ -213,7 +215,7 @@ def json_api_usage_cards() -> str:
         "<div class='cards'>"
         "<article class='card stack'>"
         "<h3>浏览器里看</h3>"
-        "<div>先从这个页面点进具体接口，再决定要不要继续打开详情接口或文件产物。</div>"
+        "<div>从接口列表打开 JSON，也可以继续进入详情接口或文件产物。</div>"
         "<div><a href='/api/platform'>平台 JSON</a> / <a href='/api/users'>用户目录</a> / <a href='/api/responsibility'>责任同步</a> / <a href='/api/device-pools'>设备池 JSON</a> / <a href='/api/manifest'>API Manifest</a> / <a href='/api/openapi.json'>OpenAPI</a> / <a href='/api/home'>首页 JSON</a> / <a href='/api/tasks'>任务 JSON</a> / <a href='/api/long-run-templates'>长稳模板 JSON</a> / <a href='/api/performance'>性能 JSON</a> / <a href='/api/rules'>规则 JSON</a> / <a href='/api/integration'>集成 JSON</a></div>"
         "</article>"
         "<article class='card stack'>"

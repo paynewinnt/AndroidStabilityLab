@@ -35,6 +35,7 @@ def handle_core_get(
         return app._html_response(200, app._render_doctor(payload))
     if route == "/json-api":
         payload = app._home_payload(query, request_context=request_context)
+        payload["json_api_query"] = dict(query)
         return app._html_response(200, app._render_json_api_index(payload))
     if route == "/rules":
         payload = app._rules_payload(query, request_context=request_context)

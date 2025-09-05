@@ -7,6 +7,7 @@ from urllib.parse import urlencode
 
 from stability.infrastructure.command_runner import CommandResult
 from stability.web import WebPortalApplication
+from stability.web.features.quick_adb.catalog import quick_adb_command_by_id
 from tests.helpers import web_portal as web_portal_helpers
 
 
@@ -49,6 +50,10 @@ class WebQuickAdbTest(unittest.TestCase):
         self.assertIn("asl.quickAdb.selectedPackages.v1", html)
         self.assertIn("restoreQuickAdbPackages", html)
         self.assertIn("persistQuickAdbPackages", html)
+        self.assertIn("scheduleAdminFilterSubmit", html)
+        self.assertIn("target.closest('.admin-filter-bar')", html)
+        self.assertIn("const actionPreviewLinkSelector='[data-action-preview-link][href]'", html)
+        self.assertNotIn(".admin-table-actions a[href],.task-row-actions a[href]", html)
         self.assertIn("/api/quick-adb/packages", html)
         self.assertIn("data-quick-adb-package-target", html)
         self.assertIn("class='quick-adb-package-help'", html)
@@ -85,6 +90,26 @@ class WebQuickAdbTest(unittest.TestCase):
         self.assertIn("binder state 不可读", command_text)
         self.assertIn("exit 0", command_text)
         self.assertNotIn("2>/dev/null", command_text)
+        self.assertEqual(binder_command["args"][0], "shell")
+        self.assertNotIn("sh", binder_command["args"][1:])
+        self.assertNotIn("-c", binder_command["args"][1:])
+
+    def test_quick_adb_exposes_non_root_binder_fallback_commands(self) -> None:
+        expected = {
+            "system_binder_calls_stats_enable": ("shell", "dumpsys", "binder_calls_stats", "--enable"),
+            "system_binder_calls_stats_reset": ("shell", "dumpsys", "binder_calls_stats", "--reset"),
+            "system_binder_calls_stats": ("shell", "dumpsys", "binder_calls_stats"),
+            "system_looper_stats": ("shell", "dumpsys", "looper_stats"),
+            "system_procstats_1h": ("shell", "dumpsys", "procstats", "--hours", "1"),
+        }
+
+        for command_id, args in expected.items():
+            with self.subTest(command_id=command_id):
+                command = quick_adb_command_by_id(command_id)
+                self.assertIsNotNone(command)
+                self.assertEqual(command.args, args)
+                self.assertEqual(command.layer, "system_server")
+                self.assertEqual(command.group, "非 root Binder 替代诊断")
 
     def test_quick_adb_execute_uses_whitelisted_template(self) -> None:
         app = WebPortalApplication(web_portal_helpers.bundle())

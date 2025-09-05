@@ -16,6 +16,7 @@ class IntegrationPayloadMixin(IntegrationAcceptancePayloadMixin):
         *,
         request_context: Mapping[str, Any] | None = None,
     ) -> dict[str, Any]:
+        filters = self._integration_admin_filters(query)
         service = getattr(self._bundle, "integration_outbox_service", None)
         if service is None:
             return {
@@ -32,10 +33,18 @@ class IntegrationPayloadMixin(IntegrationAcceptancePayloadMixin):
                 "operator_receipts": [],
                 "idempotency_contract": self._integration_idempotency_contract_payload(),
                 "callback_contract": self._integration_callback_contract_payload(),
+                "filters": filters,
+                "pagination": {"page": int(filters["page"]), "page_size": int(filters["page_size"]), "total": 0},
                 "events": [],
+                "all_events": [],
                 "webhooks": [],
+                "all_webhooks": [],
+                "release_submissions": [],
             }
-        limit = self._int_query(query, "limit", default=20)
+        page = int(filters["page"])
+        page_size = int(filters["page_size"])
+        default_limit = max(page * page_size, 20)
+        limit = self._int_query(query, "limit", default=default_limit) if "limit" in query else default_limit
         events = list(service.list_events(limit=limit)) if hasattr(service, "list_events") else []
         webhooks = list(service.list_webhooks()) if hasattr(service, "list_webhooks") else []
         delivery_status_counts: dict[str, int] = {}
@@ -73,7 +82,18 @@ class IntegrationPayloadMixin(IntegrationAcceptancePayloadMixin):
                 defect_webhook_count += 1
             if channel == "release_submission":
                 release_webhook_count += 1
-        event_payloads = [self._integration_event_payload(item) for item in events]
+        webhook_payloads = [self._integration_webhook_payload(item) for item in webhooks]
+        channel_index = self._integration_event_channel_index(webhook_payloads)
+        event_payloads = [
+            self._integration_event_with_channels(self._integration_event_payload(item), channel_index=channel_index)
+            for item in events
+        ]
+        filtered_events = [item for item in event_payloads if self._integration_event_matches_admin_filters(item, filters)]
+        paged_events = self._page_slice(filtered_events, page=page, page_size=page_size)
+        filtered_webhooks = [
+            item for item in webhook_payloads if self._integration_webhook_matches_admin_filters(item, filters)
+        ]
+        release_submissions = self._integration_release_submissions_for_page(filters)
         consumer_receipts = [
             dict(item)
             for event_payload in event_payloads
@@ -119,6 +139,9 @@ class IntegrationPayloadMixin(IntegrationAcceptancePayloadMixin):
                 "consumer_receipt_count": len(consumer_receipts),
                 "replay_receipt_count": len(replay_receipts),
                 "operator_receipt_count": len(operator_receipts),
+                "filtered_event_count": len(filtered_events),
+                "filtered_webhook_count": len(filtered_webhooks),
+                "release_submission_count": len(release_submissions),
             },
             "worker": self._integration_worker_payload(service, webhooks=webhooks),
             "im_acceptance": self._integration_im_acceptance_payload(service, events=event_payloads, webhooks=webhooks),
@@ -128,8 +151,13 @@ class IntegrationPayloadMixin(IntegrationAcceptancePayloadMixin):
             "delivery_receipts": delivery_receipts,
             "idempotency_contract": self._integration_idempotency_contract_payload(),
             "callback_contract": self._integration_callback_contract_payload(),
-            "events": event_payloads,
-            "webhooks": [self._integration_webhook_payload(item) for item in webhooks],
+            "filters": filters,
+            "pagination": {"page": page, "page_size": page_size, "total": len(filtered_events)},
+            "events": paged_events,
+            "all_events": filtered_events,
+            "webhooks": filtered_webhooks,
+            "all_webhooks": webhook_payloads,
+            "release_submissions": release_submissions,
         }
 
     def _release_submissions_payload(
@@ -249,6 +277,175 @@ class IntegrationPayloadMixin(IntegrationAcceptancePayloadMixin):
             },
             "receipt_contract": "webhook_transport_ack_only_plus_operator_receipts",
         }
+
+    def _integration_admin_filters(self, query: dict[str, list[str]]) -> dict[str, Any]:
+        return {
+            "keyword": self._str_query(query, "keyword"),
+            "status": self._str_query(query, "status") or self._str_query(query, "delivery_status"),
+            "delivery_channel": self._str_query(query, "delivery_channel") or self._str_query(query, "channel"),
+            "event_type": self._str_query(query, "event_type"),
+            "target_type": self._str_query(query, "target_type"),
+            "package_name": self._str_query(query, "package_name"),
+            "backend": self._str_query(query, "backend") or self._str_query(query, "monitoring_backend"),
+            "created_from": self._str_query(query, "created_from"),
+            "created_to": self._str_query(query, "created_to"),
+            "page": max(self._int_query(query, "page", default=1), 1),
+            "page_size": min(max(self._int_query(query, "page_size", default=20), 1), 100),
+        }
+
+    def _integration_event_matches_admin_filters(self, item: Mapping[str, Any], filters: Mapping[str, Any]) -> bool:
+        keyword = str(filters.get("keyword", "") or "").lower()
+        if keyword:
+            payload = dict(item.get("payload", {}) or {})
+            haystack = " ".join(
+                str(value or "")
+                for value in (
+                    item.get("event_id", ""),
+                    item.get("event_type", ""),
+                    item.get("target_type", ""),
+                    item.get("target_id", ""),
+                    item.get("delivery_status", ""),
+                    item.get("created_by", ""),
+                    item.get("last_error", ""),
+                    payload.get("package_name", ""),
+                    payload.get("run_id", ""),
+                    payload.get("task_id", ""),
+                    payload.get("submission_id", ""),
+                )
+            ).lower()
+            if keyword not in haystack:
+                return False
+        status = str(filters.get("status", "") or "").lower()
+        if status and status != str(item.get("delivery_status", "") or "").lower():
+            return False
+        event_type = str(filters.get("event_type", "") or "").lower()
+        if event_type and event_type not in str(item.get("event_type", "") or "").lower():
+            return False
+        target_type = str(filters.get("target_type", "") or "").lower()
+        if target_type and target_type != str(item.get("target_type", "") or "").lower():
+            return False
+        channel = str(filters.get("delivery_channel", "") or "").lower()
+        if channel and channel not in {str(value or "").lower() for value in list(item.get("delivery_channels", []) or [])}:
+            return False
+        package_name = str(filters.get("package_name", "") or "").lower()
+        if package_name and package_name not in str(dict(item.get("payload", {}) or {}).get("package_name", "") or "").lower():
+            return False
+        backend = str(filters.get("backend", "") or "").lower()
+        if backend and backend not in self._integration_event_backend_values(item):
+            return False
+        return self._created_at_in_range(str(item.get("created_at", "") or ""), filters)
+
+    @staticmethod
+    def _integration_event_channel_index(webhooks: Sequence[Mapping[str, Any]]) -> dict[str, set[str]]:
+        index: dict[str, set[str]] = {}
+        all_event_channels: set[str] = set()
+        for webhook in webhooks:
+            channel = str(webhook.get("delivery_channel", "") or "generic").strip() or "generic"
+            event_types = [
+                str(value).strip()
+                for value in list(webhook.get("subscribed_event_types", []) or [])
+                if str(value).strip()
+            ]
+            if not event_types:
+                all_event_channels.add(channel)
+                continue
+            for event_type in event_types:
+                index.setdefault(event_type, set()).add(channel)
+        if all_event_channels:
+            index.setdefault("*", set()).update(all_event_channels)
+        return index
+
+    @staticmethod
+    def _integration_event_with_channels(
+        item: dict[str, Any],
+        *,
+        channel_index: Mapping[str, set[str]],
+    ) -> dict[str, Any]:
+        event_type = str(item.get("event_type", "") or "")
+        channels = set(channel_index.get("*", set()))
+        channels.update(channel_index.get(event_type, set()))
+        item["delivery_channels"] = sorted(channels)
+        return item
+
+    @staticmethod
+    def _integration_event_backend_values(item: Mapping[str, Any]) -> set[str]:
+        payload = dict(item.get("payload", {}) or {})
+        candidates = {
+            payload.get("backend"),
+            payload.get("monitoring_backend"),
+            payload.get("collector_backend"),
+        }
+        monitoring = payload.get("monitoring")
+        if isinstance(monitoring, Mapping):
+            candidates.add(dict(monitoring).get("backend"))
+        return {str(value or "").lower() for value in candidates if str(value or "").strip()}
+
+    def _integration_webhook_matches_admin_filters(self, item: Mapping[str, Any], filters: Mapping[str, Any]) -> bool:
+        keyword = str(filters.get("keyword", "") or "").lower()
+        if keyword:
+            haystack = " ".join(
+                [
+                    str(item.get("name", "") or ""),
+                    str(item.get("url", "") or ""),
+                    str(item.get("delivery_channel", "") or ""),
+                    str(item.get("failure_policy", "") or ""),
+                    str(item.get("security_boundary", "") or ""),
+                    " ".join(str(value or "") for value in list(item.get("subscribed_event_types", []) or [])),
+                ]
+            ).lower()
+            if keyword not in haystack:
+                return False
+        channel = str(filters.get("delivery_channel", "") or "").lower()
+        if channel and channel != str(item.get("delivery_channel", "") or "").lower():
+            return False
+        return self._created_at_in_range(str(item.get("created_at", "") or ""), filters)
+
+    def _integration_release_submissions_for_page(self, filters: Mapping[str, Any]) -> list[dict[str, Any]]:
+        service = getattr(self._bundle, "release_submission_service", None)
+        if service is None or not hasattr(service, "list_submissions"):
+            return []
+        records = list(service.list_submissions(limit=100))
+        payloads = [self._release_submission_payload(record) for record in records]
+        return [item for item in payloads if self._release_submission_matches_integration_filters(item, filters)]
+
+    def _release_submission_matches_integration_filters(
+        self,
+        item: Mapping[str, Any],
+        filters: Mapping[str, Any],
+    ) -> bool:
+        keyword = str(filters.get("keyword", "") or "").lower()
+        if keyword:
+            haystack = " ".join(
+                str(value or "")
+                for value in (
+                    item.get("submission_id", ""),
+                    item.get("source_platform", ""),
+                    item.get("source_request_id", ""),
+                    item.get("submission_title", ""),
+                    item.get("package_name", ""),
+                    item.get("build_id", ""),
+                    item.get("task_id", ""),
+                    item.get("task_name", ""),
+                    item.get("run_id", ""),
+                    item.get("owner_team", ""),
+                )
+            ).lower()
+            if keyword not in haystack:
+                return False
+        status = str(filters.get("status", "") or "").lower()
+        if status and status not in {
+            str(item.get("submission_status", "") or "").lower(),
+            str(item.get("run_status", "") or "").lower(),
+            str(item.get("admission_final_decision", "") or "").lower(),
+        }:
+            return False
+        package_name = str(filters.get("package_name", "") or "").lower()
+        if package_name and package_name not in str(item.get("package_name", "") or "").lower():
+            return False
+        backend = str(filters.get("backend", "") or "").lower()
+        if backend and backend != str(item.get("monitoring_backend", "") or "").lower():
+            return False
+        return self._created_at_in_range(str(item.get("created_at", "") or ""), filters)
 
     def _integration_idempotency_contract_payload(self) -> dict[str, Any]:
         return {

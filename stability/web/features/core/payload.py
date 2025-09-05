@@ -234,6 +234,10 @@ class CorePayloadMixin:
         check_webhooks = str((query.get("check_webhooks") or [""])[0]).strip().lower() in {"1", "true", "yes"}
         device_id = str((query.get("device_id") or [""])[0]).strip()
         package_name = str((query.get("package_name") or [""])[0]).strip()
+        keyword = self._str_query(query, "keyword")
+        status_filter = self._str_query(query, "status")
+        page = max(self._int_query(query, "page", default=1), 1)
+        page_size = min(max(self._int_query(query, "page_size", default=20), 1), 100)
         doctor_service_class = DoctorService
         legacy_module = sys.modules.get("stability.web.application_payload_core")
         if legacy_module is not None:
@@ -248,6 +252,26 @@ class CorePayloadMixin:
             package_name=package_name,
             check_webhooks=check_webhooks,
         ).run()
+        all_checks = [
+            {
+                "name": item.name,
+                "status": item.status,
+                "summary": item.summary,
+                "details": dict(item.details),
+            }
+            for item in report.checks
+        ]
+        filters = {
+            "keyword": keyword,
+            "status": status_filter,
+            "device_id": device_id,
+            "package_name": package_name,
+            "check_webhooks": "1" if check_webhooks else "",
+            "page": page,
+            "page_size": page_size,
+        }
+        filtered_checks = [item for item in all_checks if self._doctor_check_matches_admin_filters(item, filters)]
+        checks = filtered_checks[(page - 1) * page_size:page * page_size]
         return {
             "page": "doctor",
             "title": "诊断中心",
@@ -257,17 +281,39 @@ class CorePayloadMixin:
             "device_id": device_id,
             "package_name": package_name,
             "ok": report.ok,
-            "summary": dict(report.summary),
-            "checks": [
-                {
-                    "name": item.name,
-                    "status": item.status,
-                    "summary": item.summary,
-                    "details": dict(item.details),
-                }
-                for item in report.checks
-            ],
+            "summary": {**dict(report.summary), "filtered": len(filtered_checks), "total": len(all_checks)},
+            "filters": filters,
+            "filter_options": {
+                "statuses": sorted({str(item.get("status", "") or "") for item in all_checks if str(item.get("status", "") or "").strip()}),
+            },
+            "pagination": {
+                "page": page,
+                "page_size": page_size,
+                "total": len(filtered_checks),
+            },
+            "checks": checks,
         }
+
+    @staticmethod
+    def _doctor_check_matches_admin_filters(item: Mapping[str, Any], filters: Mapping[str, Any]) -> bool:
+        keyword = str(filters.get("keyword", "") or "").lower()
+        if keyword:
+            details = dict(item.get("details", {}) or {})
+            haystack = " ".join(
+                [
+                    str(item.get("name", "") or ""),
+                    str(item.get("status", "") or ""),
+                    str(item.get("summary", "") or ""),
+                    *[str(key) for key in details],
+                    *[str(value) for value in details.values()],
+                ]
+            ).lower()
+            if keyword not in haystack:
+                return False
+        status = str(filters.get("status", "") or "").lower()
+        if status and status != str(item.get("status", "") or "").lower():
+            return False
+        return True
 
     def _users_payload(
         self,

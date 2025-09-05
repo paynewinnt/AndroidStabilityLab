@@ -63,8 +63,8 @@ class HelpPageMixin:
             return (
                 [
                     ("help-quickstart", "先看边界"),
-                    ("help-sampling", "入口清单"),
-                    ("help-analysis", "部署判断"),
+                    ("help-sampling", "接口合同"),
+                    ("help-analysis", "就绪判断"),
                 ],
                 {
                     "help-quickstart": self._help_card(
@@ -73,21 +73,23 @@ class HelpPageMixin:
                             "先看当前是本地值班模式还是团队共享入口模式。",
                             "再确认写操作是否要求服务端解析 identity、session 和审计事件。",
                         ],
-                        links=[("平台说明", "/platform"), ("诊断中心", "/doctor"), ("接口中心", "/json-api")],
                     ),
                     "help-sampling": self._help_card(
-                        "2. 可用入口怎么查",
+                        "2. 接口合同看什么",
                         [
-                            "页面入口用于人工查看和操作，JSON API 用于脚本读取。",
-                            "如果要接外部系统，先看集成 Outbox，而不是直接读页面 HTML。",
+                            "平台页只展示关键合同：readiness、health、manifest 和 OpenAPI。",
+                            "外部系统接入优先依赖稳定 JSON 合同，避免直接解析 HTML。",
                         ],
-                        links=[("任务大厅", "/tasks"), ("集成 Outbox", "/integration"), ("API Manifest", "/api/manifest")],
+                        code=[
+                            "curl http://127.0.0.1:8030/api/manifest",
+                            "curl http://127.0.0.1:8030/api/openapi.json",
+                        ],
                     ),
                     "help-analysis": self._help_card(
-                        "3. 怎么判断部署是否可用",
+                        "3. 怎么判断就绪",
                         [
                             "先看 readiness、health、页面数和 API 数是否符合预期。",
-                            "如部署模式或身份边界异常，优先到诊断中心排查配置与 runtime 路径。",
+                            "如部署模式或身份边界异常，优先排查配置、runtime 路径和服务启动日志。",
                         ],
                         code=[
                             "curl http://127.0.0.1:8030/ready",
@@ -556,15 +558,15 @@ class HelpPageMixin:
         if page_title == "JSON API" or "接口" in page_title:
             return (
                 [
-                    ("help-quickstart", "先选接口"),
+                    ("help-quickstart", "接口列表"),
                     ("help-sampling", "直接看原始"),
                     ("help-analysis", "命令行化"),
                 ],
                 {
                     "help-quickstart": self._help_card(
-                        "1. 先选接口",
+                        "1. 接口列表",
                         [
-                            "先从常用接口跳转到对应 JSON，避免一次看完整屏。",
+                            "从接口列表跳转到对应 JSON。",
                             "每个入口默认是只读导航。",
                         ],
                         links=[("首页", "/"), ("任务 JSON", "/api/tasks"), ("性能 JSON", "/api/performance")],

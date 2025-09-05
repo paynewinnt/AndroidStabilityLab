@@ -19,16 +19,34 @@ class AdmissionWorkflowPayloadMixin(AdmissionPayloadMixin):
         *,
         request_context: Mapping[str, Any] | None = None,
     ) -> dict[str, Any]:
-        limit = self._int_query(query, "limit", default=30)
+        limit = self._int_query(query, "limit", default=200)
+        page = max(self._int_query(query, "page", default=1), 1)
+        page_size = min(max(self._int_query(query, "page_size", default=20), 1), 100)
+        filters = {
+            "keyword": self._str_query(query, "keyword"),
+            "status": self._str_query(query, "status") or self._str_query(query, "state"),
+            "device_id": self._str_query(query, "device_id"),
+            "package_name": self._str_query(query, "package_name"),
+            "scenario": self._str_query(query, "scenario"),
+            "issue_type": self._str_query(query, "issue_type"),
+            "severity": self._str_query(query, "severity"),
+            "created_from": self._str_query(query, "created_from"),
+            "created_to": self._str_query(query, "created_to"),
+            "page": page,
+            "page_size": page_size,
+            "limit": limit,
+        }
         actors = self._collaboration_actors()
-        issues = self._issue_summaries(limit=limit)
+        all_issues = self._issue_summaries(limit=limit)
+        filtered_issues = [item for item in all_issues if self._issue_matches_admin_filters(item, filters)]
+        issues = filtered_issues[(page - 1) * page_size:page * page_size]
         current_actor = self._current_actor_payload(request_context=request_context, query=query)
         for item in issues:
             item["current_actor"] = dict(current_actor)
         severity_counts: dict[str, int] = {}
         issue_type_counts: dict[str, int] = {}
         state_counts: dict[str, int] = {}
-        for item in issues:
+        for item in filtered_issues:
             severity = str(item.get("severity", "") or "unknown")
             issue_type = str(item.get("issue_type", "") or "unknown")
             workflow_state = str(item.get("workflow_state", "") or "new")
@@ -40,8 +58,14 @@ class AdmissionWorkflowPayloadMixin(AdmissionPayloadMixin):
             "title": "问题中心",
             "generated_at": _generated_at_now(),
             "current_actor": current_actor,
+            "filters": filters,
+            "pagination": {
+                "page": page,
+                "page_size": page_size,
+                "total": len(filtered_issues),
+            },
             "summary": {
-                "issue_count": len(issues),
+                "issue_count": len(filtered_issues),
                 "severity_counts": severity_counts,
                 "issue_type_counts": issue_type_counts,
                 "state_counts": state_counts,
@@ -50,6 +74,53 @@ class AdmissionWorkflowPayloadMixin(AdmissionPayloadMixin):
             "actors": actors,
             "issues": issues,
         }
+
+    @staticmethod
+    def _issue_matches_admin_filters(item: Mapping[str, Any], filters: Mapping[str, Any]) -> bool:
+        keyword = str(filters.get("keyword", "") or "").lower()
+        if keyword:
+            haystack = " ".join(
+                str(value or "")
+                for value in (
+                    item.get("fingerprint", ""),
+                    item.get("title", ""),
+                    item.get("issue_type", ""),
+                    item.get("severity", ""),
+                    item.get("workflow_state", ""),
+                    item.get("assignee_id", ""),
+                    item.get("assignee_display_name", ""),
+                    " ".join(str(value) for value in list(item.get("affected_packages", []) or [])),
+                    " ".join(str(value) for value in list(item.get("affected_devices", []) or [])),
+                    " ".join(str(value) for value in list(item.get("affected_scenarios", []) or [])),
+                )
+            ).lower()
+            if keyword not in haystack:
+                return False
+        for filter_key, item_key in (
+            ("status", "workflow_state"),
+            ("issue_type", "issue_type"),
+            ("severity", "severity"),
+        ):
+            expected = str(filters.get(filter_key, "") or "").lower()
+            if expected and expected != str(item.get(item_key, "") or "").lower():
+                return False
+        device_id = str(filters.get("device_id", "") or "").lower()
+        if device_id and not any(device_id in str(value or "").lower() for value in list(item.get("affected_devices", []) or [])):
+            return False
+        package_name = str(filters.get("package_name", "") or "").lower()
+        if package_name and not any(package_name in str(value or "").lower() for value in list(item.get("affected_packages", []) or [])):
+            return False
+        scenario = str(filters.get("scenario", "") or "").lower()
+        if scenario and not any(scenario in str(value or "").lower() for value in list(item.get("affected_scenarios", []) or [])):
+            return False
+        last_seen = str(item.get("last_seen_at", "") or "")[:10]
+        created_from = str(filters.get("created_from", "") or "")[:10]
+        created_to = str(filters.get("created_to", "") or "")[:10]
+        if created_from and last_seen and last_seen < created_from:
+            return False
+        if created_to and last_seen and last_seen > created_to:
+            return False
+        return True
 
     def _goldens_payload(
         self,
@@ -61,10 +132,13 @@ class AdmissionWorkflowPayloadMixin(AdmissionPayloadMixin):
         if service is None:
             raise ValueError("Rule replay golden suite service is unavailable.")
         limit = self._int_query(query, "limit", default=50)
+        page = max(self._int_query(query, "page", default=1), 1)
+        page_size = min(max(self._int_query(query, "page_size", default=20), 1), 100)
         suite_path = self._str_query(query, "suite_path")
         issue_type = self._str_query(query, "issue_type")
         layer = self._str_query(query, "layer")
         expectation = self._str_query(query, "expectation")
+        keyword = self._str_query(query, "keyword")
         result = service.list_cases(
             suite_path=suite_path,
             issue_type=issue_type,
@@ -72,6 +146,44 @@ class AdmissionWorkflowPayloadMixin(AdmissionPayloadMixin):
             expectation=expectation,
             limit=limit,
         )
+        all_cases = [
+            {
+                "case_id": getattr(item, "case_id", ""),
+                "description": getattr(item, "description", ""),
+                "issue_type": getattr(item, "issue_type", ""),
+                "layer": getattr(item, "layer", ""),
+                "expectation": getattr(item, "expectation", ""),
+                "include_unchanged": bool(getattr(item, "include_unchanged", False)),
+                "issue_count": int(getattr(item, "issue_count", 0) or 0),
+                "package_name": getattr(item, "package_name", ""),
+                "template_type": getattr(item, "template_type", ""),
+                "source_run_id": getattr(item, "source_run_id", ""),
+            }
+            for item in (getattr(result, "cases", ()) or ())
+        ]
+        filters = {
+            **dict(getattr(result, "filters", {}) or {}),
+            "keyword": keyword,
+            "suite_path": suite_path,
+            "issue_type": issue_type,
+            "layer": layer,
+            "expectation": expectation,
+            "page": page,
+            "page_size": page_size,
+            "limit": limit,
+        }
+        filtered_cases = [item for item in all_cases if self._golden_case_matches_admin_filters(item, filters)]
+        cases = filtered_cases[(page - 1) * page_size:page * page_size]
+        layer_counts: dict[str, int] = {}
+        issue_type_counts: dict[str, int] = {}
+        expectation_counts: dict[str, int] = {}
+        for item in filtered_cases:
+            case_layer = str(item.get("layer", "") or "unknown")
+            case_issue_type = str(item.get("issue_type", "") or "unknown")
+            case_expectation = str(item.get("expectation", "") or "unknown")
+            layer_counts[case_layer] = layer_counts.get(case_layer, 0) + 1
+            issue_type_counts[case_issue_type] = issue_type_counts.get(case_issue_type, 0) + 1
+            expectation_counts[case_expectation] = expectation_counts.get(case_expectation, 0) + 1
         return {
             "page": "goldens",
             "title": "Golden Suite",
@@ -80,31 +192,53 @@ class AdmissionWorkflowPayloadMixin(AdmissionPayloadMixin):
             "suite_path": getattr(result, "suite_path", ""),
             "suite_version": getattr(result, "suite_version", ""),
             "summary": {
-                "case_count": int(getattr(result, "case_count", 0) or 0),
-                "layer_count": len(dict(getattr(result, "layer_counts", {}) or {})),
-                "issue_type_count": len(dict(getattr(result, "issue_type_counts", {}) or {})),
-                "expectation_count": len(dict(getattr(result, "expectation_counts", {}) or {})),
-                "layer_counts": dict(getattr(result, "layer_counts", {}) or {}),
-                "issue_type_counts": dict(getattr(result, "issue_type_counts", {}) or {}),
-                "expectation_counts": dict(getattr(result, "expectation_counts", {}) or {}),
+                "case_count": len(filtered_cases),
+                "total_case_count": len(all_cases),
+                "layer_count": len(layer_counts),
+                "issue_type_count": len(issue_type_counts),
+                "expectation_count": len(expectation_counts),
+                "layer_counts": layer_counts,
+                "issue_type_counts": issue_type_counts,
+                "expectation_counts": expectation_counts,
             },
-            "filters": dict(getattr(result, "filters", {}) or {}),
-            "cases": [
-                {
-                    "case_id": getattr(item, "case_id", ""),
-                    "description": getattr(item, "description", ""),
-                    "issue_type": getattr(item, "issue_type", ""),
-                    "layer": getattr(item, "layer", ""),
-                    "expectation": getattr(item, "expectation", ""),
-                    "include_unchanged": bool(getattr(item, "include_unchanged", False)),
-                    "issue_count": int(getattr(item, "issue_count", 0) or 0),
-                    "package_name": getattr(item, "package_name", ""),
-                    "template_type": getattr(item, "template_type", ""),
-                    "source_run_id": getattr(item, "source_run_id", ""),
-                }
-                for item in (getattr(result, "cases", ()) or ())
-            ],
+            "filters": filters,
+            "filter_options": {
+                "issue_types": sorted({str(item.get("issue_type", "") or "") for item in all_cases if str(item.get("issue_type", "") or "").strip()}),
+                "layers": sorted({str(item.get("layer", "") or "") for item in all_cases if str(item.get("layer", "") or "").strip()}),
+                "expectations": sorted({str(item.get("expectation", "") or "") for item in all_cases if str(item.get("expectation", "") or "").strip()}),
+            },
+            "pagination": {
+                "page": page,
+                "page_size": page_size,
+                "total": len(filtered_cases),
+            },
+            "cases": cases,
         }
+
+    @staticmethod
+    def _golden_case_matches_admin_filters(item: Mapping[str, Any], filters: Mapping[str, Any]) -> bool:
+        keyword = str(filters.get("keyword", "") or "").lower()
+        if keyword:
+            haystack = " ".join(
+                str(value or "")
+                for value in (
+                    item.get("case_id", ""),
+                    item.get("description", ""),
+                    item.get("issue_type", ""),
+                    item.get("layer", ""),
+                    item.get("expectation", ""),
+                    item.get("package_name", ""),
+                    item.get("template_type", ""),
+                    item.get("source_run_id", ""),
+                )
+            ).lower()
+            if keyword not in haystack:
+                return False
+        for filter_key in ("issue_type", "layer", "expectation"):
+            expected = str(filters.get(filter_key, "") or "").lower()
+            if expected and expected != str(item.get(filter_key, "") or "").lower():
+                return False
+        return True
 
     def _golden_diff_payload(
         self,
@@ -245,8 +379,24 @@ class AdmissionWorkflowPayloadMixin(AdmissionPayloadMixin):
         *,
         request_context: Mapping[str, Any] | None = None,
     ) -> dict[str, Any]:
-        limit = self._int_query(query, "limit", default=20)
-        baselines = self._baseline_summaries(limit=limit)
+        limit = self._int_query(query, "limit", default=200)
+        page = max(self._int_query(query, "page", default=1), 1)
+        page_size = min(max(self._int_query(query, "page_size", default=20), 1), 100)
+        filters = {
+            "keyword": self._str_query(query, "keyword"),
+            "status": self._str_query(query, "status"),
+            "final_decision": self._str_query(query, "final_decision"),
+            "risk": self._str_query(query, "risk"),
+            "owner": self._str_query(query, "owner"),
+            "page": page,
+            "page_size": page_size,
+            "limit": limit,
+        }
+        all_baselines = self._baseline_summaries(limit=limit)
+        filtered_baselines = [
+            item for item in all_baselines if self._admission_baseline_matches_admin_filters(item, filters)
+        ]
+        baselines = filtered_baselines[(page - 1) * page_size:page * page_size]
         auto_decision_counts: dict[str, int] = {}
         final_decision_counts: dict[str, int] = {}
         status_counts: dict[str, int] = {}
@@ -259,7 +409,7 @@ class AdmissionWorkflowPayloadMixin(AdmissionPayloadMixin):
         golden_suite_failed_baseline_count = 0
         golden_suite_case_count_total = 0
         golden_suite_failed_case_count_total = 0
-        for baseline in baselines:
+        for baseline in filtered_baselines:
             admission_case = dict(baseline.get("admission_case", {}) or {})
             evidence = dict(baseline.get("evidence", {}) or {})
             quality_gate = dict(evidence.get("quality_gate", {}) or {})
@@ -299,8 +449,15 @@ class AdmissionWorkflowPayloadMixin(AdmissionPayloadMixin):
             "generated_at": _generated_at_now(),
             "current_actor": current_actor,
             "actors": self._collaboration_actors(),
+            "filters": filters,
+            "filter_options": self._admission_filter_options(all_baselines),
+            "pagination": {
+                "page": page,
+                "page_size": page_size,
+                "total": len(filtered_baselines),
+            },
             "summary": {
-                "baseline_count": len(baselines),
+                "baseline_count": len(filtered_baselines),
                 "auto_decision_counts": auto_decision_counts,
                 "final_decision_counts": final_decision_counts,
                 "status_counts": status_counts,
@@ -316,10 +473,135 @@ class AdmissionWorkflowPayloadMixin(AdmissionPayloadMixin):
             },
             "baselines": baselines,
             "views": self._admission_view_groups(
-                items=[self._admission_summary_view_entry(item) for item in baselines],
+                items=[self._admission_summary_view_entry(item) for item in filtered_baselines],
                 current_actor=current_actor,
             ),
         }
+
+    @staticmethod
+    def _admission_filter_options(items: list[dict[str, Any]]) -> dict[str, list[str]]:
+        statuses: set[str] = set()
+        final_decisions: set[str] = set()
+        owners: set[str] = set()
+        for item in items:
+            case = dict(item.get("admission_case", {}) or {})
+            gate = dict(dict(item.get("evidence", {}) or {}).get("quality_gate", {}) or {})
+            for value in (
+                item.get("status", ""),
+                item.get("workflow_state", ""),
+                case.get("status", ""),
+                case.get("workflow_state", ""),
+            ):
+                if str(value or "").strip():
+                    statuses.add(str(value))
+            for value in (
+                case.get("final_decision", ""),
+                gate.get("final_decision", ""),
+                gate.get("automatic_decision", ""),
+            ):
+                if str(value or "").strip():
+                    final_decisions.add(str(value))
+            for value in (
+                item.get("assignee_id", ""),
+                item.get("assignee_display_name", ""),
+                case.get("assignee_id", ""),
+                case.get("assignee_display_name", ""),
+            ):
+                if str(value or "").strip():
+                    owners.add(str(value))
+        return {
+            "statuses": sorted(statuses),
+            "final_decisions": sorted(final_decisions),
+            "owners": sorted(owners),
+            "risks": ["any", "performance", "coverage", "golden_failed", "override"],
+        }
+
+    @staticmethod
+    def _admission_baseline_matches_admin_filters(item: Mapping[str, Any], filters: Mapping[str, Any]) -> bool:
+        case = dict(item.get("admission_case", {}) or {})
+        evidence = dict(item.get("evidence", {}) or {})
+        gate = dict(evidence.get("quality_gate", {}) or {})
+        golden_suite = dict(evidence.get("golden_suite", {}) or {})
+        rule_review = dict(evidence.get("rule_review_report", {}) or {})
+        keyword = str(filters.get("keyword", "") or "").lower()
+        if keyword:
+            haystack = " ".join(
+                str(value or "")
+                for value in (
+                    item.get("baseline_key", ""),
+                    item.get("report_id", ""),
+                    item.get("report_name", ""),
+                    item.get("case_id", ""),
+                    item.get("status", ""),
+                    item.get("assignee_id", ""),
+                    item.get("assignee_display_name", ""),
+                    item.get("final_reviewer_id", ""),
+                    item.get("final_reviewer_display_name", ""),
+                    case.get("case_id", ""),
+                    case.get("final_decision", ""),
+                    case.get("error_code", ""),
+                    gate.get("automatic_decision", ""),
+                    gate.get("final_decision", ""),
+                    rule_review.get("latest_audit_id", ""),
+                )
+            ).lower()
+            if keyword not in haystack:
+                return False
+        status = str(filters.get("status", "") or "").lower()
+        if status:
+            status_values = {
+                str(value or "").lower()
+                for value in (
+                    item.get("status", ""),
+                    item.get("workflow_state", ""),
+                    case.get("status", ""),
+                    case.get("workflow_state", ""),
+                )
+            }
+            if status not in status_values:
+                return False
+        final_decision = str(filters.get("final_decision", "") or "").lower()
+        if final_decision:
+            decision_values = {
+                str(value or "").lower()
+                for value in (
+                    case.get("final_decision", ""),
+                    gate.get("final_decision", ""),
+                    gate.get("automatic_decision", ""),
+                )
+            }
+            if final_decision not in decision_values:
+                return False
+        owner = str(filters.get("owner", "") or "").lower()
+        if owner:
+            owner_values = {
+                str(value or "").lower()
+                for value in (
+                    item.get("assignee_id", ""),
+                    item.get("assignee_display_name", ""),
+                    case.get("assignee_id", ""),
+                    case.get("assignee_display_name", ""),
+                )
+            }
+            if owner not in owner_values:
+                return False
+        risk = str(filters.get("risk", "") or "").lower()
+        if risk:
+            risk_count = int(gate.get("risk_count", 0) or 0)
+            performance_risk_count = int(gate.get("performance_risk_count", case.get("performance_risk_count", 0)) or 0)
+            coverage_gap_count = int(gate.get("coverage_gap_count", 0) or 0)
+            golden_failed_count = int(golden_suite.get("failed_case_count_total", 0) or 0)
+            has_override = bool(gate.get("has_override")) or bool(case.get("override"))
+            risk_checks = {
+                "any": risk_count > 0,
+                "performance": performance_risk_count > 0,
+                "coverage": coverage_gap_count > 0,
+                "golden_failed": golden_failed_count > 0,
+                "override": has_override,
+            }
+            if not risk_checks.get(risk, False):
+                return False
+        return True
 
     @staticmethod
     def _admission_summary_view_entry(item: Mapping[str, Any]) -> dict[str, Any]:

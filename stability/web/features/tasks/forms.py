@@ -88,7 +88,7 @@ class TaskFormsMixin:
             "<h3>归档任务</h3>"
             "<p>这里执行的是软删除：任务会从默认任务列表隐藏，Run、监控快照、报告和准入证据不会被物理删除。</p>"
             f"<form method='post' action='{escape(self._actor_scoped_path('/tasks/actions/archive-task', current_actor=current_actor), quote=True)}' class='stack'>"
-            "<label>任务<select name='task_id'>" + (options or "<option value=''>当前没有可归档任务</option>") + "</select></label>"
+            "<label>任务<select name='task_id' required>" + (options or "<option value=''>当前没有可归档任务</option>") + "</select></label>"
             "<label>归档原因<textarea name='reason' rows='2' placeholder='例如 临时调试任务已结束，隐藏避免干扰列表。'></textarea></label>"
             "<div class='notice warning'>归档会记录服务端解析身份、request_id、session_id、audit_event_id，并投递 task.archived outbox 事件；不会删除任何历史产物。</div>"
             "<div class='form-actions'><button type='submit'>归档并隐藏</button></div>"
@@ -114,9 +114,9 @@ class TaskFormsMixin:
             "<section class='task-form-section task-form-section-basic'>"
             "<div class='task-form-section-title'>基础信息</div>"
             "<div class='form-grid-three task-basic-grid'>"
-            "<label>任务名<input type='text' name='task_name' value='' placeholder='例如 首页冷启动回归' /></label>"
-            "<label>包名<input type='text' name='package_name' value='' placeholder='com.example.app' /></label>"
-            f"<label>模板<select name='template_type'>{template_options}</select></label>"
+            "<label>任务名<input type='text' name='task_name' value='' placeholder='例如 首页冷启动回归' required /></label>"
+            "<label>包名<input type='text' name='package_name' value='' placeholder='com.example.app' required /></label>"
+            f"<label>模板<select name='template_type' required>{template_options}</select></label>"
             "</div>"
             f"{self._task_template_risk_notice(template_schema)}"
             "</section>"
@@ -213,7 +213,7 @@ class TaskFormsMixin:
             "<div class='form-grid-three task-basic-grid'>"
             f"<label>任务名<input type='text' name='task_name' value='{escape(selected_task_name, quote=True)}' placeholder='例如 直播间 overnight 长稳' required /></label>"
             f"<label>包名<input type='text' name='package_name' value='{escape(selected_package_name, quote=True)}' placeholder='com.example.app' required /></label>"
-            f"<label>长稳模板<select name='template_type'>{template_options}</select></label>"
+            f"<label>长稳模板<select name='template_type' required>{template_options}</select></label>"
             "</div>"
             f"{self._task_template_risk_notice(template_schema)}"
             "<div class='meta'>模板覆盖前后台切换、Monkey、冷启动、安装卸载、重启、待机唤醒；这里只做最小长稳闭环，不做复杂排班平台。</div>"
@@ -305,7 +305,7 @@ class TaskFormsMixin:
             "<h3>创建 Run <span class='heading-hint'>基于某个任务生成一次具体执行批次。</span></h3>"
             f"<form method='post' action='{escape(self._actor_scoped_path('/tasks/actions/create-run', current_actor=current_actor), quote=True)}' class='stack'>"
             "<div class='form-grid-three'>"
-            "<label>任务<select name='task_id'>" + options + "</select></label>"
+            "<label>任务<select name='task_id' required>" + options + "</select></label>"
             f"{device_selector}"
             "<label>metadata(JSON)<textarea name='metadata' rows='2' placeholder='例如 {\"source\":\"web\"}'></textarea></label>"
             "</div>"
@@ -327,7 +327,7 @@ class TaskFormsMixin:
             "<h3>执行 Run <span class='heading-hint'>真正开始跑，并选择 monitoring backend、并发、重试等执行参数。</span></h3>"
             f"<form method='post' action='{escape(self._actor_scoped_path('/tasks/actions/execute-run', current_actor=current_actor), quote=True)}' class='stack'>"
             "<div class='form-grid-three'>"
-            "<label>Run<select name='run_id'>" + options + "</select></label>"
+            "<label>Run<select name='run_id' required>" + options + "</select></label>"
             f"<label>Monitoring Backend<select name='monitoring_backend'><option value='default'{' selected' if selected_backend == 'default' else ''}>default - 基础 ADB 快照</option><option value='solox'{' selected' if selected_backend == 'solox' else ''}>solox - 实时性能采样</option><option value='perfetto'{' selected' if selected_backend == 'perfetto' else ''}>perfetto - 系统 Trace</option></select></label>"
             "<label>重试次数<input type='number' name='retry_count' value='0' min='0' /></label>"
             "</div>"
@@ -605,10 +605,14 @@ class TaskFormsMixin:
             if allow_empty
             else "必须勾选至少一台可调度设备。"
         )
+        required_attrs = "" if allow_empty else " data-required-group='1' data-required-message='请至少选择一台设备。'"
         if not devices:
             message = "当前没有可调度设备，请先到设备池刷新或连接设备"
+            empty_required_attrs = (
+                "" if allow_empty else " data-required-group='1' data-required-message='当前没有可调度设备，请先到设备池刷新或连接设备。'"
+            )
             return (
-                "<div class='device-checkbox-field'>"
+                f"<div class='device-checkbox-field'{empty_required_attrs}>"
                 f"<div class='meta'>{escape(label)}</div>"
                 f"<div class='empty-state'>{escape(message)}</div>"
                 f"<span class='meta'>{escape(message)}</span>"
@@ -641,7 +645,7 @@ class TaskFormsMixin:
                 "</label>"
             )
         return (
-            "<div class='device-checkbox-field'>"
+            f"<div class='device-checkbox-field'{required_attrs}>"
             f"<div class='meta'>{escape(label)}</div>"
             "<div class='device-choice-grid'>"
             + "".join(cards)

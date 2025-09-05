@@ -27,6 +27,7 @@ from .features.admission.page import (
 )
 from .features.admission.payload import AdmissionWorkflowPayloadMixin as ApplicationPayloadAdmissionReportsMixin
 from .features.collaboration.payload import CollaborationPayloadMixin as ApplicationPayloadCollaborationMixin
+from .features.core.admin_components import AdminComponentsMixin as ApplicationAdminComponentsMixin
 from .features.core.help_page import HelpPageMixin as ApplicationHelpPagesMixin
 from .features.core.layout_page import LayoutPageMixin as ApplicationLayoutPagesMixin
 from .features.core.page import CorePageMixin as ApplicationCorePagesMixin
@@ -60,6 +61,7 @@ from .responses import ApplicationResponseMixin
 
 class WebPortalApplication(
     ApplicationIdentityMixin,
+    ApplicationAdminComponentsMixin,
     ApplicationPayloadCoreMixin,
     ApplicationRuntimeMixin,
     ApplicationTasksPayloadMixin,

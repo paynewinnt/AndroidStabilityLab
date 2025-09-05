@@ -29,7 +29,13 @@ class TasksPageMixin:
             body.append(self._notice(str(flash.get("message", "") or ""), tone=str(flash.get("tone", "ok") or "ok")))
         latest_run = self._latest_workflow_run(payload)
         body.extend([
-            self._metric_grid(
+            self._admin_page_header(
+                "任务大厅",
+                subtitle="任务、Run、执行动作和产物入口统一在列表上下文内完成。",
+                breadcrumbs=[("首页", "/"), ("任务大厅", "")],
+                actions=[self._route_link("JSON API", "/api/tasks")],
+            ),
+            self._admin_summary_strip(
                 [
                     ("任务数", payload["summary"]["task_count"]),
                     ("最近 Run 数", payload["summary"]["run_count"]),
@@ -46,16 +52,8 @@ class TasksPageMixin:
                 run_hint="Run 列表" if latest_run else "等待 Run",
                 artifact_hint="产物列表",
             ),
-            self._section(
-                "操作入口",
-                [self._task_operation_launcher(payload)],
-            ),
-            self._section(
-                "任务与执行",
-                [
-                    self._task_run_board(payload),
-                ],
-            ),
+            self._task_admin_filter_bar(payload),
+            self._task_admin_workspace(payload),
         ])
         if payload.get("device_sync"):
             body.insert(1, self._notice(self._sync_hint(payload["device_sync"])))
@@ -76,12 +74,287 @@ class TasksPageMixin:
                 return latest_run
         return {}
 
+    def _task_admin_filter_bar(self, payload: Mapping[str, Any]) -> str:
+        filters = dict(payload.get("filters", {}) or {})
+        return self._admin_filter_bar(
+            action="/tasks",
+            values=filters,
+            hidden={"show_archived": "1" if dict(payload.get("summary", {}) or {}).get("show_archived") else ""},
+            fields=[
+                {"name": "keyword", "label": "关键词", "placeholder": "任务名 / 包名 / ID"},
+                {
+                    "name": "status",
+                    "label": "状态",
+                    "type": "select",
+                    "options": [
+                        {"value": "", "label": "全部"},
+                        {"value": "no_run", "label": "未运行"},
+                        {"value": "queued", "label": "queued"},
+                        {"value": "running", "label": "running"},
+                        {"value": "success", "label": "success"},
+                        {"value": "failed", "label": "failed"},
+                        {"value": "partial_failed", "label": "partial_failed"},
+                        {"value": "cancelled", "label": "cancelled"},
+                    ],
+                },
+                {"name": "package_name", "label": "包名", "placeholder": "com.example"},
+                {"name": "device_id", "label": "设备", "placeholder": "device id"},
+                {
+                    "name": "scenario",
+                    "label": "场景",
+                    "type": "select",
+                    "options": [{"value": "", "label": "全部"}]
+                    + [
+                        {"value": str(item.value), "label": str(item.plain_label)}
+                        for item in list_scenario_definitions()
+                    ],
+                },
+                {
+                    "name": "backend",
+                    "label": "Backend",
+                    "type": "select",
+                    "options": [
+                        {"value": "", "label": "全部"},
+                        {"value": "adb_collector", "label": "adb_collector"},
+                        {"value": "solox", "label": "solox"},
+                        {"value": "perfetto", "label": "perfetto"},
+                        {"value": "solox_perfetto", "label": "solox_perfetto"},
+                    ],
+                },
+                {"name": "created_from", "label": "开始日期", "type": "date"},
+                {"name": "created_to", "label": "结束日期", "type": "date"},
+            ],
+        )
+
+    def _task_admin_workspace(self, payload: Mapping[str, Any]) -> str:
+        table_id = "tasks-admin-table"
+        columns = self._task_admin_columns()
+        toolbar = self._admin_toolbar(
+            title="任务列表",
+            description="行内完成 Run 管理、执行、停止、详情和归档。",
+            table_id=table_id,
+            columns=columns,
+            actions=[
+                "<button type='button' data-task-modal-target='long-run-task'>新增长稳</button>",
+                "<button type='button' class='secondary' data-task-modal-target='standard-task'>新增任务</button>",
+                "<button type='button' class='secondary' data-task-modal-target='create-run'>创建 Run</button>",
+                "<button type='button' class='secondary' data-task-modal-target='execute-run'>执行 Run</button>",
+                "<button type='button' class='secondary' data-task-modal-target='delete-task-run' title='不物理删除，只从默认列表隐藏并记录审计事件。'>归档 / 隐藏</button>",
+                "<a class='button secondary' href='/tasks'>刷新</a>",
+                (
+                    "<a class='button secondary' href='/tasks'>仅看活跃</a>"
+                    if dict(payload.get("summary", {}) or {}).get("show_archived")
+                    else "<a class='button secondary' href='/tasks?show_archived=1'>查看归档</a>"
+                ),
+            ],
+        )
+        table_html, drawers = self._task_admin_table(payload, table_id=table_id, columns=columns)
+        pagination = self._admin_pagination(
+            base_path="/tasks",
+            filters=dict(payload.get("filters", {}) or {}),
+            page=int(dict(payload.get("pagination", {}) or {}).get("page", 1) or 1),
+            page_size=int(dict(payload.get("pagination", {}) or {}).get("page_size", 20) or 20),
+            total=int(dict(payload.get("pagination", {}) or {}).get("total", 0) or 0),
+        )
+        return (
+            "<section class='panel admin-list-panel'>"
+            + toolbar
+            + table_html
+            + pagination
+            + "</section>"
+            + self._task_admin_operation_modals(payload)
+            + drawers
+        )
+
+    @staticmethod
+    def _compact_value_list(values: Sequence[Any], *, limit: int = 3) -> str:
+        seen: list[str] = []
+        for value in values:
+            text = str(value or "").strip()
+            if text and text not in seen:
+                seen.append(text)
+        if not seen:
+            return "n/a"
+        visible = seen[:limit]
+        suffix = f" +{len(seen) - limit}" if len(seen) > limit else ""
+        return ", ".join(visible) + suffix
+
+    @classmethod
+    def _monitoring_backend_label(cls, monitoring_summary: Mapping[str, Any]) -> str:
+        summary = dict(monitoring_summary or {})
+        backend_counts = dict(summary.get("backend_counts", {}) or {})
+        if backend_counts:
+            return cls._compact_value_list(sorted(backend_counts.keys()))
+        summary_line = str(summary.get("summary_line", "") or "")
+        if "backend=" in summary_line:
+            return summary_line.split("backend=", 1)[1].split("/", 1)[0].strip() or "n/a"
+        return "n/a"
+
+    @classmethod
+    def _task_device_label(cls, task: Mapping[str, Any]) -> str:
+        values: list[Any] = list(task.get("selected_device_ids", []) or [])
+        for run in list(task.get("runs", []) or []):
+            values.extend(list(dict(run).get("target_device_ids", []) or []))
+        return cls._compact_value_list(values)
+
+    @classmethod
+    def _task_backend_label(cls, task: Mapping[str, Any]) -> str:
+        values = [
+            cls._monitoring_backend_label(dict(run).get("monitoring_summary", {}) or {})
+            for run in list(task.get("runs", []) or [])
+        ]
+        return cls._compact_value_list(value for value in values if value != "n/a")
+
+    @staticmethod
+    def _task_admin_columns() -> list[dict[str, Any]]:
+        return [
+            {"key": "select", "label": "", "locked": True},
+            {"key": "task", "label": "任务"},
+            {"key": "status", "label": "状态"},
+            {"key": "package", "label": "包名"},
+            {"key": "scenario", "label": "场景"},
+            {"key": "devices", "label": "设备"},
+            {"key": "backend", "label": "Backend"},
+            {"key": "runs", "label": "Run"},
+            {"key": "active", "label": "运行中"},
+            {"key": "created", "label": "创建时间"},
+            {"key": "actions", "label": "操作", "locked": True},
+        ]
+
+    def _task_admin_table(
+        self,
+        payload: Mapping[str, Any],
+        *,
+        table_id: str,
+        columns: Sequence[Mapping[str, Any]],
+    ) -> tuple[str, str]:
+        tasks = list(payload.get("tasks", []) or [])
+        current_actor = dict(payload.get("current_actor", {}) or {})
+        rows: list[dict[str, str]] = []
+        drawers: list[str] = []
+        for task in tasks:
+            item = dict(task or {})
+            task_id = str(item.get("task_id", "") or "")
+            task_name = str(item.get("task_name", "") or task_id or "未命名任务")
+            run_drawer_id = f"admin-task-runs-{self._dom_id_fragment(task_id)}"
+            detail_drawer_id = f"admin-task-detail-{self._dom_id_fragment(task_id)}"
+            latest_status = str(item.get("latest_run_status", "") or "no_run")
+            archived = bool(item.get("archived") or item.get("hidden"))
+            archive_action = self._task_archive_inline_form(task_id, current_actor=current_actor) if task_id and not archived else ""
+            devices = self._task_device_label(item)
+            backend = self._task_backend_label(item)
+            actions = (
+                "<div class='admin-table-actions'>"
+                + self._admin_drawer_button("Run", run_drawer_id)
+                + self._admin_drawer_button("详情", detail_drawer_id)
+                + self._route_link_new_tab("任务页", f"/tasks/task/{quote(task_id, safe='')}" if task_id else "")
+                + archive_action
+                + ("<span class='admin-status admin-status-muted'>已归档</span>" if archived else "")
+                + "</div>"
+            )
+            rows.append(
+                {
+                    "select": f"<input type='checkbox' name='task_id' value='{escape(task_id, quote=True)}' />",
+                    "task": (
+                        f"<strong title='{escape(task_name, quote=True)}'>{escape(task_name)}</strong>"
+                        f"<div class='mono' title='{escape(task_id, quote=True)}'>{escape(task_id)}</div>"
+                    ),
+                    "status": self._admin_status(
+                        "已归档" if archived else latest_status,
+                        tone="muted" if archived else self._status_tone(latest_status),
+                    ),
+                    "package": f"<span class='mono'>{escape(str(item.get('package_name', '') or 'n/a'))}</span>",
+                    "scenario": self._task_template_cell(str(item.get("template_type", "") or "")),
+                    "devices": f"<span title='{escape(devices, quote=True)}'>{escape(devices)}</span>",
+                    "backend": f"<span title='{escape(backend, quote=True)}'>{escape(backend)}</span>",
+                    "runs": escape(str(item.get("run_count", 0) or 0)),
+                    "active": escape(str(item.get("active_run_count", 0) or 0)),
+                    "created": escape(self._display_datetime(item.get("created_at", "")) or "n/a"),
+                    "actions": actions,
+                }
+            )
+            drawers.append(
+                self._admin_drawer(
+                    run_drawer_id,
+                    f"Run 列表 · {task_name}",
+                    self._task_run_modal_body(item, payload=payload, current_actor=current_actor),
+                )
+            )
+            drawers.append(
+                self._admin_drawer(
+                    detail_drawer_id,
+                    f"任务详情 · {task_name}",
+                    self._task_admin_detail(item),
+                )
+            )
+        return self._admin_table(table_id=table_id, columns=columns, rows=rows, empty_text="当前没有匹配任务。"), "".join(drawers)
+
+    def _task_admin_detail(self, task: Mapping[str, Any]) -> str:
+        fields = [
+            ("任务 ID", task.get("task_id", "")),
+            ("任务名", task.get("task_name", "")),
+            ("包名", task.get("package_name", "")),
+            ("场景", task.get("template_type", "")),
+            ("设备", self._task_device_label(task)),
+            ("Backend", self._task_backend_label(task)),
+            ("Run 数", task.get("run_count", 0)),
+            ("运行中", task.get("active_run_count", 0)),
+            ("最新状态", task.get("latest_run_status", "no_run") or "no_run"),
+            ("创建时间", self._display_datetime(task.get("created_at", "")) or "n/a"),
+        ]
+        details = "".join(
+            "<div class='admin-detail-item'>"
+            f"<small>{escape(str(label))}</small>"
+            f"<strong>{escape(str(value or 'n/a'))}</strong>"
+            "</div>"
+            for label, value in fields
+        )
+        return (
+            "<div class='admin-detail-grid'>"
+            + details
+            + "</div>"
+            "<details class='compact-details'><summary>Task JSON</summary><pre class='mono compact-pre'>"
+            + escape(json.dumps(dict(task), ensure_ascii=False, indent=2, default=str))
+            + "</pre></details>"
+        )
+
+    def _task_admin_operation_modals(self, payload: Mapping[str, Any]) -> str:
+        current_actor = dict(payload.get("current_actor", {}) or {})
+        return (
+            self._task_modal("long-run-task", "创建长稳任务", self._long_run_task_create_form(payload))
+            + self._task_modal("standard-task", "创建任务", self._standard_task_create_form(payload))
+            + self._task_modal("create-run", "创建 Run", self._run_create_form(payload))
+            + self._task_modal("execute-run", "执行 Run", self._run_execute_form(payload))
+            + self._task_modal("delete-task-run", "归档 / 隐藏", self._task_delete_boundary_card(payload))
+            + (
+                f"<span hidden data-task-auto-open='{escape(str(dict(payload.get('operation_defaults', {}) or {}).get('auto_open_modal', '') or ''), quote=True)}'></span>"
+                if str(dict(payload.get("operation_defaults", {}) or {}).get("auto_open_modal", "") or "")
+                else ""
+            )
+        )
+
+    @staticmethod
+    def _status_tone(status: str) -> str:
+        value = str(status or "").lower()
+        if value in {"failed", "partial_failed", "error"}:
+            return "danger"
+        if value in {"queued", "pending", "running", "preparing", "collecting", "stopping", "no_run"}:
+            return "warning"
+        if value in {"cancelled", "archived", "unknown"}:
+            return "muted"
+        return "ok"
+
     def _render_runs(self, payload: dict[str, Any]) -> str:
         summary = dict(payload.get("summary", {}) or {})
-        runs = list(payload.get("runs", []) or [])
         status_counts = dict(summary.get("run_status_counts", {}) or {})
         body = [
-            self._metric_grid(
+            self._admin_page_header(
+                "Run 列表",
+                subtitle="按执行批次集中查询、停止、查看详情和进入产物。",
+                breadcrumbs=[("首页", "/"), ("任务大厅", "/tasks"), ("Run 列表", "")],
+                actions=[self._route_link("JSON API", "/api/runs")],
+            ),
+            self._admin_summary_strip(
                 [
                     ("Run 数", summary.get("run_count", 0)),
                     ("失败 Run", status_counts.get("failed", 0)),
@@ -98,12 +371,206 @@ class TasksPageMixin:
                 run_hint="Run 列表",
                 artifact_hint="产物列表",
             ),
-            self._section("Run 列表", [self._run_list(runs)]),
+            self._run_admin_filter_bar(payload),
+            self._run_admin_workspace(payload),
         ]
         return self._layout(
             "Run 列表",
-            "这里按最近执行批次展示 Run；先从列表选择一条，再进入详情、产物或原始 JSON。",
+            "按最近执行批次展示 Run，支持进入详情、产物和原始 JSON。",
             "".join(body),
+        )
+
+    def _run_admin_filter_bar(self, payload: Mapping[str, Any]) -> str:
+        filters = dict(payload.get("filters", {}) or {})
+        return self._admin_filter_bar(
+            action="/runs",
+            values=filters,
+            fields=[
+                {"name": "keyword", "label": "关键词", "placeholder": "Run / 任务 / 包名 / ID"},
+                {
+                    "name": "status",
+                    "label": "状态",
+                    "type": "select",
+                    "options": [
+                        {"value": "", "label": "全部"},
+                        {"value": "queued", "label": "queued"},
+                        {"value": "running", "label": "running"},
+                        {"value": "success", "label": "success"},
+                        {"value": "failed", "label": "failed"},
+                        {"value": "partial_failed", "label": "partial_failed"},
+                        {"value": "cancelled", "label": "cancelled"},
+                    ],
+                },
+                {"name": "package_name", "label": "包名", "placeholder": "com.example"},
+                {"name": "device_id", "label": "设备", "placeholder": "device id"},
+                {
+                    "name": "scenario",
+                    "label": "场景",
+                    "type": "select",
+                    "options": [{"value": "", "label": "全部"}]
+                    + [
+                        {"value": str(item.value), "label": str(item.plain_label)}
+                        for item in list_scenario_definitions()
+                    ],
+                },
+                {
+                    "name": "backend",
+                    "label": "Backend",
+                    "type": "select",
+                    "options": [
+                        {"value": "", "label": "全部"},
+                        {"value": "adb_collector", "label": "adb_collector"},
+                        {"value": "solox", "label": "solox"},
+                        {"value": "perfetto", "label": "perfetto"},
+                        {"value": "solox_perfetto", "label": "solox_perfetto"},
+                    ],
+                },
+                {"name": "created_from", "label": "开始日期", "type": "date"},
+                {"name": "created_to", "label": "结束日期", "type": "date"},
+            ],
+        )
+
+    def _run_admin_workspace(self, payload: Mapping[str, Any]) -> str:
+        table_id = "runs-admin-table"
+        columns = self._run_admin_columns()
+        toolbar = self._admin_toolbar(
+            title="执行批次",
+            description="可直接停止活跃 Run，详情和产物都用当前列表上下文承接。",
+            table_id=table_id,
+            columns=columns,
+            actions=[
+                "<button type='button' data-task-modal-target='execute-run'>执行 Run</button>",
+                "<a class='button secondary' href='/runs'>刷新</a>",
+                self._route_link("产物中心", "/artifacts"),
+            ],
+        )
+        table_html, drawers = self._run_admin_table(payload, table_id=table_id, columns=columns)
+        pagination = self._admin_pagination(
+            base_path="/runs",
+            filters=dict(payload.get("filters", {}) or {}),
+            page=int(dict(payload.get("pagination", {}) or {}).get("page", 1) or 1),
+            page_size=int(dict(payload.get("pagination", {}) or {}).get("page_size", 20) or 20),
+            total=int(dict(payload.get("pagination", {}) or {}).get("total", 0) or 0),
+        )
+        return (
+            "<section class='panel admin-list-panel'>"
+            + toolbar
+            + table_html
+            + pagination
+            + "</section>"
+            + self._task_modal("execute-run", "执行 Run", self._run_execute_form(payload))
+            + drawers
+        )
+
+    @staticmethod
+    def _run_admin_columns() -> list[dict[str, Any]]:
+        return [
+            {"key": "select", "label": "", "locked": True},
+            {"key": "run", "label": "Run"},
+            {"key": "status", "label": "状态"},
+            {"key": "task", "label": "任务"},
+            {"key": "package", "label": "包名"},
+            {"key": "scenario", "label": "场景"},
+            {"key": "devices", "label": "设备"},
+            {"key": "monitoring", "label": "Backend / 监控"},
+            {"key": "created", "label": "创建时间"},
+            {"key": "actions", "label": "操作", "locked": True},
+        ]
+
+    def _run_admin_table(
+        self,
+        payload: Mapping[str, Any],
+        *,
+        table_id: str,
+        columns: Sequence[Mapping[str, Any]],
+    ) -> tuple[str, str]:
+        runs = list(payload.get("runs", []) or [])
+        current_actor = dict(payload.get("current_actor", {}) or {})
+        rows: list[dict[str, str]] = []
+        drawers: list[str] = []
+        for run in runs:
+            item = dict(run or {})
+            run_id = str(item.get("run_id", "") or "")
+            task_id = str(item.get("task_id", "") or "")
+            task_name = str(item.get("task_name", "") or run_id or "未命名 Run")
+            run_status = str(item.get("run_status", "") or "unknown")
+            drawer_id = f"admin-run-detail-{self._dom_id_fragment(run_id)}"
+            short_run_id = run_id[:10] + "..." + run_id[-6:] if len(run_id) > 22 else run_id
+            devices = ", ".join(item.get("target_device_ids", []) or []) or "n/a"
+            monitoring_summary = dict(item.get("monitoring_summary", {}) or {})
+            backend = self._monitoring_backend_label(monitoring_summary)
+            monitor_line = str(monitoring_summary.get("summary_line", "") or "未发现监控快照")
+            actions = (
+                "<div class='admin-table-actions'>"
+                + self._admin_drawer_button("详情", drawer_id)
+                + self._route_link_new_tab("查看详情", item.get("detail_path", ""))
+                + self._route_link_new_tab("产物", f"/artifacts/run/{quote(run_id, safe='')}" if run_id else "")
+                + self._route_link_new_tab("Run JSON", item.get("api_path", ""))
+                + self._task_run_execute_inline_form(item, current_actor=current_actor)
+                + self._task_run_stop_inline_form(item, current_actor=current_actor)
+                + "</div>"
+            )
+            rows.append(
+                {
+                    "select": f"<input type='checkbox' name='run_id' value='{escape(run_id, quote=True)}' />",
+                    "run": (
+                        f"<strong class='mono' title='{escape(run_id, quote=True)}'>{escape(short_run_id or 'n/a')}</strong>"
+                        f"<div class='mono' title='{escape(run_id, quote=True)}'>{escape(run_id)}</div>"
+                    ),
+                    "status": self._admin_status(run_status, tone=self._status_tone(run_status)),
+                    "task": self._route_link(task_name, f"/tasks/task/{quote(task_id, safe='')}" if task_id else ""),
+                    "package": f"<span class='mono'>{escape(str(item.get('package_name', '') or 'n/a'))}</span>",
+                    "scenario": self._task_template_cell(str(item.get("template_type", "") or "")),
+                    "devices": f"<span title='{escape(devices, quote=True)}'>{escape(devices)}</span>",
+                    "monitoring": (
+                        f"<span class='mono'>{escape(backend)}</span>"
+                        f"<div class='meta' title='{escape(monitor_line, quote=True)}'>{escape(monitor_line)}</div>"
+                    ),
+                    "created": escape(self._display_datetime(item.get("created_at", "")) or "n/a"),
+                    "actions": actions,
+                }
+            )
+            drawers.append(
+                self._admin_drawer(
+                    drawer_id,
+                    f"Run 详情 · {short_run_id or run_id}",
+                    self._run_admin_detail(item),
+                )
+            )
+        return self._admin_table(table_id=table_id, columns=columns, rows=rows, empty_text="当前没有匹配 Run。"), "".join(drawers)
+
+    def _run_admin_detail(self, run: Mapping[str, Any]) -> str:
+        monitoring_summary = dict(run.get("monitoring_summary", {}) or {})
+        fields = [
+            ("Run ID", run.get("run_id", "")),
+            ("任务 ID", run.get("task_id", "")),
+            ("任务名", run.get("task_name", "")),
+            ("包名", run.get("package_name", "")),
+            ("场景", run.get("template_type", "")),
+            ("状态", run.get("run_status", "")),
+            ("设备", ", ".join(run.get("target_device_ids", []) or [])),
+            ("Backend", self._monitoring_backend_label(monitoring_summary)),
+            ("创建时间", self._display_datetime(run.get("created_at", "")) or "n/a"),
+            ("监控样本", monitoring_summary.get("sample_count", 0)),
+            ("Trace", monitoring_summary.get("trace_count", 0)),
+        ]
+        details = "".join(
+            "<div class='admin-detail-item'>"
+            f"<small>{escape(str(label))}</small>"
+            f"<strong>{escape(str(value or 'n/a'))}</strong>"
+            "</div>"
+            for label, value in fields
+        )
+        return (
+            "<div class='admin-detail-grid'>"
+            + details
+            + "</div>"
+            "<details class='compact-details'><summary>Monitoring Summary</summary><pre class='mono compact-pre'>"
+            + escape(json.dumps(monitoring_summary, ensure_ascii=False, indent=2, default=str))
+            + "</pre></details>"
+            "<details class='compact-details'><summary>Run JSON</summary><pre class='mono compact-pre'>"
+            + escape(json.dumps(dict(run), ensure_ascii=False, indent=2, default=str))
+            + "</pre></details>"
         )
 
     def _run_list(self, runs: Sequence[Mapping[str, Any]]) -> str:
@@ -135,9 +602,9 @@ class TasksPageMixin:
                 f"<div class='record-list-wide'><b>监控</b><span title='{escape(monitor_line, quote=True)}'>{escape(monitor_line)}</span></div>"
                 "</div>"
                 "<div class='record-list-actions'>"
-                + self._route_link("查看详情", run.get("detail_path", ""))
+                + self._route_link_new_tab("查看详情", run.get("detail_path", ""))
                 + " / "
-                + self._route_link("产物", f"/artifacts/run/{quote(run_id, safe='')}" if run_id else "")
+                + self._route_link_new_tab("产物", f"/artifacts/run/{quote(run_id, safe='')}" if run_id else "")
                 + " / "
                 + self._route_link_new_tab("Run JSON", run.get("api_path", ""))
                 + "</div>"
@@ -147,9 +614,14 @@ class TasksPageMixin:
 
     def _render_artifacts(self, payload: dict[str, Any]) -> str:
         summary = dict(payload.get("summary", {}) or {})
-        items = list(payload.get("items", []) or [])
         body = [
-            self._metric_grid(
+            self._admin_page_header(
+                "产物中心",
+                subtitle="按 Run 汇总报告、Trace、监控快照和异常摘要；详情用抽屉承接，文件再进入单独产物页。",
+                breadcrumbs=[("首页", "/"), ("任务大厅", "/tasks"), ("产物中心", "")],
+                actions=[self._route_link("JSON API", "/api/artifacts")],
+            ),
+            self._admin_summary_strip(
                 [
                     ("Run 数", summary.get("run_count", 0)),
                     ("报告", summary.get("report_count", 0)),
@@ -166,12 +638,219 @@ class TasksPageMixin:
                 run_hint="Run 列表",
                 artifact_hint="产物列表",
             ),
-            self._section("Run 产物列表", [self._artifact_run_list(items)]),
+            self._artifact_admin_filter_bar(payload),
+            self._artifact_admin_workspace(payload),
         ]
         return self._layout(
             "产物中心",
-            "这里按 Run 汇总报告、Trace、监控快照和异常摘要；先选一条 Run，再进入详情页查看具体文件。",
+            "按 Run 汇总报告、Trace、监控快照和异常摘要。",
             "".join(body),
+        )
+
+    def _artifact_admin_filter_bar(self, payload: Mapping[str, Any]) -> str:
+        filters = dict(payload.get("filters", {}) or {})
+        return self._admin_filter_bar(
+            action="/artifacts",
+            values=filters,
+            fields=[
+                {"name": "keyword", "label": "关键词", "placeholder": "Run / 任务 / 包名 / ID"},
+                {
+                    "name": "status",
+                    "label": "状态",
+                    "type": "select",
+                    "options": [
+                        {"value": "", "label": "全部"},
+                        {"value": "queued", "label": "queued"},
+                        {"value": "running", "label": "running"},
+                        {"value": "success", "label": "success"},
+                        {"value": "failed", "label": "failed"},
+                        {"value": "partial_failed", "label": "partial_failed"},
+                        {"value": "cancelled", "label": "cancelled"},
+                    ],
+                },
+                {"name": "package_name", "label": "包名", "placeholder": "com.example"},
+                {"name": "device_id", "label": "设备", "placeholder": "device id"},
+                {
+                    "name": "scenario",
+                    "label": "场景",
+                    "type": "select",
+                    "options": [{"value": "", "label": "全部"}]
+                    + [{"value": str(item.value), "label": str(item.plain_label)} for item in list_scenario_definitions()],
+                },
+                {
+                    "name": "backend",
+                    "label": "Backend",
+                    "type": "select",
+                    "options": [
+                        {"value": "", "label": "全部"},
+                        {"value": "adb_collector", "label": "adb_collector"},
+                        {"value": "solox", "label": "solox"},
+                        {"value": "perfetto", "label": "perfetto"},
+                        {"value": "solox_perfetto", "label": "solox_perfetto"},
+                    ],
+                },
+                {"name": "created_from", "label": "开始日期", "type": "date"},
+                {"name": "created_to", "label": "结束日期", "type": "date"},
+            ],
+        )
+
+    def _artifact_admin_workspace(self, payload: Mapping[str, Any]) -> str:
+        table_id = "artifacts-admin-table"
+        columns = self._artifact_admin_columns()
+        toolbar = self._admin_toolbar(
+            title="Run 产物列表",
+            description="报告、Trace、监控快照和 Issue 按 Run 聚合；先看列表，再用详情抽屉或产物页下钻。",
+            table_id=table_id,
+            columns=columns,
+            actions=[
+                "<a class='button secondary' href='/artifacts'>刷新</a>",
+                self._route_link("Run 列表", "/runs"),
+            ],
+        )
+        table_html, drawers = self._artifact_admin_table(payload, table_id=table_id, columns=columns)
+        pagination = self._admin_pagination(
+            base_path="/artifacts",
+            filters=dict(payload.get("filters", {}) or {}),
+            page=int(dict(payload.get("pagination", {}) or {}).get("page", 1) or 1),
+            page_size=int(dict(payload.get("pagination", {}) or {}).get("page_size", 20) or 20),
+            total=int(dict(payload.get("pagination", {}) or {}).get("total", 0) or 0),
+        )
+        return (
+            "<section class='panel admin-list-panel'>"
+            + toolbar
+            + table_html
+            + pagination
+            + "</section>"
+            + drawers
+        )
+
+    @staticmethod
+    def _artifact_admin_columns() -> list[dict[str, Any]]:
+        return [
+            {"key": "select", "label": "", "locked": True},
+            {"key": "run", "label": "Run"},
+            {"key": "status", "label": "状态"},
+            {"key": "task", "label": "任务"},
+            {"key": "package", "label": "包名"},
+            {"key": "scenario", "label": "场景"},
+            {"key": "devices", "label": "设备"},
+            {"key": "artifacts", "label": "产物"},
+            {"key": "monitoring", "label": "Backend / 监控"},
+            {"key": "created", "label": "创建时间"},
+            {"key": "actions", "label": "操作", "locked": True},
+        ]
+
+    def _artifact_admin_table(
+        self,
+        payload: Mapping[str, Any],
+        *,
+        table_id: str,
+        columns: Sequence[Mapping[str, Any]],
+    ) -> tuple[str, str]:
+        items = list(payload.get("items", []) or [])
+        rows: list[dict[str, str]] = []
+        drawers: list[str] = []
+        for raw_item in items:
+            item = dict(raw_item or {})
+            run_id = str(item.get("run_id", "") or "")
+            task_id = str(item.get("task_id", "") or "")
+            task_name = str(item.get("task_name", "") or run_id or "未命名 Run")
+            run_status = str(item.get("run_status", "") or "unknown")
+            drawer_id = f"admin-artifact-detail-{self._dom_id_fragment(run_id)}"
+            short_run_id = run_id[:10] + "..." + run_id[-6:] if len(run_id) > 22 else run_id
+            monitoring_summary = dict(item.get("monitoring_summary", {}) or {})
+            artifact_summary = dict(item.get("artifact_summary", {}) or {})
+            devices = ", ".join(item.get("target_device_ids", []) or []) or "n/a"
+            backend = self._monitoring_backend_label(monitoring_summary)
+            monitor_line = str(monitoring_summary.get("summary_line", "") or "未发现监控快照")
+            artifact_line = " / ".join(
+                f"{label}:{artifact_summary.get(key, 0)}"
+                for label, key in (
+                    ("报告", "report_count"),
+                    ("Trace", "trace_count"),
+                    ("监控", "monitoring_snapshot_count"),
+                    ("Issue", "issue_count"),
+                )
+            )
+            actions = (
+                "<div class='admin-table-actions'>"
+                + self._admin_drawer_button("详情", drawer_id)
+                + self._route_link_new_tab("查看详情", item.get("artifact_path", ""))
+                + self._route_link_new_tab("Run 详情", item.get("detail_path", ""))
+                + self._route_link_new_tab("Run JSON", item.get("api_path", ""))
+                + "</div>"
+            )
+            rows.append(
+                {
+                    "select": f"<input type='checkbox' name='run_id' value='{escape(run_id, quote=True)}' />",
+                    "run": (
+                        f"<strong class='mono' title='{escape(run_id, quote=True)}'>{escape(short_run_id or 'n/a')}</strong>"
+                        f"<div class='mono' title='{escape(run_id, quote=True)}'>{escape(run_id)}</div>"
+                    ),
+                    "status": self._admin_status(run_status, tone=self._status_tone(run_status)),
+                    "task": self._route_link(task_name, f"/tasks/task/{quote(task_id, safe='')}" if task_id else ""),
+                    "package": f"<span class='mono'>{escape(str(item.get('package_name', '') or 'n/a'))}</span>",
+                    "scenario": self._task_template_cell(str(item.get("template_type", "") or "")),
+                    "devices": f"<span title='{escape(devices, quote=True)}'>{escape(devices)}</span>",
+                    "artifacts": f"<span title='{escape(artifact_line, quote=True)}'>{escape(artifact_line)}</span>",
+                    "monitoring": (
+                        f"<span class='mono'>{escape(backend)}</span>"
+                        f"<div class='meta' title='{escape(monitor_line, quote=True)}'>{escape(monitor_line)}</div>"
+                    ),
+                    "created": escape(self._display_datetime(item.get("created_at", "")) or "n/a"),
+                    "actions": actions,
+                }
+            )
+            drawers.append(
+                self._admin_drawer(
+                    drawer_id,
+                    f"Run 产物 · {short_run_id or run_id}",
+                    self._artifact_admin_detail(item),
+                )
+            )
+        return self._admin_table(table_id=table_id, columns=columns, rows=rows, empty_text="当前没有匹配 Run 产物。"), "".join(drawers)
+
+    def _artifact_admin_detail(self, item: Mapping[str, Any]) -> str:
+        monitoring_summary = dict(item.get("monitoring_summary", {}) or {})
+        artifact_summary = dict(item.get("artifact_summary", {}) or {})
+        fields = [
+            ("Run ID", item.get("run_id", "")),
+            ("任务 ID", item.get("task_id", "")),
+            ("任务名", item.get("task_name", "")),
+            ("包名", item.get("package_name", "")),
+            ("场景", item.get("template_type", "")),
+            ("状态", item.get("run_status", "")),
+            ("设备", ", ".join(item.get("target_device_ids", []) or [])),
+            ("Backend", self._monitoring_backend_label(monitoring_summary)),
+            ("创建时间", self._display_datetime(item.get("created_at", "")) or "n/a"),
+        ]
+        detail_grid = "".join(
+            "<div class='admin-detail-item'>"
+            f"<small>{escape(str(label))}</small>"
+            f"<strong>{escape(str(value or 'n/a'))}</strong>"
+            "</div>"
+            for label, value in fields
+        )
+        return (
+            "<div class='admin-detail-grid'>"
+            + detail_grid
+            + "</div>"
+            + self._artifact_count_chips(artifact_summary)
+            + self._artifact_links(
+                "跳转",
+                [
+                    ("查看详情", item.get("artifact_path", "")),
+                    ("Run 详情", item.get("detail_path", "")),
+                    ("Run JSON", item.get("api_path", "")),
+                    ("Artifacts API", item.get("artifacts_api_path", "")),
+                ],
+            )
+            + "<details class='compact-details'><summary>Monitoring Summary</summary><pre class='mono compact-pre'>"
+            + escape(json.dumps(monitoring_summary, ensure_ascii=False, indent=2, default=str))
+            + "</pre></details>"
+            "<details class='compact-details'><summary>Artifact Summary</summary><pre class='mono compact-pre'>"
+            + escape(json.dumps(artifact_summary, ensure_ascii=False, indent=2, default=str))
+            + "</pre></details>"
         )
 
     def _artifact_run_list(self, items: Sequence[Mapping[str, Any]]) -> str:
@@ -202,9 +881,9 @@ class TasksPageMixin:
                 "</div>"
                 + self._artifact_count_chips(artifact_summary)
                 + "<div class='record-list-actions'>"
-                + self._route_link("查看详情", item.get("artifact_path", ""))
+                + self._route_link_new_tab("查看详情", item.get("artifact_path", ""))
                 + " / "
-                + self._route_link("Run 详情", item.get("detail_path", ""))
+                + self._route_link_new_tab("Run 详情", item.get("detail_path", ""))
                 + " / "
                 + self._route_link_new_tab("Run JSON", item.get("api_path", ""))
                 + "</div>"
@@ -295,7 +974,7 @@ class TasksPageMixin:
             + "</div>"
             "<div class='task-row-actions'>"
             f"<button type='button' class='task-run-primary-button' data-task-modal-target='{escape(modal_id, quote=True)}'>Run</button>"
-            + self._route_link("任务详情", f"/tasks/task/{quote(task_id, safe='')}" if task_id else "")
+            + self._route_link_new_tab("任务详情", f"/tasks/task/{quote(task_id, safe='')}" if task_id else "")
             + archive_action
             + ("<span class='pill'>已归档</span>" if archived else "")
             + "</div>"
@@ -405,8 +1084,8 @@ class TasksPageMixin:
             f"<span class='task-run-entry-wide'><b>监控</b>{escape(monitor_line)}</span>"
             "</div>"
             "<div class='task-run-entry-actions'>"
-            + self._route_link("Run 详情", run.get("detail_path", ""))
-            + self._route_link("产物", f"/artifacts/run/{quote(run_id, safe='')}" if run_id else "")
+            + self._route_link_new_tab("Run 详情", run.get("detail_path", ""))
+            + self._route_link_new_tab("产物", f"/artifacts/run/{quote(run_id, safe='')}" if run_id else "")
             + self._route_link_new_tab("Run JSON", run.get("api_path", ""))
             + self._task_run_execute_inline_form(run, current_actor=current_actor)
             + self._task_run_stop_inline_form(run, current_actor=current_actor)
@@ -531,7 +1210,7 @@ class TasksPageMixin:
         ]
         return self._layout(
             "Run 详情",
-            "这里把一条 Run 的执行实例、监控 backend、关键指标和 trace 入口一起摊开，方便从任务大厅继续下钻。",
+            "展示单条 Run 的执行实例、监控 backend、关键指标和 trace 入口。",
             "".join(body),
         )
 
