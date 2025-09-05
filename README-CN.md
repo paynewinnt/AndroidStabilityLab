@@ -108,13 +108,18 @@ PYTHONPATH=. ./.venv/bin/python -m stability.cli run-unattended-patrol-runner --
 ## Web 页面
 
 - `/`：首页摘要
-- `/tasks`：任务和 Run 历史
-- `/performance`：监控快照和 trace 链接
-- `/issues`：Top Issue 聚合
-- `/runner`：无人值守 runner 状态
-- `/goldens`：golden suite 样本和 diff
-- `/admission`：规则准入、基线、审计和对比
-- `/json-api`：JSON API 导航
+- `/platform`：平台说明和运行说明
+- `/tasks`、`/runs`、`/artifacts`：任务定义、Run 历史和产物
+- `/performance`：监控快照、趋势和 trace 链接
+- `/issues`：Top Issue 聚合和协作状态
+- `/runner`、`/long-run-templates`：无人值守 runner 和长稳模板
+- `/goldens`、`/admission`、`/rules`：golden suite、规则准入和规则治理
+- `/device-pools`、`/quick-adb`：设备池和快捷 ADB 操作
+- `/integration`、`/doctor`：集成 outbox 和本地诊断
+- `/json-api`：当前 JSON API 的可读入口和原始数据导航
+
+涉及新增、修改的表单会在前端标识必填项，并在提交前做必填校验。JSON
+接口以 `/json-api` 页面为准，README 不再维护重复的静态 API 清单。
 
 ## 运行态数据
 

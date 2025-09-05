@@ -245,30 +245,23 @@ PYTHONPATH=. ./.venv/bin/python -m stability.cli replay-integration-dead-letters
 The web portal is dependency-light and intended for local or trusted intranet
 use.
 
-Main pages:
+Common entry points:
 
-- `/`: home dashboard for device, task, issue, runner, and report summaries.
-- `/tasks`: task and run history.
-- `/performance`: recent monitoring snapshots and trace links.
-- `/issues`: top issue aggregation and samples.
-- `/runner`: unattended patrol status, heartbeat, lock state, and reports.
-- `/goldens`: golden suite cases and diff views.
-- `/admission`: rule review baselines, admission cases, audits, and comparisons.
-- `/json-api`: browser-friendly JSON endpoint index.
+- `/`: home dashboard.
+- `/platform`: platform overview and operating notes.
+- `/tasks`, `/runs`, `/artifacts`: task definitions, run history, and artifacts.
+- `/performance`: monitoring snapshots, trends, and trace links.
+- `/issues`: top issue aggregation and collaboration state.
+- `/runner`, `/long-run-templates`: unattended patrols and long-run templates.
+- `/goldens`, `/admission`, `/rules`: golden suites, admission checks, and rule governance.
+- `/device-pools`, `/quick-adb`: device pools and quick ADB actions.
+- `/integration`, `/doctor`: integration outbox and local diagnostics.
+- `/json-api`: browser-friendly index for the current JSON API surface.
 
-Read-only JSON endpoints:
-
-- `/api/home`
-- `/api/tasks`
-- `/api/performance`
-- `/api/issues`
-- `/api/runner`
-- `/api/goldens`
-- `/api/admission`
-- `/api/admission/cases`
-- `/api/admission/cases/<baseline_key>`
-- `/api/integration/outbox`
-- `/health`
+Create and update forms mark required fields in the UI and validate required
+inputs before submission. Use `/json-api` as the source of truth for available
+JSON endpoints instead of relying on a duplicated static endpoint list in this
+README.
 
 ## Runtime Data
 
