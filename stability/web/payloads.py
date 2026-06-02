@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Any, Mapping, Sequence
 from stability.time_utils import now_beijing_string
+from stability.web.manifest import platform_surface as manifest_platform_surface
 
 
 def _generated_at_now() -> str:
@@ -9,85 +10,7 @@ def _generated_at_now() -> str:
 
 
 def platform_surface() -> dict[str, list[dict[str, str]]]:
-    return {
-        "pages": [
-            {"label": "首页", "path": "/"},
-            {"label": "平台说明", "path": "/platform"},
-            {"label": "诊断中心", "path": "/doctor"},
-            {"label": "设备池", "path": "/device-pools"},
-            {"label": "快捷 ADB", "path": "/quick-adb"},
-            {"label": "任务大厅", "path": "/tasks"},
-            {"label": "Run 列表", "path": "/runs"},
-            {"label": "长稳模板", "path": "/long-run-templates"},
-            {"label": "性能采样", "path": "/performance"},
-            {"label": "产物中心", "path": "/artifacts"},
-            {"label": "问题中心", "path": "/issues"},
-            {"label": "巡检状态", "path": "/runner"},
-            {"label": "集成 Outbox", "path": "/integration"},
-            {"label": "Golden Suite", "path": "/goldens"},
-            {"label": "准入中心", "path": "/admission"},
-            {"label": "规则中心", "path": "/rules"},
-            {"label": "接口中心", "path": "/json-api"},
-        ],
-        "api_endpoints": [
-            {"label": "平台说明", "path": "/api/platform"},
-            {"label": "平台健康", "path": "/api/platform-health"},
-            {"label": "诊断中心", "path": "/api/doctor"},
-            {"label": "API Manifest", "path": "/api/manifest"},
-            {"label": "OpenAPI", "path": "/api/openapi.json"},
-            {"label": "首页摘要", "path": "/api/home"},
-            {"label": "用户目录", "path": "/api/users"},
-            {"label": "责任同步", "path": "/api/responsibility"},
-            {"label": "设备池", "path": "/api/device-pools"},
-            {"label": "快捷 ADB", "path": "/api/quick-adb"},
-            {"label": "快捷 ADB 包名查询", "path": "/api/quick-adb/packages"},
-            {"label": "任务大厅", "path": "/api/tasks"},
-            {"label": "任务详情", "path": "/api/tasks/task/<task_id>"},
-            {"label": "Run 列表", "path": "/api/runs"},
-            {"label": "Run 详情", "path": "/api/runs/<run_id>"},
-            {"label": "长稳模板", "path": "/api/long-run-templates"},
-            {"label": "性能采样", "path": "/api/performance"},
-            {"label": "产物中心", "path": "/api/artifacts"},
-            {"label": "Run 产物", "path": "/api/artifacts/run/<run_id>"},
-            {"label": "提测请求", "path": "/api/release-submissions"},
-            {"label": "提测详情", "path": "/api/release-submissions/<submission_id>"},
-            {"label": "集成 Outbox", "path": "/api/integration"},
-            {"label": "问题中心", "path": "/api/issues"},
-            {"label": "巡检状态", "path": "/api/runner"},
-            {"label": "无人值守任务", "path": "/api/runner/unattended/<task_id>"},
-            {"label": "Golden Suite", "path": "/api/goldens"},
-            {"label": "Golden Case", "path": "/api/goldens/case/<case_id>"},
-            {"label": "准入中心", "path": "/api/admission"},
-            {"label": "准入基线", "path": "/api/admission/baseline/<baseline_key>"},
-            {"label": "Admission Cases", "path": "/api/admission/cases"},
-            {"label": "Admission Reports", "path": "/api/admission/reports/<baseline_key>"},
-            {"label": "规则中心", "path": "/api/rules"},
-            {"label": "集成 Outbox 事件", "path": "/api/integration/outbox"},
-            {"label": "Ready", "path": "/ready"},
-            {"label": "Health", "path": "/health"},
-        ],
-        "write_actions": [
-            {"label": "创建任务", "path": "/api/tasks/actions/create-task"},
-            {"label": "创建 Run", "path": "/api/tasks/actions/create-run"},
-            {"label": "执行 Run", "path": "/api/tasks/actions/execute-run"},
-            {"label": "停止 Run", "path": "/api/tasks/actions/stop-run"},
-            {"label": "归档任务", "path": "/api/tasks/actions/archive-task"},
-            {"label": "配置无人值守", "path": "/api/runner/actions/configure-unattended"},
-            {"label": "执行无人值守单轮", "path": "/api/runner/actions/run-unattended-round"},
-            {"label": "巡检", "path": "/api/runner/actions/patrol-unattended"},
-            {"label": "刷新设备", "path": "/api/device-pools/actions/refresh"},
-            {"label": "连接设备", "path": "/api/device-pools/actions/connect"},
-            {"label": "无线配对并连接设备", "path": "/api/device-pools/actions/pair-connect"},
-            {"label": "设备标记", "path": "/api/device-pools/actions/update-profile"},
-            {"label": "执行快捷 ADB", "path": "/api/quick-adb/actions/execute"},
-            {"label": "创建提测请求", "path": "/api/release-submissions/actions/create"},
-            {"label": "问题协作", "path": "/api/issues/actions/assign"},
-            {"label": "准入协作", "path": "/api/admission/actions/transition"},
-            {"label": "集成 worker", "path": "/api/integration/actions/run-worker"},
-            {"label": "Outbox 死信回放", "path": "/api/integration/actions/replay-dead-letters"},
-            {"label": "CI 准入同步", "path": "/api/integration/actions/sync-ci-admission-decisions"},
-        ],
-    }
+    return manifest_platform_surface()
 
 
 def api_manifest_payload(

@@ -22,6 +22,7 @@ class CorePayloadMixin:
         runner = self._runner_snapshot()
         performance = self._recent_monitoring_snapshot(run_limit=40, entry_limit=6)
         platform_health = self._platform_health_payload({}, request_context=request_context)
+        surface = self._platform_surface()
         online_count = sum(1 for item in devices if item.get("is_online"))
         schedulable_count = sum(1 for item in devices if item.get("is_schedulable"))
         failed_run_count = sum(1 for item in runs if item.get("run_status") == "failed")
@@ -82,30 +83,8 @@ class CorePayloadMixin:
             "runner": runner,
             "performance": performance,
             "platform_health": platform_health,
-            "api_endpoints": [
-                {"label": "平台说明", "path": "/api/platform"},
-                {"label": "诊断中心", "path": "/api/doctor"},
-                {"label": "平台健康", "path": "/api/platform-health"},
-                {"label": "API Manifest", "path": "/api/manifest"},
-                {"label": "OpenAPI", "path": "/api/openapi.json"},
-                {"label": "首页摘要", "path": "/api/home"},
-                {"label": "任务大厅", "path": "/api/tasks"},
-                {"label": "Run 列表", "path": "/api/runs"},
-                {"label": "性能采样", "path": "/api/performance"},
-                {"label": "产物中心", "path": "/api/artifacts"},
-                {"label": "提测请求", "path": "/api/release-submissions"},
-                {"label": "集成 Outbox", "path": "/api/integration"},
-                {"label": "问题中心", "path": "/api/issues"},
-                {"label": "Runner 状态", "path": "/api/runner"},
-                {"label": "Golden Suite", "path": "/api/goldens"},
-                {"label": "准入中心", "path": "/api/admission"},
-                {"label": "Admission Cases", "path": "/api/admission/cases"},
-                {"label": "Admission Reports", "path": "/api/admission/reports/<baseline_key>"},
-                {"label": "规则中心", "path": "/api/rules"},
-                {"label": "集成 Outbox", "path": "/api/integration/outbox"},
-                {"label": "Ready", "path": "/ready"},
-                {"label": "健康检查", "path": "/health"},
-            ],
+            "pages": list(surface.get("pages", []) or []),
+            "api_endpoints": list(surface.get("api_endpoints", []) or []),
         }
 
     def _platform_payload(

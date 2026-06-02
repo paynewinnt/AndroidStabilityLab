@@ -7,6 +7,7 @@ from unittest.mock import patch
 
 from stability.app.doctor_service import DoctorCheck, DoctorReport
 from stability.web import WebPortalApplication
+from stability.web.manifest import platform_surface
 from tests.helpers import web_portal as web_portal_helpers
 
 
@@ -1015,7 +1016,7 @@ class WebPortalReadOnlyPagesTest(unittest.TestCase):
     def test_json_api_menu_page_renders_html_index(self) -> None:
         app = WebPortalApplication(self._bundle())
 
-        status, content_type, body = app.handle_request("/json-api")
+        status, content_type, body = app.handle_request("/json-api?page_size=50")
 
         html = body.decode("utf-8")
         self.assertEqual(status, 200)
@@ -1100,6 +1101,24 @@ class WebPortalReadOnlyPagesTest(unittest.TestCase):
         self.assertIn("confidence_score", payload["advanced_anomaly_fields"]["attribution_fields"])
         self.assertIn("recommended_next_steps", payload["advanced_anomaly_fields"]["attribution_fields"])
         self.assertIn("threshold_source", payload["advanced_anomaly_fields"]["performance_risk_fields"])
+
+    def test_api_surfaces_use_shared_manifest(self) -> None:
+        app = WebPortalApplication(self._bundle())
+        expected = platform_surface()
+
+        _, _, manifest_body = app.handle_request("/api/manifest")
+        _, _, platform_body = app.handle_request("/api/platform")
+        _, _, home_body = app.handle_request("/api/home")
+
+        manifest = json.loads(manifest_body.decode("utf-8"))
+        platform = json.loads(platform_body.decode("utf-8"))
+        home = json.loads(home_body.decode("utf-8"))
+        self.assertEqual(expected["pages"], manifest["pages"])
+        self.assertEqual(expected["api_endpoints"], manifest["read_endpoints"])
+        self.assertEqual(expected["write_actions"], [{key: item[key] for key in ("label", "path", "description")} for item in manifest["write_endpoints"]])
+        self.assertEqual(expected["pages"], platform["surface"]["pages"])
+        self.assertEqual(expected["api_endpoints"], platform["surface"]["api_endpoints"])
+        self.assertEqual(expected["api_endpoints"], home["api_endpoints"])
 
     def test_openapi_endpoint_returns_spec_like_payload(self) -> None:
         app = WebPortalApplication(self._bundle())

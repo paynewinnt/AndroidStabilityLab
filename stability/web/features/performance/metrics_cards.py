@@ -5,12 +5,26 @@ from typing import Any, Mapping
 
 
 class PerformanceMetricsCardsMixin:
+    def _performance_route_link_new_tab(self, label: str, path: object) -> str:
+        link_builder = getattr(self, "_route_link_new_tab", None)
+        if callable(link_builder):
+            return str(link_builder(label, path))
+        fallback_builder = getattr(self, "_route_link", None)
+        if callable(fallback_builder):
+            return str(fallback_builder(label, path))
+        href = str(path or "").strip()
+        if not href:
+            return f"<span class='meta'>{escape(str(label))}</span>"
+        return f"<a href='{escape(href, quote=True)}' target='_blank' rel='noreferrer'>{escape(str(label))}</a>"
+
     def _performance_backend_cards(self, summary: Mapping[str, Any]) -> str:
         backend_counts = dict(summary.get("backend_counts", {}) or {})
         if not backend_counts:
             return self._notice("当前还没有可统计的 backend 分布。")
         cards = []
-        for backend, count in sorted(backend_counts.items(), key=lambda item: (-int(item[1] or 0), str(item[0]))):
+        for backend, count in sorted(
+            backend_counts.items(), key=lambda item: (-int(item[1] or 0), str(item[0]))
+        ):
             description = {
                 "adb_collector": "兼容采样链路，适合快速确认基础 CPU / memory / network 指标是否有落盘。",
                 "solox": "一站式应用层采样，适合无 Root 场景下看 CPU / memory / network / battery / FPS / GPU。",
@@ -31,7 +45,9 @@ class PerformanceMetricsCardsMixin:
             return self._notice("当前还没有可统计的 backend 分布。")
         max_count = max(int(value or 0) for value in backend_counts.values()) or 1
         rows = []
-        for backend, count in sorted(backend_counts.items(), key=lambda item: (-int(item[1] or 0), str(item[0]))):
+        for backend, count in sorted(
+            backend_counts.items(), key=lambda item: (-int(item[1] or 0), str(item[0]))
+        ):
             value = int(count or 0)
             width = max(4, int(value / max_count * 100))
             rows.append(
@@ -77,7 +93,9 @@ class PerformanceMetricsCardsMixin:
                 "</article>"
             )
         if not charts:
-            return self._notice("最近样本里还没有 CPU / Memory / FPS / Battery 这类可绘制指标。")
+            return self._notice(
+                "最近样本里还没有 CPU / Memory / FPS / Battery 这类可绘制指标。"
+            )
         return "<div class='performance-chart-grid'>" + "".join(charts) + "</div>"
 
     def _performance_task_panels(self, items: list[dict[str, Any]]) -> str:
@@ -86,13 +104,17 @@ class PerformanceMetricsCardsMixin:
         groups: dict[str, list[dict[str, Any]]] = {}
         for item in items:
             run_key = str(item.get("run_id", "") or "").strip()
-            task_key = str(item.get("task_id", "") or item.get("task_name", "") or "unknown-task")
+            task_key = str(
+                item.get("task_id", "") or item.get("task_name", "") or "unknown-task"
+            )
             key = f"{task_key}:{run_key}" if run_key else task_key
             groups.setdefault(key, []).append(item)
         panels = []
         for group_items in sorted(
             groups.values(),
-            key=lambda values: str(values[0].get("captured_at", "") or values[0].get("run_created_at", "")),
+            key=lambda values: str(
+                values[0].get("captured_at", "") or values[0].get("run_created_at", "")
+            ),
             reverse=True,
         ):
             latest = group_items[0]
@@ -100,11 +122,25 @@ class PerformanceMetricsCardsMixin:
             task_id = str(latest.get("task_id", "") or "")
             run_id = str(latest.get("run_id", "") or "")
             package_name = str(latest.get("package_name", "") or "n/a")
-            run_ids = {str(item.get("run_id", "") or "") for item in group_items if str(item.get("run_id", "") or "")}
+            run_ids = {
+                str(item.get("run_id", "") or "")
+                for item in group_items
+                if str(item.get("run_id", "") or "")
+            }
             ordered_group_items = self._performance_entries_chronological(group_items)
-            latest_metrics = self._performance_latest_non_empty_metrics(ordered_group_items)
-            first_sample = str(ordered_group_items[0].get("captured_at", "") or "n/a") if ordered_group_items else "n/a"
-            latest_sample = str(ordered_group_items[-1].get("captured_at", "") or "n/a") if ordered_group_items else "n/a"
+            latest_metrics = self._performance_latest_non_empty_metrics(
+                ordered_group_items
+            )
+            first_sample = (
+                str(ordered_group_items[0].get("captured_at", "") or "n/a")
+                if ordered_group_items
+                else "n/a"
+            )
+            latest_sample = (
+                str(ordered_group_items[-1].get("captured_at", "") or "n/a")
+                if ordered_group_items
+                else "n/a"
+            )
             drawer_items = list(reversed(ordered_group_items))[:50]
             panels.append(
                 "<details class='performance-task-panel performance-task-panel-compact'>"
@@ -130,7 +166,9 @@ class PerformanceMetricsCardsMixin:
         return "<div class='performance-task-list'>" + "".join(panels) + "</div>"
 
     @classmethod
-    def _performance_metric_series(cls, items: list[dict[str, Any]], metric_key: str) -> list[dict[str, Any]]:
+    def _performance_metric_series(
+        cls, items: list[dict[str, Any]], metric_key: str
+    ) -> list[dict[str, Any]]:
         series: list[dict[str, Any]] = []
         for item in cls._performance_entries_chronological(items):
             metrics = dict(item.get("metrics", {}) or {})
@@ -141,22 +179,37 @@ class PerformanceMetricsCardsMixin:
                 number = float(value)
             except (TypeError, ValueError):
                 continue
-            label = str(item.get("captured_at", "") or item.get("run_created_at", "") or "sample")
-            series.append({"value": round(number, 2), "label": label[-15:] if len(label) > 15 else label})
+            label = str(
+                item.get("captured_at", "")
+                or item.get("run_created_at", "")
+                or "sample"
+            )
+            series.append(
+                {
+                    "value": round(number, 2),
+                    "label": label[-15:] if len(label) > 15 else label,
+                }
+            )
         return series
 
     @staticmethod
-    def _performance_entries_chronological(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    def _performance_entries_chronological(
+        items: list[dict[str, Any]],
+    ) -> list[dict[str, Any]]:
         return sorted(
             items,
             key=lambda item: (
-                str(item.get("captured_at", "") or item.get("run_created_at", "") or ""),
+                str(
+                    item.get("captured_at", "") or item.get("run_created_at", "") or ""
+                ),
                 int(item.get("sample_index", 0) or 0),
             ),
         )
 
     @classmethod
-    def _performance_latest_non_empty_metrics(cls, items: list[dict[str, Any]]) -> dict[str, Any]:
+    def _performance_latest_non_empty_metrics(
+        cls, items: list[dict[str, Any]]
+    ) -> dict[str, Any]:
         metrics: dict[str, Any] = {}
         for item in cls._performance_entries_chronological(items):
             for key, value in dict(item.get("metrics", {}) or {}).items():
@@ -184,7 +237,9 @@ class PerformanceMetricsCardsMixin:
             points.append(f"{x},{y}")
             if len(values) <= 240:
                 circles.append(f"<circle cx='{x}' cy='{y}' r='3.5'></circle>")
-        area_points = " ".join([f"0,{height}", *points, f"{round((len(values)-1)*step, 2)},{height}"])
+        area_points = " ".join(
+            [f"0,{height}", *points, f"{round((len(values) - 1) * step, 2)},{height}"]
+        )
         return (
             f"<svg class='performance-line-chart' viewBox='0 0 {width} {height}' role='img' aria-label='性能趋势图'>"
             f"<polygon class='performance-line-area' points='{area_points}' style='fill:{escape(color)}'></polygon>"
@@ -194,6 +249,7 @@ class PerformanceMetricsCardsMixin:
             + "</g>"
             "</svg>"
         )
+
     def _performance_entry_cards(self, items: list[dict[str, Any]]) -> str:
         if not items:
             return self._notice("最近没有可聚合的 monitoring snapshot。")
@@ -249,9 +305,14 @@ class PerformanceMetricsCardsMixin:
                     ],
                 )
                 + "<div>"
-                + self._route_link_new_tab("Run 详情", item.get("run_detail_path", ""))
+                + self._performance_route_link_new_tab(
+                    "Run 详情", item.get("run_detail_path", "")
+                )
                 + (
-                    " / " + self._route_link_new_tab("Run JSON", item.get("run_api_path", ""))
+                    " / "
+                    + self._performance_route_link_new_tab(
+                        "Run JSON", item.get("run_api_path", "")
+                    )
                     if item.get("run_api_path", "")
                     else ""
                 )
@@ -302,8 +363,11 @@ class PerformanceMetricsCardsMixin:
                 f"<b>{escape(str(round(value, 2)))}</b>"
                 "</div>"
             )
-        return "<div class='performance-mini-bars'>" + "".join(rows) + "</div>" if rows else ""
-
+        return (
+            "<div class='performance-mini-bars'>" + "".join(rows) + "</div>"
+            if rows
+            else ""
+        )
 
 
 __all__ = ["PerformanceMetricsCardsMixin"]

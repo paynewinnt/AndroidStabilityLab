@@ -249,14 +249,14 @@ Common entry points:
 
 - `/`: home dashboard.
 - `/platform`: platform overview and operating notes.
-- `/tasks`, `/runs`, `/artifacts`: task definitions, run history, and artifacts.
-- `/performance`: monitoring snapshots, trends, and trace links.
-- `/issues`: top issue aggregation and collaboration state.
-- `/runner`, `/long-run-templates`: unattended patrols and long-run templates.
-- `/goldens`, `/admission`, `/rules`: golden suites, admission checks, and rule governance.
-- `/device-pools`, `/quick-adb`: device pools and quick ADB actions.
-- `/integration`, `/doctor`: integration outbox and local diagnostics.
 - `/json-api`: browser-friendly index for the current JSON API surface.
+- `/api/manifest`: machine-readable page/API/action manifest.
+- `/api/openapi.json`: OpenAPI-style description generated from the manifest.
+
+The manifest covers the task/run/artifact, device/ADB, performance/issue,
+runner, rule/admission/golden, integration, and diagnostic areas. Keep detailed
+page and endpoint inventories in `stability.web.manifest`; README should only
+document the stable entry points above.
 
 Create and update forms mark required fields in the UI and validate required
 inputs before submission. Use `/json-api` as the source of truth for available

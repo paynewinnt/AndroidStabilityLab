@@ -5,11 +5,14 @@ from html import escape
 from typing import Any, Mapping, Sequence
 from urllib.parse import quote
 from stability.web import renderers as portal_renderers
+from stability.web.features.core.json_api_page import CoreJsonApiPageMixin
 
 
-class CorePageMixin:
+class CorePageMixin(CoreJsonApiPageMixin):
     @staticmethod
-    def _core_select_options(values: Sequence[str], *, labels: Mapping[str, str] | None = None) -> list[dict[str, str]]:
+    def _core_select_options(
+        values: Sequence[str], *, labels: Mapping[str, str] | None = None
+    ) -> list[dict[str, str]]:
         label_map = dict(labels or {})
         return [{"value": "", "label": "全部"}] + [
             {"value": str(value), "label": label_map.get(str(value), str(value))}
@@ -37,15 +40,27 @@ class CorePageMixin:
             portal_renderers.metric_grid(metrics, class_name="grid home-summary-grid"),
             self._section(
                 "Runner 摘要卡",
-                [self._runner_home_summary_cards(dict(payload.get("runner", {}) or {}))],
+                [
+                    self._runner_home_summary_cards(
+                        dict(payload.get("runner", {}) or {})
+                    )
+                ],
             ),
             self._section(
                 "平台自监控",
-                [self._platform_health_card(dict(payload.get("platform_health", {}) or {}))],
+                [
+                    self._platform_health_card(
+                        dict(payload.get("platform_health", {}) or {})
+                    )
+                ],
             ),
             self._section(
                 "最近性能采样",
-                [self._performance_home_summary_card(dict(payload.get("performance", {}) or {}))],
+                [
+                    self._performance_home_summary_card(
+                        dict(payload.get("performance", {}) or {})
+                    )
+                ],
             ),
             self._section(
                 "平台状态",
@@ -56,7 +71,11 @@ class CorePageMixin:
             ),
             self._section(
                 "后台巡检",
-                [self._runner_status_card(dict(payload.get("runner", {}) or {}), include_link=True)],
+                [
+                    self._runner_status_card(
+                        dict(payload.get("runner", {}) or {}), include_link=True
+                    )
+                ],
             ),
             self._section(
                 "今日可看的东西",
@@ -85,15 +104,23 @@ class CorePageMixin:
         metrics = [
             ("来源", summary.get("source", "fallback")),
             ("当前版本", summary.get("current_version", "n/a") or "n/a"),
-            ("校验", "valid" if summary.get("validation_valid", False) else "needs check"),
+            (
+                "校验",
+                "valid" if summary.get("validation_valid", False) else "needs check",
+            ),
             ("错误", summary.get("error_count", 0)),
             ("警告", summary.get("warning_count", 0)),
             ("可编辑字段", summary.get("editable_field_count", 0)),
         ]
         preview_block = (
-            "<pre class='mono'>" + escape(json.dumps(preview, ensure_ascii=False, indent=2)) + "</pre>"
+            "<pre class='mono'>"
+            + escape(json.dumps(preview, ensure_ascii=False, indent=2))
+            + "</pre>"
             if preview
-            else self._notice("可用 query 参数预览：/rules?set.version=candidate-v2 或 /api/rules?set.version=candidate-v2。", tone="warning")
+            else self._notice(
+                "可用 query 参数预览：/rules?set.version=candidate-v2 或 /api/rules?set.version=candidate-v2。",
+                tone="warning",
+            )
         )
         body = [
             self._metric_grid(metrics),
@@ -111,10 +138,14 @@ class CorePageMixin:
                 "校验状态",
                 [
                     self._notice(
-                        "当前规则入口校验通过。" if validation.get("valid", False) else "当前规则入口需要校验或服务层暂未提供完整状态。",
+                        "当前规则入口校验通过。"
+                        if validation.get("valid", False)
+                        else "当前规则入口需要校验或服务层暂未提供完整状态。",
                         tone="ok" if validation.get("valid", False) else "warning",
                     ),
-                    "<pre class='mono'>" + escape(json.dumps(validation, ensure_ascii=False, indent=2)) + "</pre>",
+                    "<pre class='mono'>"
+                    + escape(json.dumps(validation, ensure_ascii=False, indent=2))
+                    + "</pre>",
                 ],
             ),
             self._section(
@@ -135,10 +166,16 @@ class CorePageMixin:
                 [
                     "<div class='cards'>"
                     "<article class='card stack'><h3>风险提示</h3><ul class='link-list'>"
-                    + "".join(f"<li>{escape(str(item))}</li>" for item in list(entrypoint.get("risk_prompts", []) or []))
+                    + "".join(
+                        f"<li>{escape(str(item))}</li>"
+                        for item in list(entrypoint.get("risk_prompts", []) or [])
+                    )
                     + "</ul></article>"
                     "<article class='card stack'><h3>建议流程</h3><ul class='link-list'>"
-                    + "".join(f"<li><span class='mono'>{escape(str(item))}</span></li>" for item in list(entrypoint.get("recommended_flow", []) or []))
+                    + "".join(
+                        f"<li><span class='mono'>{escape(str(item))}</span></li>"
+                        for item in list(entrypoint.get("recommended_flow", []) or [])
+                    )
                     + "</ul></article>"
                     "</div>",
                 ],
@@ -149,7 +186,9 @@ class CorePageMixin:
                     "<ul class='link-list'>"
                     + "".join(
                         f"<li><span class='mono'>{escape(str(path))}</span></li>"
-                        for path in list(entrypoint.get("related_policy_files", []) or [])
+                        for path in list(
+                            entrypoint.get("related_policy_files", []) or []
+                        )
                         if str(path)
                     )
                     + "</ul>",
@@ -174,7 +213,9 @@ class CorePageMixin:
         readiness_checks = dict(readiness.get("checks", {}) or {})
         mode = str(summary.get("portal_mode", "") or "local_ops_console")
         boundary_tone = "ok" if mode == "team_entry" else "warning"
-        health_status = str(summary.get("platform_health_status", "unknown") or "unknown")
+        health_status = str(
+            summary.get("platform_health_status", "unknown") or "unknown"
+        )
         body = [
             self._admin_page_header(
                 "平台说明",
@@ -186,7 +227,10 @@ class CorePageMixin:
                 [
                     ("平台模式", summary.get("portal_mode", "local_ops_console")),
                     ("平台健康", health_status),
-                    ("Ready", "ok" if summary.get("readiness_ok", False) else "blocked"),
+                    (
+                        "Ready",
+                        "ok" if summary.get("readiness_ok", False) else "blocked",
+                    ),
                     ("页面数", summary.get("page_count", 0)),
                     ("API 数", summary.get("api_count", 0)),
                     ("可写动作", summary.get("write_action_count", 0)),
@@ -197,13 +241,25 @@ class CorePageMixin:
                 title="平台定位",
                 description="面向 Android 稳定性验证和值班排障的统一运维控制台。",
             )
-            + self._notice("平台聚合设备状态、任务执行、性能采样、报告产物、问题流转和准入结论，帮助团队在同一运行上下文中判断风险、追踪异常和完成交接。", tone="ok")
+            + self._notice(
+                "平台聚合设备状态、任务执行、性能采样、报告产物、问题流转和准入结论，帮助团队在同一运行上下文中判断风险、追踪异常和完成交接。",
+                tone="ok",
+            )
             + self._platform_detail_grid(
                 [
-                    ("平台用途", "统一沉淀稳定性任务、Run、监控采样、证据产物和问题状态"),
-                    ("覆盖链路", "设备可用性、ADB 诊断、长稳任务、性能趋势、报告归档和准入判断"),
+                    (
+                        "平台用途",
+                        "统一沉淀稳定性任务、Run、监控采样、证据产物和问题状态",
+                    ),
+                    (
+                        "覆盖链路",
+                        "设备可用性、ADB 诊断、长稳任务、性能趋势、报告归档和准入判断",
+                    ),
                     ("使用对象", "值班同学、测试开发、稳定性负责人和外部系统接入方"),
-                    ("边界原则", "读取面向共享观测；写操作必须具备身份解析、权限检查和审计记录"),
+                    (
+                        "边界原则",
+                        "读取面向共享观测；写操作必须具备身份解析、权限检查和审计记录",
+                    ),
                 ]
             )
             + "</section>",
@@ -221,14 +277,31 @@ class CorePageMixin:
             )
             + self._platform_detail_grid(
                 [
-                    ("deployment", deployment.get("deployment_label", "") or "Android Stability Lab"),
+                    (
+                        "deployment",
+                        deployment.get("deployment_label", "")
+                        or "Android Stability Lab",
+                    ),
                     ("mode", deployment.get("mode", "") or "local_ops_console"),
                     ("local base url", deployment.get("local_base_url", "")),
                     ("public base url", deployment.get("public_base_url", "")),
-                    ("allow remote", str(deployment.get("allow_remote_access", False)).lower()),
+                    (
+                        "allow remote",
+                        str(deployment.get("allow_remote_access", False)).lower(),
+                    ),
                     ("team boundary", deployment.get("team_boundary_version", "")),
-                    ("identity", write_boundary.get("write_identity_resolution", "server_resolved_identity")),
-                    ("trusted SSO", str(identity_capabilities.get("trusted_sso_header", False)).lower()),
+                    (
+                        "identity",
+                        write_boundary.get(
+                            "write_identity_resolution", "server_resolved_identity"
+                        ),
+                    ),
+                    (
+                        "trusted SSO",
+                        str(
+                            identity_capabilities.get("trusted_sso_header", False)
+                        ).lower(),
+                    ),
                 ]
             )
             + "</section>",
@@ -241,7 +314,9 @@ class CorePageMixin:
                 actions=[],
             )
             + self._notice(
-                "平台关键服务已就绪。" if readiness.get("ok", False) else "仍有关键服务未就绪，当前入口不应作为正式团队入口使用。",
+                "平台关键服务已就绪。"
+                if readiness.get("ok", False)
+                else "仍有关键服务未就绪，当前入口不应作为正式团队入口使用。",
                 tone="ok" if readiness.get("ok", False) else "danger",
             )
             + self._admin_table(
@@ -253,21 +328,65 @@ class CorePageMixin:
             + self._platform_health_summary(platform_health)
             + "</section>",
             "<section class='panel admin-list-panel'>"
-            + self._admin_toolbar(title="安全与合同", description="写边界、审计字段和回调签名合同。")
+            + self._admin_toolbar(
+                title="安全与合同", description="写边界、审计字段和回调签名合同。"
+            )
             + self._platform_detail_grid(
                 [
-                    ("shared read surface", str(write_boundary.get("shared_read_surface", True)).lower()),
-                    ("same data for all", str(write_boundary.get("same_data_for_all_viewers", True)).lower()),
-                    ("local session", str(identity_capabilities.get("local_session", False)).lower()),
-                    ("trusted SSO headers", ", ".join(str(item) for item in list(identity_capabilities.get("trusted_sso_headers", []) or []))),
-                    ("request headers", ", ".join(str(item) for item in list(write_boundary.get("request_headers", []) or []))),
-                    ("audit fields", ", ".join(str(item) for item in list(write_boundary.get("write_audit_fields", []) or []))),
+                    (
+                        "shared read surface",
+                        str(write_boundary.get("shared_read_surface", True)).lower(),
+                    ),
+                    (
+                        "same data for all",
+                        str(
+                            write_boundary.get("same_data_for_all_viewers", True)
+                        ).lower(),
+                    ),
+                    (
+                        "local session",
+                        str(identity_capabilities.get("local_session", False)).lower(),
+                    ),
+                    (
+                        "trusted SSO headers",
+                        ", ".join(
+                            str(item)
+                            for item in list(
+                                identity_capabilities.get("trusted_sso_headers", [])
+                                or []
+                            )
+                        ),
+                    ),
+                    (
+                        "request headers",
+                        ", ".join(
+                            str(item)
+                            for item in list(
+                                write_boundary.get("request_headers", []) or []
+                            )
+                        ),
+                    ),
+                    (
+                        "audit fields",
+                        ", ".join(
+                            str(item)
+                            for item in list(
+                                write_boundary.get("write_audit_fields", []) or []
+                            )
+                        ),
+                    ),
                     ("readiness endpoints", "/ready, /health, /api/platform-health"),
                     ("schema endpoints", "/api/manifest, /api/openapi.json"),
                 ]
             )
             + "<details class='compact-details'><summary>回调安全合同</summary><pre class='mono compact-pre'>"
-            + escape(json.dumps(dict(payload.get("callback_contract", {}) or {}), ensure_ascii=False, indent=2))
+            + escape(
+                json.dumps(
+                    dict(payload.get("callback_contract", {}) or {}),
+                    ensure_ascii=False,
+                    indent=2,
+                )
+            )
             + "</pre></details>"
             + "<details class='compact-details'><summary>使用建议</summary><ul class='link-list'>"
             + "".join(f"<li>{escape(str(item))}</li>" for item in notes)
@@ -301,14 +420,19 @@ class CorePageMixin:
             {"key": "status", "label": "状态"},
         ]
 
-    def _platform_readiness_rows(self, readiness_checks: Mapping[str, Any]) -> list[dict[str, str]]:
+    def _platform_readiness_rows(
+        self, readiness_checks: Mapping[str, Any]
+    ) -> list[dict[str, str]]:
         rows = []
         for name, value in readiness_checks.items():
             ready = bool(value)
             rows.append(
                 {
                     "check": f"<span class='mono'>{escape(str(name))}</span>",
-                    "status": self._admin_status("ready" if ready else "missing", tone="ok" if ready else "danger"),
+                    "status": self._admin_status(
+                        "ready" if ready else "missing",
+                        tone="ok" if ready else "danger",
+                    ),
                 }
             )
         return rows
@@ -330,222 +454,6 @@ class CorePageMixin:
             + self._platform_detail_grid(fields)
             + "</details>"
         )
-
-    def _render_json_api_index(self, payload: dict[str, Any]) -> str:
-        api_endpoints = list(payload.get("api_endpoints", []) or [])
-        filters = self._json_api_filters(dict(payload.get("json_api_query", {}) or {}))
-        filtered_endpoints = [item for item in api_endpoints if self._json_api_endpoint_matches(item, filters)]
-        page = int(filters["page"])
-        page_size = int(filters["page_size"])
-        page_endpoints = filtered_endpoints[(page - 1) * page_size:page * page_size]
-        body = [
-            self._admin_page_header(
-                "JSON API",
-                breadcrumbs=[("首页", "/"), ("接口中心", "")],
-                actions=[self._route_link("Manifest", "/api/manifest"), self._route_link("OpenAPI", "/api/openapi.json")],
-            ),
-            self._admin_summary_strip(
-                [
-                    ("接口数", len(api_endpoints)),
-                    ("当前过滤", len(filtered_endpoints)),
-                    ("页面入口", 9),
-                    ("详情接口", sum(1 for item in api_endpoints if "<" in str(dict(item).get("path", "") or ""))),
-                    ("健康检查", sum(1 for item in api_endpoints if str(dict(item).get("path", "") or "") in {"/ready", "/health"})),
-                ]
-            ),
-            self._json_api_filter_bar(filters),
-            self._json_api_admin_workspace(page_endpoints, filters=filters, total=len(filtered_endpoints)),
-            self._section("怎么用", [self._json_api_usage_cards()]),
-        ]
-        return self._layout(
-            "JSON API",
-            "",
-            "".join(body),
-        )
-
-    def _json_api_filter_bar(self, filters: Mapping[str, Any]) -> str:
-        return self._admin_filter_bar(
-            action="/json-api",
-            values=filters,
-            fields=[
-                {"name": "keyword", "label": "关键词", "placeholder": "接口 / 说明 / path"},
-                {
-                    "name": "kind",
-                    "label": "类型",
-                    "type": "select",
-                    "options": [
-                        {"value": "", "label": "全部"},
-                        {"value": "read", "label": "读接口"},
-                        {"value": "detail", "label": "详情模板"},
-                        {"value": "health", "label": "健康检查"},
-                    ],
-                },
-                {
-                    "name": "page_size",
-                    "label": "每页",
-                    "type": "select",
-                    "options": [{"value": "10", "label": "10"}, {"value": "20", "label": "20"}, {"value": "50", "label": "50"}],
-                },
-            ],
-        )
-
-    def _json_api_admin_workspace(
-        self,
-        endpoints: Sequence[Mapping[str, Any]],
-        *,
-        filters: Mapping[str, Any],
-        total: int,
-    ) -> str:
-        table_id = "json-api-admin-table"
-        columns = self._json_api_columns()
-        toolbar = self._admin_toolbar(
-            title="接口列表",
-            description="按 path、说明和类型过滤接口。",
-            table_id=table_id,
-            columns=columns,
-            actions=[
-                "<a class='button secondary' href='/json-api'>刷新</a>",
-                self._route_link_new_tab("Manifest", "/api/manifest"),
-                self._route_link_new_tab("OpenAPI", "/api/openapi.json"),
-            ],
-        )
-        table_html, drawers = self._json_api_table(endpoints, table_id=table_id, columns=columns)
-        pagination = self._admin_pagination(
-            base_path="/json-api",
-            filters=filters,
-            page=int(filters.get("page", 1) or 1),
-            page_size=int(filters.get("page_size", 20) or 20),
-            total=total,
-        )
-        return "<section class='panel admin-list-panel'>" + toolbar + table_html + pagination + "</section>" + drawers
-
-    @staticmethod
-    def _json_api_columns() -> list[dict[str, Any]]:
-        return [
-            {"key": "select", "label": "", "locked": True},
-            {"key": "api", "label": "接口"},
-            {"key": "kind", "label": "类型"},
-            {"key": "description", "label": "说明"},
-            {"key": "curl", "label": "curl", "default_visible": False},
-            {"key": "actions", "label": "操作", "locked": True},
-        ]
-
-    def _json_api_table(
-        self,
-        endpoints: Sequence[Mapping[str, Any]],
-        *,
-        table_id: str,
-        columns: Sequence[Mapping[str, Any]],
-    ) -> tuple[str, str]:
-        rows: list[dict[str, str]] = []
-        drawers: list[str] = []
-        for raw_item in endpoints:
-            item = dict(raw_item or {})
-            path = str(item.get("path", "") or "")
-            label = str(item.get("label", path) or path)
-            kind = self._json_api_kind(path)
-            drawer_id = f"admin-json-api-{self._dom_id_fragment(path)}"
-            description = self._json_api_description(path)
-            curl = f"curl http://127.0.0.1:8030{path}" if "<" not in path else f"curl http://127.0.0.1:8030{path}"
-            rows.append(
-                {
-                    "select": f"<input type='checkbox' name='api_path' value='{escape(path, quote=True)}' />",
-                    "api": f"<strong>{escape(label)}</strong><div class='mono'>{escape(path)}</div>",
-                    "kind": self._admin_status(kind, tone="warning" if kind == "detail" else "ok"),
-                    "description": escape(description),
-                    "curl": f"<span class='mono'>{escape(curl)}</span>",
-                    "actions": (
-                        "<div class='admin-table-actions'>"
-                        + self._admin_drawer_button("详情", drawer_id)
-                        + (self._route_link_new_tab("打开 JSON", path) if "<" not in path else "<span class='meta'>需替换参数</span>")
-                        + "</div>"
-                    ),
-                }
-            )
-            drawers.append(
-                self._admin_drawer(
-                    drawer_id,
-                    f"接口 · {label}",
-                    self._json_api_detail(label=label, path=path, kind=kind, description=description, curl=curl),
-                )
-            )
-        return self._admin_table(table_id=table_id, columns=columns, rows=rows, empty_text="当前没有匹配接口。"), "".join(drawers)
-
-    def _json_api_detail(self, *, label: str, path: str, kind: str, description: str, curl: str) -> str:
-        fields = [
-            ("接口", label),
-            ("Path", path),
-            ("类型", kind),
-            ("说明", description),
-        ]
-        return (
-            "<div class='admin-detail-grid'>"
-            + "".join(
-                "<div class='admin-detail-item'>"
-                f"<small>{escape(str(name))}</small>"
-                f"<strong>{escape(str(value or 'n/a'))}</strong>"
-                "</div>"
-                for name, value in fields
-            )
-            + "</div><pre class='mono compact-pre'>"
-            + escape(curl)
-            + "</pre>"
-        )
-
-    def _json_api_filters(self, query: Mapping[str, Sequence[str]]) -> dict[str, Any]:
-        raw_query = {str(key): [str(value) for value in list(values or [])] for key, values in dict(query or {}).items()}
-        return {
-            "keyword": self._str_query(raw_query, "keyword"),
-            "kind": self._str_query(raw_query, "kind"),
-            "page": max(self._int_query(raw_query, "page", default=1), 1),
-            "page_size": min(max(self._int_query(raw_query, "page_size", default=20), 1), 100),
-        }
-
-    def _json_api_endpoint_matches(self, item: Mapping[str, Any], filters: Mapping[str, Any]) -> bool:
-        path = str(item.get("path", "") or "")
-        label = str(item.get("label", path) or path)
-        description = self._json_api_description(path)
-        keyword = str(filters.get("keyword", "") or "").lower()
-        if keyword and keyword not in " ".join([path, label, description]).lower():
-            return False
-        kind = str(filters.get("kind", "") or "").lower()
-        return not kind or kind == self._json_api_kind(path)
-
-    @staticmethod
-    def _json_api_kind(path: str) -> str:
-        if str(path or "") in {"/ready", "/health", "/api/platform-health", "/api/doctor"}:
-            return "health"
-        if "<" in str(path or ""):
-            return "detail"
-        return "read"
-
-    @staticmethod
-    def _json_api_description(path: str) -> str:
-        descriptions = {
-            "/api/platform": "平台模式、共享入口、就绪状态和 API 清单",
-            "/api/platform-health": "平台自监控快照，持续沉淀 runner、ADB、任务、证据抓取和 outbox 健康指标",
-            "/api/doctor": "总诊断入口，检查 Python、ADB、设备、runtime、Web、监控 backend 和 outbox webhook",
-            "/api/manifest": "正式 API manifest，汇总读写端点、响应边界和回调合同",
-            "/api/openapi.json": "OpenAPI 风格描述，供共享入口和外部系统对接参考",
-            "/api/home": "首页总览聚合数据",
-            "/api/tasks": "任务和 run 列表",
-            "/api/runs": "Run 列表与执行状态",
-            "/api/performance": "最近监控快照聚合，并说明性能 risk item 字段",
-            "/api/artifacts": "Run 产物索引",
-            "/api/release-submissions": "提测请求列表",
-            "/api/integration": "集成 outbox 总览、worker 与 webhook 状态",
-            "/api/issues": "问题中心聚合和协作数据",
-            "/api/runner": "巡检 runner 状态和日报周报",
-            "/api/goldens": "Golden Suite 总览",
-            "/api/admission": "准入中心总览",
-            "/api/admission/cases": "稳定 AdmissionCase 合同与列表入口",
-            "/api/admission/reports/<baseline_key>": "正式准入报告 JSON，需要替换 baseline_key",
-            "/api/rules": "规则配置中心，只读展示当前版本、校验状态、可编辑字段、风险提示和预览入口",
-            "/api/integration/outbox": "集成 outbox 事件和投递状态",
-            "/ready": "团队入口 ready 检查和关键服务就绪状态",
-            "/health": "服务健康检查",
-        }
-        return descriptions.get(str(path or ""), "当前接口没有额外说明。")
 
     def _render_doctor(self, payload: dict[str, Any]) -> str:
         summary = dict(payload.get("summary", {}) or {})
@@ -576,7 +484,10 @@ class CorePageMixin:
                 ]
             ),
             "<section class='panel admin-list-panel'>"
-            + self._admin_toolbar(title="怎么用", description="默认只做只读检查，显式开启 webhook 时才会发送诊断 ping。")
+            + self._admin_toolbar(
+                title="怎么用",
+                description="默认只做只读检查，显式开启 webhook 时才会发送诊断 ping。",
+            )
             + "<div class='admin-detail-grid'>"
             "<div class='admin-detail-item'><small>命令行诊断</small><strong>python -m stability.cli doctor</strong></div>"
             "<div class='admin-detail-item'><small>设备诊断</small><strong>doctor --device-id ... --package-name ...</strong></div>"
@@ -599,10 +510,29 @@ class CorePageMixin:
             action="/doctor",
             values=filters,
             fields=[
-                {"name": "keyword", "label": "关键词", "placeholder": "检查项 / 摘要 / details"},
-                {"name": "status", "label": "状态", "type": "select", "options": self._core_select_options(list(options.get("statuses", []) or []))},
-                {"name": "device_id", "label": "设备 ID", "placeholder": "USB serial 或 ip:port"},
-                {"name": "package_name", "label": "包名", "placeholder": "可选，例如 com.example.app"},
+                {
+                    "name": "keyword",
+                    "label": "关键词",
+                    "placeholder": "检查项 / 摘要 / details",
+                },
+                {
+                    "name": "status",
+                    "label": "状态",
+                    "type": "select",
+                    "options": self._core_select_options(
+                        list(options.get("statuses", []) or [])
+                    ),
+                },
+                {
+                    "name": "device_id",
+                    "label": "设备 ID",
+                    "placeholder": "USB serial 或 ip:port",
+                },
+                {
+                    "name": "package_name",
+                    "label": "包名",
+                    "placeholder": "可选，例如 com.example.app",
+                },
                 {
                     "name": "check_webhooks",
                     "label": "Webhook",
@@ -616,7 +546,11 @@ class CorePageMixin:
                     "name": "page_size",
                     "label": "每页",
                     "type": "select",
-                    "options": [{"value": "10", "label": "10"}, {"value": "20", "label": "20"}, {"value": "50", "label": "50"}],
+                    "options": [
+                        {"value": "10", "label": "10"},
+                        {"value": "20", "label": "20"},
+                        {"value": "50", "label": "50"},
+                    ],
                 },
             ],
         )
@@ -634,15 +568,26 @@ class CorePageMixin:
                 "<a class='button secondary' href='/api/doctor'>导出 JSON</a>",
             ],
         )
-        table_html, drawers = self._doctor_admin_table(payload, table_id=table_id, columns=columns)
+        table_html, drawers = self._doctor_admin_table(
+            payload, table_id=table_id, columns=columns
+        )
         pagination = self._admin_pagination(
             base_path="/doctor",
             filters=dict(payload.get("filters", {}) or {}),
             page=int(dict(payload.get("pagination", {}) or {}).get("page", 1) or 1),
-            page_size=int(dict(payload.get("pagination", {}) or {}).get("page_size", 20) or 20),
+            page_size=int(
+                dict(payload.get("pagination", {}) or {}).get("page_size", 20) or 20
+            ),
             total=int(dict(payload.get("pagination", {}) or {}).get("total", 0) or 0),
         )
-        return "<section class='panel admin-list-panel'>" + toolbar + table_html + pagination + "</section>" + drawers
+        return (
+            "<section class='panel admin-list-panel'>"
+            + toolbar
+            + table_html
+            + pagination
+            + "</section>"
+            + drawers
+        )
 
     @staticmethod
     def _doctor_admin_columns() -> list[dict[str, Any]]:
@@ -665,7 +610,12 @@ class CorePageMixin:
     ) -> tuple[str, str]:
         status_order = {"fail": 0, "warn": 1, "ok": 2, "skipped": 3}
         checks = [dict(item or {}) for item in list(payload.get("checks", []) or [])]
-        checks.sort(key=lambda item: (status_order.get(str(item.get("status", "")), 9), str(item.get("name", ""))))
+        checks.sort(
+            key=lambda item: (
+                status_order.get(str(item.get("status", "")), 9),
+                str(item.get("name", "")),
+            )
+        )
         device_id = str(payload.get("device_id", "") or "n/a")
         package_name = str(payload.get("package_name", "") or "n/a")
         rows: list[dict[str, str]] = []
@@ -675,19 +625,28 @@ class CorePageMixin:
             status = str(check.get("status", "") or "unknown")
             details = dict(check.get("details", {}) or {})
             drawer_id = f"admin-doctor-detail-{self._dom_id_fragment(name)}"
-            detail_check = {**check, "context": {"device_id": device_id, "package_name": package_name}}
+            detail_check = {
+                **check,
+                "context": {"device_id": device_id, "package_name": package_name},
+            }
             rows.append(
                 {
                     "select": f"<input type='checkbox' name='check' value='{escape(name, quote=True)}' />",
                     "name": f"<strong>{escape(name)}</strong>",
-                    "status": self._admin_status(status, tone=self._doctor_status_tone(status)),
+                    "status": self._admin_status(
+                        status, tone=self._doctor_status_tone(status)
+                    ),
                     "context": (
                         f"<span class='mono' title='{escape(device_id, quote=True)}'>{escape(device_id)}</span>"
                         f"<div class='meta' title='{escape(package_name, quote=True)}'>package={escape(package_name)}</div>"
                     ),
                     "summary": escape(str(check.get("summary", "") or "")),
-                    "detail_keys": escape(", ".join(str(key) for key in details.keys()) or "n/a"),
-                    "actions": "<div class='admin-table-actions'>" + self._admin_drawer_button("查看诊断细节", drawer_id) + "</div>",
+                    "detail_keys": escape(
+                        ", ".join(str(key) for key in details.keys()) or "n/a"
+                    ),
+                    "actions": "<div class='admin-table-actions'>"
+                    + self._admin_drawer_button("查看诊断细节", drawer_id)
+                    + "</div>",
                 }
             )
             drawers.append(
@@ -697,7 +656,12 @@ class CorePageMixin:
                     self._doctor_admin_detail(detail_check),
                 )
             )
-        return self._admin_table(table_id=table_id, columns=columns, rows=rows, empty_text="当前没有匹配诊断项。"), "".join(drawers)
+        return self._admin_table(
+            table_id=table_id,
+            columns=columns,
+            rows=rows,
+            empty_text="当前没有匹配诊断项。",
+        ), "".join(drawers)
 
     def _doctor_admin_detail(self, check: Mapping[str, Any]) -> str:
         details = dict(check.get("details", {}) or {})
@@ -762,7 +726,12 @@ class CorePageMixin:
             self._admin_summary_strip(
                 [
                     ("模板数量", payload.get("template_count", 0)),
-                    ("全部模板", payload.get("total_template_count", payload.get("template_count", 0))),
+                    (
+                        "全部模板",
+                        payload.get(
+                            "total_template_count", payload.get("template_count", 0)
+                        ),
+                    ),
                     ("来源", payload.get("source", "fallback")),
                     ("Runner", "/runner"),
                     ("API", "/api/long-run-templates"),
@@ -770,7 +739,9 @@ class CorePageMixin:
             ),
             self._long_run_template_filter_bar(payload),
             self._long_run_template_workspace(payload, templates),
-            self._long_run_template_preview_panel(payload, selected, plan) if selected else "",
+            self._long_run_template_preview_panel(payload, selected, plan)
+            if selected
+            else "",
         ]
         return self._layout(
             "长稳运行模板",
@@ -786,18 +757,35 @@ class CorePageMixin:
             values=filters,
             hidden={"template_key": payload.get("template_key", "") or ""},
             fields=[
-                {"name": "keyword", "label": "关键词", "placeholder": "模板名 / key / 作用 / tag"},
-                {"name": "template_type", "label": "类型", "type": "select", "options": self._core_select_options(list(options.get("template_types", []) or []))},
+                {
+                    "name": "keyword",
+                    "label": "关键词",
+                    "placeholder": "模板名 / key / 作用 / tag",
+                },
+                {
+                    "name": "template_type",
+                    "label": "类型",
+                    "type": "select",
+                    "options": self._core_select_options(
+                        list(options.get("template_types", []) or [])
+                    ),
+                },
                 {
                     "name": "page_size",
                     "label": "每页",
                     "type": "select",
-                    "options": [{"value": "10", "label": "10"}, {"value": "20", "label": "20"}, {"value": "50", "label": "50"}],
+                    "options": [
+                        {"value": "10", "label": "10"},
+                        {"value": "20", "label": "20"},
+                        {"value": "50", "label": "50"},
+                    ],
                 },
             ],
         )
 
-    def _long_run_template_workspace(self, payload: Mapping[str, Any], templates: Sequence[Mapping[str, Any]]) -> str:
+    def _long_run_template_workspace(
+        self, payload: Mapping[str, Any], templates: Sequence[Mapping[str, Any]]
+    ) -> str:
         table_id = "long-run-templates-admin-table"
         columns = self._long_run_template_columns()
         toolbar = self._admin_toolbar(
@@ -811,15 +799,26 @@ class CorePageMixin:
                 "<a class='button secondary' href='/runner'>去 Runner 配置</a>",
             ],
         )
-        table_html, drawers = self._long_run_template_table(templates, table_id=table_id, columns=columns)
+        table_html, drawers = self._long_run_template_table(
+            templates, table_id=table_id, columns=columns
+        )
         pagination = self._admin_pagination(
             base_path="/long-run-templates",
             filters=dict(payload.get("filters", {}) or {}),
             page=int(dict(payload.get("pagination", {}) or {}).get("page", 1) or 1),
-            page_size=int(dict(payload.get("pagination", {}) or {}).get("page_size", 20) or 20),
+            page_size=int(
+                dict(payload.get("pagination", {}) or {}).get("page_size", 20) or 20
+            ),
             total=int(dict(payload.get("pagination", {}) or {}).get("total", 0) or 0),
         )
-        return "<section class='panel admin-list-panel'>" + toolbar + table_html + pagination + "</section>" + drawers
+        return (
+            "<section class='panel admin-list-panel'>"
+            + toolbar
+            + table_html
+            + pagination
+            + "</section>"
+            + drawers
+        )
 
     @staticmethod
     def _long_run_template_columns() -> list[dict[str, Any]]:
@@ -848,9 +847,16 @@ class CorePageMixin:
             template = dict(item_raw or {})
             key = self._long_run_template_key(template)
             defaults = dict(template.get("defaults", {}) or {})
-            tags = list(template.get("default_tags", []) or defaults.get("tags", []) or [])
+            tags = list(
+                template.get("default_tags", []) or defaults.get("tags", []) or []
+            )
             drawer_id = f"admin-long-run-template-{self._dom_id_fragment(key)}"
-            purpose = str(template.get("chinese_purpose", "") or template.get("chinese_explanation", "") or template.get("description", "") or "长稳运行模板默认值。")
+            purpose = str(
+                template.get("chinese_purpose", "")
+                or template.get("chinese_explanation", "")
+                or template.get("description", "")
+                or "长稳运行模板默认值。"
+            )
             rows.append(
                 {
                     "select": f"<input type='checkbox' name='template_key' value='{escape(key, quote=True)}' />",
@@ -862,9 +868,17 @@ class CorePageMixin:
                     "type": escape(self._long_run_template_type(template)),
                     "interval": f"{escape(str(defaults.get('interval_minutes', '-') or '-'))} min",
                     "rounds": f"{escape(str(defaults.get('max_rounds', '-') or '-'))} rounds",
-                    "devices": escape(str(defaults.get("desired_device_count", "-") or "-")),
-                    "rotation": escape(str(defaults.get("rotation_strategy", "-") or "-")),
-                    "tags": " ".join(f"<span class='pill muted'>{escape(str(tag))}</span>" for tag in tags) or "n/a",
+                    "devices": escape(
+                        str(defaults.get("desired_device_count", "-") or "-")
+                    ),
+                    "rotation": escape(
+                        str(defaults.get("rotation_strategy", "-") or "-")
+                    ),
+                    "tags": " ".join(
+                        f"<span class='pill muted'>{escape(str(tag))}</span>"
+                        for tag in tags
+                    )
+                    or "n/a",
                     "actions": (
                         "<div class='admin-table-actions'>"
                         + self._admin_drawer_button("详情", drawer_id)
@@ -887,16 +901,30 @@ class CorePageMixin:
                     self._long_run_template_detail(template),
                 )
             )
-        return self._admin_table(table_id=table_id, columns=columns, rows=rows, empty_text="当前没有可展示的长稳模板。"), "".join(drawers)
+        return self._admin_table(
+            table_id=table_id,
+            columns=columns,
+            rows=rows,
+            empty_text="当前没有可展示的长稳模板。",
+        ), "".join(drawers)
 
     @staticmethod
     def _long_run_template_key(template: Mapping[str, Any]) -> str:
-        return str(template.get("template_key", "") or template.get("template_id", "") or template.get("key", "") or "")
+        return str(
+            template.get("template_key", "")
+            or template.get("template_id", "")
+            or template.get("key", "")
+            or ""
+        )
 
     @staticmethod
     def _long_run_template_type(template: Mapping[str, Any]) -> str:
         defaults = dict(template.get("defaults", {}) or {})
-        return str(template.get("template_type", "") or defaults.get("template_type", "") or "n/a")
+        return str(
+            template.get("template_type", "")
+            or defaults.get("template_type", "")
+            or "n/a"
+        )
 
     def _long_run_template_detail(self, template: Mapping[str, Any]) -> str:
         defaults = dict(template.get("defaults", {}) or {})
@@ -911,7 +939,12 @@ class CorePageMixin:
             ("设备", defaults.get("desired_device_count", "-")),
             ("轮转", defaults.get("rotation_strategy", "-")),
             ("中文解释", template.get("chinese_explanation", "") or "n/a"),
-            ("作用", template.get("chinese_purpose", "") or template.get("description", "") or "n/a"),
+            (
+                "作用",
+                template.get("chinese_purpose", "")
+                or template.get("description", "")
+                or "n/a",
+            ),
         ]
         key = self._long_run_template_key(template)
         return (
@@ -924,7 +957,13 @@ class CorePageMixin:
                 for label, value in fields
             )
             + "</div>"
-            + ("<div class='notice warning'>" + "；".join(escape(str(item)) for item in risk_notes) + "</div>" if risk_notes else "")
+            + (
+                "<div class='notice warning'>"
+                + "；".join(escape(str(item)) for item in risk_notes)
+                + "</div>"
+                if risk_notes
+                else ""
+            )
             + (
                 f"<p><a href='/long-run-templates?template_key={quote(key)}&amp;preview_only=1' "
                 f"data-file-preview-link='1' data-file-preview-title='预览计划' data-file-preview-path='{escape(key, quote=True)}'>预览计划</a>"
@@ -944,13 +983,26 @@ class CorePageMixin:
         selected: Mapping[str, Any],
         plan: Mapping[str, Any],
     ) -> str:
-        selected_key = str(payload.get("template_key", "") or selected.get("template_key", "") or selected.get("template_id", "") or "")
+        selected_key = str(
+            payload.get("template_key", "")
+            or selected.get("template_key", "")
+            or selected.get("template_id", "")
+            or ""
+        )
         selected_defaults = dict(selected.get("defaults", {}) or {})
         override_values = dict(payload.get("overrides", {}) or {})
         override_fields = [
-            ("interval_minutes", "间隔分钟", selected_defaults.get("interval_minutes", "60")),
+            (
+                "interval_minutes",
+                "间隔分钟",
+                selected_defaults.get("interval_minutes", "60"),
+            ),
             ("max_rounds", "最大轮次", selected_defaults.get("max_rounds", "12")),
-            ("desired_device_count", "期望设备数", selected_defaults.get("desired_device_count", "2")),
+            (
+                "desired_device_count",
+                "期望设备数",
+                selected_defaults.get("desired_device_count", "2"),
+            ),
             ("primary_device_ids", "主设备 ID，逗号分隔", ""),
             ("backup_device_ids", "备用设备 ID，逗号分隔", ""),
             ("task_name", "任务名", ""),
@@ -973,13 +1025,18 @@ class CorePageMixin:
                     "<details class='card compact-details'>"
                     f"<summary>{escape(title)} JSON</summary>"
                     "<pre class='mono compact-pre'>"
-                    + escape(json.dumps(plan.get(key, {}), ensure_ascii=False, indent=2))
+                    + escape(
+                        json.dumps(plan.get(key, {}), ensure_ascii=False, indent=2)
+                    )
                     + "</pre></details>"
                 )
         if plan.get("notes"):
             plan_sections.append(
                 "<article class='card compact-note-card'><h3>说明</h3>"
-                + "".join(f"<p>{escape(str(item))}</p>" for item in list(plan.get("notes", []) or []))
+                + "".join(
+                    f"<p>{escape(str(item))}</p>"
+                    for item in list(plan.get("notes", []) or [])
+                )
                 + "</article>"
             )
         return (
@@ -997,13 +1054,28 @@ class CorePageMixin:
             )
             + f"<form method='get' action='/long-run-templates' class='compact-long-run-preview-form'>"
             + f"<input type='hidden' name='template_key' value='{escape(selected_key, quote=True)}' />"
-            + ("<input type='hidden' name='preview_only' value='1' />" if payload.get("preview_only") else "")
+            + (
+                "<input type='hidden' name='preview_only' value='1' />"
+                if payload.get("preview_only")
+                else ""
+            )
             + f"<div class='form-grid-three'>{override_inputs}</div>"
             + "<div class='form-actions'><button type='submit'>预览覆盖参数</button></div></form>"
             + "<div class='long-run-plan-grid'>"
             + "".join(plan_sections)
             + "</div><details class='compact-details'><summary>原始 JSON</summary><pre class='mono compact-pre'>"
-            + escape(json.dumps({"template_key": selected_key, "template": selected, "overrides": payload.get("overrides", {}), "plan": plan}, ensure_ascii=False, indent=2))
+            + escape(
+                json.dumps(
+                    {
+                        "template_key": selected_key,
+                        "template": selected,
+                        "overrides": payload.get("overrides", {}),
+                        "plan": plan,
+                    },
+                    ensure_ascii=False,
+                    indent=2,
+                )
+            )
             + "</pre></details></section>"
         )
 
