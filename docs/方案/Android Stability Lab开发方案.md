@@ -332,8 +332,9 @@
 - 抓取失败率
 - 报告生成失败率
 - outbox backlog、重试和 dead-letter
+- 24h 趋势窗口、SLA 阈值评估和 CLI `platform-health --publish-alert` outbox 告警推送
 
-后续仍需补 24h 趋势图、SLA 阈值配置、告警订阅和健康日报。
+后续仍需补独立健康中心页面、趋势图可视化、告警订阅治理和健康日报。
 
 ### 10.3 安全与权限
 

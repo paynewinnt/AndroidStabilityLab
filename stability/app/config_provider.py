@@ -6,6 +6,9 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Mapping
 
+from stability.app.evidence_retention import EvidenceRetentionPolicy
+from stability.app.platform_health_service import PlatformHealthThresholds
+from stability.app.quality_gate_service import QualityGatePolicy
 from stability.infrastructure import (
     FileBackedMonitoringSettingsProvider,
     FileBackedPerformanceRiskThresholdProvider,
@@ -175,6 +178,65 @@ class ConfigProvider:
             performance_risk_config_path=path,
             monitoring_thresholds=dict(self._monitoring_payload.get("thresholds", {}) or {}),
         )
+
+    def platform_health(self) -> PlatformHealthThresholds:
+        """平台健康 SLA 阈值，从 ``platform.json`` 的 ``platform_health`` 段叠加到默认值上。"""
+        section = self._platform_payload.get("platform_health", {})
+        if not isinstance(section, Mapping):
+            section = {}
+        payload = dict(section)
+        env_keys = {
+            "alert_min_severity": "ASL_PLATFORM_HEALTH_ALERT_MIN_SEVERITY",
+            "trend_window_hours": "ASL_PLATFORM_HEALTH_TREND_WINDOW_HOURS",
+            "device_online_rate_min": "ASL_PLATFORM_HEALTH_DEVICE_ONLINE_RATE_MIN",
+            "run_failure_rate_max": "ASL_PLATFORM_HEALTH_RUN_FAILURE_RATE_MAX",
+            "instance_failure_rate_max": "ASL_PLATFORM_HEALTH_INSTANCE_FAILURE_RATE_MAX",
+            "artifact_failure_rate_max": "ASL_PLATFORM_HEALTH_ARTIFACT_FAILURE_RATE_MAX",
+            "outbox_dead_letter_max": "ASL_PLATFORM_HEALTH_OUTBOX_DEAD_LETTER_MAX",
+        }
+        for key, env_key in env_keys.items():
+            override_key = f"platform_health.{key}"
+            if override_key in self._overrides:
+                payload[key] = self._overrides[override_key]
+            elif env_key in self._env:
+                payload[key] = self._env[env_key]
+        return PlatformHealthThresholds.from_mapping(payload)
+
+    def quality_gate_policy(self) -> QualityGatePolicy:
+        """质量门禁策略，从 ``platform.json`` 的 ``quality_gate`` 段叠加到默认值上。"""
+        section = self._platform_payload.get("quality_gate", {})
+        if not isinstance(section, Mapping):
+            section = {}
+        payload = dict(section)
+        env_keys = {
+            "review_failures_max": "ASL_QUALITY_GATE_REVIEW_FAILURES_MAX",
+            "golden_suite_failures_max": "ASL_QUALITY_GATE_GOLDEN_SUITE_FAILURES_MAX",
+            "review_warnings_max": "ASL_QUALITY_GATE_REVIEW_WARNINGS_MAX",
+            "high_risk_family_max": "ASL_QUALITY_GATE_HIGH_RISK_FAMILY_MAX",
+            "high_risk_family_high_severity_min": "ASL_QUALITY_GATE_HIGH_RISK_FAMILY_HIGH_SEVERITY_MIN",
+            "min_review_snapshot_count": "ASL_QUALITY_GATE_MIN_REVIEW_SNAPSHOT_COUNT",
+            "min_golden_suite_case_count": "ASL_QUALITY_GATE_MIN_GOLDEN_SUITE_CASE_COUNT",
+            "performance_risk_max": "ASL_QUALITY_GATE_PERFORMANCE_RISK_MAX",
+            "performance_worsened_high_count": "ASL_QUALITY_GATE_PERFORMANCE_WORSENED_HIGH_COUNT",
+        }
+        for key, env_key in env_keys.items():
+            override_key = f"quality_gate.{key}"
+            if override_key in self._overrides:
+                payload[key] = self._overrides[override_key]
+            elif env_key in self._env:
+                payload[key] = self._env[env_key]
+        if "quality_gate.rule_version" in self._overrides:
+            payload["rule_version"] = self._overrides["quality_gate.rule_version"]
+        elif "ASL_QUALITY_GATE_RULE_VERSION" in self._env:
+            payload["rule_version"] = self._env["ASL_QUALITY_GATE_RULE_VERSION"]
+        return QualityGatePolicy.from_mapping(payload)
+
+    def evidence_retention(self) -> EvidenceRetentionPolicy:
+        """证据保留策略，从 ``platform.json`` 的 ``evidence_retention`` 段叠加到默认策略上。"""
+        section = self._platform_payload.get("evidence_retention", {})
+        if not isinstance(section, Mapping):
+            section = {}
+        return EvidenceRetentionPolicy.from_mapping(section)
 
     def outbox(self) -> OutboxConfig:
         runtime = self.runtime_paths()

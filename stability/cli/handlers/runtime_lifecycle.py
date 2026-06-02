@@ -56,9 +56,16 @@ def _handle_platform_health(args: argparse.Namespace) -> int:
 
         service = create_v1_persistent_bootstrap(config_provider=provider).platform_health_service
     except Exception:
-        service = PlatformHealthService(root_dir=Path(runtime_root) / "platform_health")
+        service = PlatformHealthService(root_dir=Path(runtime_root) / "platform_health", thresholds=provider.platform_health())
     snapshot = service.snapshot(record=not bool(getattr(args, "no_record", False)))
-    print(json.dumps(service.snapshot_payload(snapshot), ensure_ascii=False, indent=2))
+    payload = service.snapshot_payload(snapshot)
+    if bool(getattr(args, "publish_alert", False)):
+        published = service.publish_alert(snapshot)
+        payload["published_alert"] = {
+            "published": published is not None,
+            "alert": published.to_payload() if published is not None else None,
+        }
+    print(json.dumps(payload, ensure_ascii=False, indent=2))
     return 0 if snapshot.ok else 1
 
 
@@ -78,6 +85,18 @@ def _handle_cleanup_runtime(args: argparse.Namespace) -> int:
     result = service.cleanup(
         categories=_split_values(args.categories),
         max_age_days=args.max_age_days,
+        apply=bool(args.apply),
+    )
+    print(json.dumps(asdict(result), ensure_ascii=False, indent=2))
+    return 0
+
+
+def _handle_cleanup_evidence(args: argparse.Namespace) -> int:
+    provider = ConfigProvider(config_dir=str(getattr(args, "config_dir", "") or "config"))
+    runtime_root = str(getattr(args, "runtime_root", "") or provider.runtime_paths().root)
+    service = RuntimeLifecycleService(root_dir=runtime_root)
+    result = service.enforce_evidence_retention(
+        policy=provider.evidence_retention(),
         apply=bool(args.apply),
     )
     print(json.dumps(asdict(result), ensure_ascii=False, indent=2))

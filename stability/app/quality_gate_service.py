@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Callable, Mapping, Sequence
@@ -16,6 +17,123 @@ from stability.domain import (
 from stability.domain.value_objects import new_id, utcnow
 
 from .integration_outbox_service import IntegrationOutboxService
+
+
+@dataclass(frozen=True)
+class QualityGatePolicyOverride:
+    """Scoped override for quality gate thresholds."""
+
+    name: str
+    match: Mapping[str, Any] = field(default_factory=dict)
+    values: Mapping[str, Any] = field(default_factory=dict)
+
+
+@dataclass(frozen=True)
+class QualityGatePolicy:
+    """Configurable quality gate thresholds with conservative defaults."""
+
+    rule_version: str = "quality-gate-v1"
+    review_failures_max: int = 0
+    golden_suite_failures_max: int = 0
+    review_warnings_max: int = 0
+    high_risk_family_max: int = 0
+    high_risk_family_high_severity_min: int = 3
+    min_review_snapshot_count: int = 1
+    min_golden_suite_case_count: int = 1
+    performance_risk_max: int = 0
+    performance_worsened_high_count: int = 3
+    scoped_overrides: Sequence[QualityGatePolicyOverride] = field(default_factory=tuple)
+
+    @classmethod
+    def default(cls) -> "QualityGatePolicy":
+        return cls()
+
+    @classmethod
+    def from_mapping(cls, payload: Mapping[str, Any] | None) -> "QualityGatePolicy":
+        data = dict(payload or {})
+        base = cls()
+
+        def _i(key: str, fallback: int) -> int:
+            try:
+                return int(data[key]) if key in data and data[key] is not None else fallback
+            except (TypeError, ValueError):
+                return fallback
+
+        overrides: list[QualityGatePolicyOverride] = []
+        for index, item in enumerate(data.get("scoped_overrides", ()) or ()):
+            if not isinstance(item, Mapping):
+                continue
+            values = dict(item.get("values", {}) or item.get("thresholds", {}) or {})
+            match = dict(item.get("match", {}) or {})
+            if not values or not match:
+                continue
+            overrides.append(
+                QualityGatePolicyOverride(
+                    name=str(item.get("name", "") or f"override_{index + 1}"),
+                    match=match,
+                    values=values,
+                )
+            )
+        return cls(
+            rule_version=str(data.get("rule_version", base.rule_version) or base.rule_version),
+            review_failures_max=max(0, _i("review_failures_max", base.review_failures_max)),
+            golden_suite_failures_max=max(0, _i("golden_suite_failures_max", base.golden_suite_failures_max)),
+            review_warnings_max=max(0, _i("review_warnings_max", base.review_warnings_max)),
+            high_risk_family_max=max(0, _i("high_risk_family_max", base.high_risk_family_max)),
+            high_risk_family_high_severity_min=max(
+                1,
+                _i("high_risk_family_high_severity_min", base.high_risk_family_high_severity_min),
+            ),
+            min_review_snapshot_count=max(0, _i("min_review_snapshot_count", base.min_review_snapshot_count)),
+            min_golden_suite_case_count=max(
+                0,
+                _i("min_golden_suite_case_count", base.min_golden_suite_case_count),
+            ),
+            performance_risk_max=max(0, _i("performance_risk_max", base.performance_risk_max)),
+            performance_worsened_high_count=max(
+                1,
+                _i("performance_worsened_high_count", base.performance_worsened_high_count),
+            ),
+            scoped_overrides=tuple(overrides),
+        )
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "rule_version": self.rule_version,
+            "review_failures_max": self.review_failures_max,
+            "golden_suite_failures_max": self.golden_suite_failures_max,
+            "review_warnings_max": self.review_warnings_max,
+            "high_risk_family_max": self.high_risk_family_max,
+            "high_risk_family_high_severity_min": self.high_risk_family_high_severity_min,
+            "min_review_snapshot_count": self.min_review_snapshot_count,
+            "min_golden_suite_case_count": self.min_golden_suite_case_count,
+            "performance_risk_max": self.performance_risk_max,
+            "performance_worsened_high_count": self.performance_worsened_high_count,
+            "scoped_overrides": [
+                {"name": item.name, "match": dict(item.match), "values": dict(item.values)}
+                for item in self.scoped_overrides
+            ],
+        }
+
+    def resolve(self, context: Mapping[str, Any]) -> "QualityGatePolicy":
+        payload = self.to_payload()
+        payload.pop("scoped_overrides", None)
+        for override in self.scoped_overrides:
+            if self._matches(context, override.match):
+                payload.update(dict(override.values))
+        return QualityGatePolicy.from_mapping(payload)
+
+    @staticmethod
+    def _matches(context: Mapping[str, Any], match: Mapping[str, Any]) -> bool:
+        for key, expected in match.items():
+            actual = context.get(str(key))
+            if isinstance(expected, Sequence) and not isinstance(expected, (str, bytes, bytearray)):
+                if str(actual or "") not in {str(item) for item in expected}:
+                    return False
+                continue
+            if str(actual or "") != str(expected):
+                return False
+        return True
 
 
 class QualityGateService:
@@ -35,12 +153,14 @@ class QualityGateService:
         root_dir: str | Path = "runtime/quality_gates",
         performance_risk_provider: Callable[..., Sequence[QualityGateRiskItem | Mapping[str, Any]]] | None = None,
         outbox_service: IntegrationOutboxService | None = None,
+        policy: QualityGatePolicy | None = None,
     ) -> None:
         self._rule_review_report_service = rule_review_report_service
         self._root_dir = Path(root_dir)
         self._override_registry_path = self._root_dir / "overrides.json"
         self._performance_risk_provider = performance_risk_provider
         self._outbox_service = outbox_service
+        self._policy = policy or QualityGatePolicy.default()
 
     def list_quality_gates(self, *, limit: int = 20) -> tuple[QualityGateResult, ...]:
         baselines = list(self._rule_review_report_service.list_baselines())
@@ -63,7 +183,12 @@ class QualityGateService:
             report_summary=report_summary,
             latest_audit_summary=latest_audit_summary,
         )
-        rules = self._default_rules()
+        policy = self._policy_for(
+            baseline=baseline,
+            report_summary=report_summary,
+            latest_audit_summary=latest_audit_summary,
+        )
+        rules = self._default_rules(policy=policy)
         triggered_rules: list[QualityGateTriggeredRule] = []
         risk_items: list[QualityGateRiskItem] = []
         coverage_gaps: list[QualityGateCoverageGap] = []
@@ -79,65 +204,72 @@ class QualityGateService:
         golden_case_count = int(golden_suite.get("case_count_total", 0) or 0)
         golden_failed_case_count = int(golden_suite.get("failed_case_count_total", 0) or 0)
 
-        if fail_count > 0:
+        if fail_count > policy.review_failures_max:
             triggered_rules.append(
                 self._triggered_rule(
                     rule_key="review_failures",
                     observed_value=fail_count,
-                    threshold=0,
+                    threshold=policy.review_failures_max,
                     decision_on_trigger="fail",
-                    message=f"当前报告包含 {fail_count} 个 fail 决策快照。",
+                    message=f"当前报告包含 {fail_count} 个 fail 决策快照，超过阈值 {policy.review_failures_max}。",
                     source="report.summary.decision_counts.fail",
+                    policy=policy,
                 )
             )
-        if golden_failed_case_count > 0:
+        if golden_failed_case_count > policy.golden_suite_failures_max:
             triggered_rules.append(
                 self._triggered_rule(
                     rule_key="golden_suite_failures",
                     observed_value=golden_failed_case_count,
-                    threshold=0,
+                    threshold=policy.golden_suite_failures_max,
                     decision_on_trigger="fail",
                     message=(
                         f"Golden Suite 失败 {golden_failed_case_count} 个 case，"
-                        f"当前总 case 数 {golden_case_count}。"
+                        f"当前总 case 数 {golden_case_count}，超过阈值 {policy.golden_suite_failures_max}。"
                     ),
                     source="report.current_report_golden_suite.failed_case_count_total",
+                    policy=policy,
                 )
             )
-        if fail_count == 0 and conditional_count > 0:
+        if fail_count <= policy.review_failures_max and conditional_count > policy.review_warnings_max:
             triggered_rules.append(
                 self._triggered_rule(
                     rule_key="review_warnings",
                     observed_value=conditional_count,
-                    threshold=0,
+                    threshold=policy.review_warnings_max,
                     decision_on_trigger="conditional_pass",
-                    message=f"当前报告包含 {conditional_count} 个 conditional_pass 决策快照。",
+                    message=(
+                        f"当前报告包含 {conditional_count} 个 conditional_pass 决策快照，"
+                        f"超过阈值 {policy.review_warnings_max}。"
+                    ),
                     source="report.summary.decision_counts.conditional_pass",
+                    policy=policy,
                 )
             )
-        if high_risk_family_count > 0:
+        if high_risk_family_count > policy.high_risk_family_max:
             triggered_rules.append(
                 self._triggered_rule(
                     rule_key="high_risk_families",
                     observed_value=high_risk_family_count,
-                    threshold=0,
+                    threshold=policy.high_risk_family_max,
                     decision_on_trigger="conditional_pass",
-                    message=f"当前报告仍有 {high_risk_family_count} 个高风险 family。",
+                    message=f"当前报告仍有 {high_risk_family_count} 个高风险 family，超过阈值 {policy.high_risk_family_max}。",
                     source="report.summary.high_risk_family_count",
+                    policy=policy,
                 )
             )
             risk_items.append(
                 QualityGateRiskItem(
                     risk_key="stability_high_risk_families",
                     category="stability",
-                    severity="high" if high_risk_family_count >= 3 else "medium",
+                    severity="high" if high_risk_family_count >= policy.high_risk_family_high_severity_min else "medium",
                     summary=f"高风险 family 数为 {high_risk_family_count}，建议继续人工评审。",
                     details={"high_risk_family_count": high_risk_family_count},
                     source="report.summary.high_risk_family_count",
                     blocks_admission=False,
                 )
             )
-        if snapshot_count < 1:
+        if snapshot_count < policy.min_review_snapshot_count:
             coverage_gaps.append(
                 QualityGateCoverageGap(
                     gap_key="review_snapshot_coverage",
@@ -145,7 +277,7 @@ class QualityGateService:
                     severity="high",
                     summary="当前准入报告没有可用的 review snapshot，覆盖不足。",
                     observed_value=snapshot_count,
-                    required_value=1,
+                    required_value=policy.min_review_snapshot_count,
                     source="report.summary.snapshot_count",
                 )
             )
@@ -153,13 +285,14 @@ class QualityGateService:
                 self._triggered_rule(
                     rule_key="review_snapshot_coverage",
                     observed_value=snapshot_count,
-                    threshold=1,
+                    threshold=policy.min_review_snapshot_count,
                     decision_on_trigger="conditional_pass",
                     message="当前准入报告没有可用的 review snapshot，自动结论降级为 conditional_pass。",
                     source="report.summary.snapshot_count",
+                    policy=policy,
                 )
             )
-        if golden_case_count < 1:
+        if golden_case_count < policy.min_golden_suite_case_count:
             coverage_gaps.append(
                 QualityGateCoverageGap(
                     gap_key="golden_suite_coverage",
@@ -167,7 +300,7 @@ class QualityGateService:
                     severity="medium",
                     summary="当前准入结果没有 golden suite case 覆盖，建议补齐验收样本。",
                     observed_value=golden_case_count,
-                    required_value=1,
+                    required_value=policy.min_golden_suite_case_count,
                     source="report.current_report_golden_suite.case_count_total",
                 )
             )
@@ -175,10 +308,11 @@ class QualityGateService:
                 self._triggered_rule(
                     rule_key="golden_suite_coverage",
                     observed_value=golden_case_count,
-                    threshold=1,
+                    threshold=policy.min_golden_suite_case_count,
                     decision_on_trigger="conditional_pass",
                     message="当前准入结果缺少 golden suite case 覆盖。",
                     source="report.current_report_golden_suite.case_count_total",
+                    policy=policy,
                 )
             )
 
@@ -187,16 +321,21 @@ class QualityGateService:
             report=report,
             latest_audit=latest_audit,
             report_summary=report_summary,
+            policy=policy,
         )
-        if performance_risk_items:
+        if len(performance_risk_items) > policy.performance_risk_max:
             triggered_rules.append(
                 self._triggered_rule(
                     rule_key="performance_risks",
                     observed_value=len(performance_risk_items),
-                    threshold=0,
+                    threshold=policy.performance_risk_max,
                     decision_on_trigger="risk_only",
-                    message=f"检测到 {len(performance_risk_items)} 个性能风险提示项，仅作为辅助风险，不直接替代稳定性结论。",
+                    message=(
+                        f"检测到 {len(performance_risk_items)} 个性能风险提示项，"
+                        f"超过阈值 {policy.performance_risk_max}；仅作为辅助风险，不直接替代稳定性结论。"
+                    ),
                     source="performance_risk_provider",
+                    policy=policy,
                 )
             )
 
@@ -318,16 +457,36 @@ class QualityGateService:
             )
         return override
 
-    def _default_rules(self) -> tuple[QualityGateRule, ...]:
+    def _policy_for(
+        self,
+        *,
+        baseline: object,
+        report_summary: Mapping[str, Any],
+        latest_audit_summary: Mapping[str, Any],
+    ) -> QualityGatePolicy:
+        context = {
+            "baseline_key": str(getattr(baseline, "baseline_key", "") or ""),
+            "report_name": str(getattr(baseline, "report_name", "") or getattr(baseline, "name", "") or ""),
+            "updated_by": str(getattr(baseline, "updated_by", "") or ""),
+            "package_name": str(report_summary.get("package_name", "") or latest_audit_summary.get("package_name", "") or ""),
+            "scenario": str(report_summary.get("scenario", "") or report_summary.get("template_type", "") or ""),
+            "template_type": str(report_summary.get("template_type", "") or report_summary.get("scenario", "") or ""),
+            "device_group": str(report_summary.get("device_group", "") or latest_audit_summary.get("device_group", "") or ""),
+            "release_type": str(report_summary.get("release_type", "") or latest_audit_summary.get("release_type", "") or ""),
+        }
+        return self._policy.resolve(context)
+
+    def _default_rules(self, *, policy: QualityGatePolicy | None = None) -> tuple[QualityGateRule, ...]:
+        resolved_policy = policy or self._policy
         return (
             QualityGateRule(
                 rule_key="review_failures",
                 name="规则评审失败门槛",
-                rule_version=self._rule_version,
+                rule_version=resolved_policy.rule_version,
                 scope="global",
                 metric_key="decision_counts.fail",
                 comparator=">",
-                threshold=0,
+                threshold=resolved_policy.review_failures_max,
                 decision_on_trigger="fail",
                 description="当前报告只要存在 fail 决策快照，就直接阻断自动准入。",
                 created_by="system",
@@ -336,11 +495,11 @@ class QualityGateService:
             QualityGateRule(
                 rule_key="golden_suite_failures",
                 name="Golden Suite 失败门槛",
-                rule_version=self._rule_version,
+                rule_version=resolved_policy.rule_version,
                 scope="global",
                 metric_key="current_report_golden_suite.failed_case_count_total",
                 comparator=">",
-                threshold=0,
+                threshold=resolved_policy.golden_suite_failures_max,
                 decision_on_trigger="fail",
                 description="黄金样本失败代表规则变更未通过关键 acceptance。",
                 created_by="system",
@@ -349,11 +508,11 @@ class QualityGateService:
             QualityGateRule(
                 rule_key="review_warnings",
                 name="规则评审警告门槛",
-                rule_version=self._rule_version,
+                rule_version=resolved_policy.rule_version,
                 scope="global",
                 metric_key="decision_counts.conditional_pass",
                 comparator=">",
-                threshold=0,
+                threshold=resolved_policy.review_warnings_max,
                 decision_on_trigger="conditional_pass",
                 description="出现 warning 时自动结论降级为 conditional_pass。",
                 created_by="system",
@@ -362,11 +521,11 @@ class QualityGateService:
             QualityGateRule(
                 rule_key="high_risk_families",
                 name="高风险 Family 门槛",
-                rule_version=self._rule_version,
+                rule_version=resolved_policy.rule_version,
                 scope="global",
                 metric_key="high_risk_family_count",
                 comparator=">",
-                threshold=0,
+                threshold=resolved_policy.high_risk_family_max,
                 decision_on_trigger="conditional_pass",
                 description="高风险 family 不一定直接阻断，但必须显式暴露给评审者。",
                 created_by="system",
@@ -375,11 +534,11 @@ class QualityGateService:
             QualityGateRule(
                 rule_key="review_snapshot_coverage",
                 name="准入评审覆盖门槛",
-                rule_version=self._rule_version,
+                rule_version=resolved_policy.rule_version,
                 scope="global",
                 metric_key="snapshot_count",
                 comparator="<",
-                threshold=1,
+                threshold=resolved_policy.min_review_snapshot_count,
                 decision_on_trigger="conditional_pass",
                 description="缺少 review snapshot 时不应给出无条件通过。",
                 created_by="system",
@@ -388,11 +547,11 @@ class QualityGateService:
             QualityGateRule(
                 rule_key="golden_suite_coverage",
                 name="Golden Suite 覆盖门槛",
-                rule_version=self._rule_version,
+                rule_version=resolved_policy.rule_version,
                 scope="global",
                 metric_key="current_report_golden_suite.case_count_total",
                 comparator="<",
-                threshold=1,
+                threshold=resolved_policy.min_golden_suite_case_count,
                 decision_on_trigger="conditional_pass",
                 description="缺少 golden suite 覆盖时需要显式提示覆盖不足。",
                 created_by="system",
@@ -401,11 +560,11 @@ class QualityGateService:
             QualityGateRule(
                 rule_key="performance_risks",
                 name="性能风险辅助项",
-                rule_version=self._rule_version,
+                rule_version=resolved_policy.rule_version,
                 scope="global",
                 metric_key="performance_risk_items",
                 comparator=">",
-                threshold=0,
+                threshold=resolved_policy.performance_risk_max,
                 decision_on_trigger="risk_only",
                 description="性能结果只作为风险辅助项，不直接替代稳定性结论。",
                 created_by="system",
@@ -422,8 +581,9 @@ class QualityGateService:
         decision_on_trigger: str,
         message: str,
         source: str,
+        policy: QualityGatePolicy | None = None,
     ) -> QualityGateTriggeredRule:
-        rule = {item.rule_key: item for item in self._default_rules()}[rule_key]
+        rule = {item.rule_key: item for item in self._default_rules(policy=policy)}[rule_key]
         return QualityGateTriggeredRule(
             rule_key=rule.rule_key,
             rule_name=rule.name,
@@ -476,6 +636,7 @@ class QualityGateService:
         report: object,
         latest_audit: object,
         report_summary: Mapping[str, Any],
+        policy: QualityGatePolicy,
     ) -> tuple[QualityGateRiskItem, ...]:
         items: list[QualityGateRiskItem] = []
         provider = self._performance_risk_provider
@@ -496,7 +657,7 @@ class QualityGateService:
                 QualityGateRiskItem(
                     risk_key="performance_metric_regression",
                     category="performance",
-                    severity="medium" if worsened_count < 3 else "high",
+                    severity="medium" if worsened_count < policy.performance_worsened_high_count else "high",
                     summary=f"关键性能指标存在 {worsened_count} 项恶化趋势。",
                     details=metric_summary,
                     source="report.summary.metric_result_summary",

@@ -42,7 +42,7 @@
 
 | 功能 | 已完成 | 部分完成 | 未完成 | 验收方式 | 对应入口 | 对应测试 |
 | --- | --- | --- | --- | --- | --- | --- |
-| 问题聚合 | Top Issue、fingerprint、按 task/run/device/package/template/version 过滤已具备；核心在 `AnalysisService` | 看板/UI、人工合并、拆分、误聚合修正、跨版本 issue lineage 治理仍未产品化 | `IssueFingerprintGovernanceService` 尚未建立 | 同类 crash/ANR 应聚合到同一 fingerprint；不同场景/包名应可区分；支持 drill-down samples | Web：`/issues`、`/api/issues`；CLI：`list-top-issues`、`show-issue-group`；服务：`AnalysisService` | `tests/test_analysis_service.py`、`tests/test_cli_analysis_commands.py`、`tests/test_web_portal_read_only.py` |
+| 问题聚合 | Top Issue、fingerprint、按 task/run/device/package/template/version 过滤已具备；`IssueFingerprintGovernanceService` 已支持 alias / suppress 规则并接入 `AnalysisService` 聚合前解析 | 看板/UI、人工拆分、跨版本 issue lineage 和治理入口仍未产品化 | 完整 Web 化指纹治理、跨版本延续关系库未完成 | 同类 crash/ANR 应聚合到同一 fingerprint；不同场景/包名应可区分；支持 drill-down samples；人工规则可合并或压制噪声指纹 | Web：`/issues`、`/api/issues`；CLI：`list-top-issues`、`show-issue-group`；服务：`AnalysisService`、`IssueFingerprintGovernanceService` | `tests/test_analysis_service.py`、`tests/test_issue_fingerprint_governance_service.py`、`tests/test_cli_analysis_commands.py`、`tests/test_web_portal_read_only.py` |
 | Top Issue 看板 | Web 问题中心、首页摘要、API 查询已具备 | 噪声过滤、人工压制、优先级治理还需要加强 | Top Issue 运营动作闭环未完整产品化 | 首页和问题中心能展示 Top Issue；过滤条件应影响排序和结果 | Web：`/issues`、首页；API：`/api/issues`；CLI：analysis 查询 | `tests/test_web_portal.py`、`tests/test_web_portal_read_only.py`、`tests/test_analysis_service.py` |
 | 回归分析 | comparison、regression、performance trend、snapshot 已具备；支持版本/设备/场景维度对比 | CLI 分析能力强于 Web；Web 主要提供看板/详情，缺少 compare/regression 的一等交互式操作入口；回归阈值、显著性口径、人工确认、按设备组差异化判断仍需加强 | 持续趋势图和回归运营看板仍可增强 | 构造左右版本/设备/场景数据，验证 regression result、risk level 和差异明细 | Web：问题中心、准入中心、性能页、Golden Diff；CLI：`compare-issues`、`compare-performance-trends`、`judge-regression`、analysis snapshot、rule replay/golden/rule review 系列 | `tests/test_comparison_service.py`、`tests/test_regression_service.py`、`tests/test_performance_trend_service.py`、`tests/test_cli_analysis_commands.py`、`tests/test_rule_*` |
 | 场景编排增强 | 多模板已接入，参数表单和动态指标已具备；自定义自动化支持 adb/uiautomator2/external script | 模板参数 schema 还需进一步驱动 Web/CLI/文档完全同源 | 编排 DAG、跨模板复杂流程尚未实现 | 每个模板可通过 Web/CLI 完成 task/run/execute；custom 可执行脚本并落审计/结果 | Web：`/tasks`；CLI：任务命令；服务：`ScenarioRegistry`、scenario runners | `tests/test_scenario_registry.py`、`tests/test_custom_automation_runner.py`、`tests/test_cli_device_task_run_commands.py` |
@@ -54,7 +54,7 @@
 | --- | --- | --- | --- | --- | --- | --- |
 | 初步归因 | Attribution service、规则治理、性能风险辅助已有基础；问题中心和准入详情可间接展示归因/风险信息 | 主线程阻塞、binder、IO、CPU、内存、温控等归因规则需要更多真实样本和置信度校准；缺少专门 CLI/API，如 `attribute-issue` 或归因规则调试入口 | AI/深度归因不是当前目标 | 给定 Top Issue，输出归因方向、证据摘要、置信度和建议动作 | Web：`/issues`、`/api/issues`；CLI：通过 issue group/准入报告间接查看；服务：`AttributionService` | `tests/test_attribution_service.py`、`tests/test_rule_governance_service.py`、`tests/test_web_portal.py` |
 | 7x24 无人值守 | unattended task、patrol runner、日报、周报、runner 状态页、runner 心跳已具备 | 真实 7x24 长时运行、设备自动恢复、补跑策略、通知链路更多依赖 smoke/runbook，不是稳定自动化测试闭环 | 多机集中调度、分布式执行代理和强 SLA 尚未定义 | 配置 unattended task，运行 patrol，生成 daily/weekly report，验证 runner 状态 | Web：`/runner`、`/runner/unattended/<task_id>`、`/api/runner`、`/api/unattended/actions/configure|run-round|patrol`；CLI：unattended 命令；服务：`UnattendedService`、`UnattendedRunnerService` | `tests/test_unattended_service.py`、`tests/test_unattended_runner_service.py`、`tests/test_cli_unattended_commands.py`、`tests/test_web_portal.py` |
-| 质量门禁 | QualityGate、AdmissionCase、人工 override、准入报告、风险项、性能风险、覆盖不足已具备 | 硬门禁/软风险、场景阈值、设备组阈值、人工确认规则还需配置化；CLI 暂缺质量门禁 override 命令，Web 写入口也偏少 | 组织级准入策略库未完成 | 构造 report/baseline/audit，生成 AdmissionCase 和 QualityGate，验证自动结论、人工覆盖、最终结论 | Web：`/admission`、`/admission/baseline/<key>`、`/api/admission/actions/override|assign|comment|transition`；CLI：`list-admission-cases`、`show-admission-case`、`show-admission-report`、release/CI sync 命令；服务：`AdmissionCaseService`、`QualityGateService` | `tests/test_admission_case_service.py`、`tests/test_quality_gate_service.py`、`tests/test_release_submission_service.py`、`tests/test_cli_admission_rule_replay_commands.py`、`tests/test_cli_ci_integration_commands.py` |
+| 质量门禁 | QualityGate、AdmissionCase、人工 override、准入报告、风险项、性能风险、覆盖不足已具备；`QualityGatePolicy` 已支持硬门禁/软风险/覆盖/性能风险阈值和 package/scenario/device_group/release_type scoped override | CLI 暂缺质量门禁 override 命令，Web 写入口和策略治理入口仍偏少 | 组织级准入策略库未完成 | 构造 report/baseline/audit，生成 AdmissionCase 和 QualityGate，验证自动结论、人工覆盖、最终结论；修改 `config/platform.json` 后阈值应影响门禁结论 | Web：`/admission`、`/admission/baseline/<key>`、`/api/admission/actions/override|assign|comment|transition`；CLI：`list-admission-cases`、`show-admission-case`、`show-admission-report`、release/CI sync 命令；服务：`AdmissionCaseService`、`QualityGateService`、`ConfigProvider` | `tests/test_admission_case_service.py`、`tests/test_quality_gate_service.py`、`tests/test_config_provider.py`、`tests/test_release_submission_service.py`、`tests/test_cli_admission_rule_replay_commands.py`、`tests/test_cli_ci_integration_commands.py` |
 | 团队协作与平台集成 | 本地 session、identity、认领、评论、状态流转、outbox、webhook、CI/IM/defect/release sync 基础已具备 | 当前仍偏本地部署和本地运维控制台；正式团队平台还需用户目录、组织边界、权限继承、接口安全 | 多租户、SSO、正式开放 API 平台未实现 | 写操作必须解析 session/identity；触发 outbox 后可投递、重试、dead-letter、receipt 可查 | Web：协作表单、`/integration`；CLI：integration/outbox/webhook 命令；服务：`CollaborationService`、`IntegrationOutboxService` | `tests/test_collaboration_service.py`、`tests/test_integration_outbox_service.py`、`tests/test_cli_ci_integration_commands.py`、`tests/test_cli_web_integration_commands.py` |
 
 ## 7. 横切能力验收矩阵
@@ -63,10 +63,10 @@
 | --- | --- | --- | --- | --- | --- | --- |
 | 统一错误模型 | `AppError`、错误码、normalize 入口已有 | 仍需检查所有 Web/CLI/service 边界是否完全使用统一错误模型 | 错误码文档和用户排障手册可继续补 | 参数错误、权限错误、not found、内部异常都应返回稳定 code/message/hint/details | Web/API/CLI 错误响应；`stability/domain/errors.py` | `tests/test_app_errors.py`、`tests/test_app_error_boundaries.py` |
 | 统一时间格式 | `time_utils` 和北京时间展示已具备 | 仍需持续清理散落的 `datetime.now()` / `utcnow()` / `isoformat()` 直出 | 时间字段 contract 文档可继续补 | Web、CLI、报告、runtime 导出中的用户可见时间统一为北京时间格式 | Web/CLI/报告；`stability/time_utils.py` | `tests/test_time_utils.py` |
-| 配置中心 | `ConfigProvider` 已覆盖 runtime、monitoring、outbox、web、device、thresholds | 仍需确保所有入口都通过 provider，不再各自读 env/config | 配置 schema 和示例文件可继续补 | CLI 参数 > env > config > default 的优先级可测试 | CLI/Web/bootstrap；`stability/app/config_provider.py` | `tests/test_config_provider.py` |
+| 配置中心 | `ConfigProvider` 已覆盖 runtime、monitoring、outbox、web、device、thresholds、platform_health、quality_gate、evidence_retention | 仍需确保所有入口都通过 provider，不再各自读 env/config | 配置 schema 和示例文件可继续补 | CLI 参数 > env > config > default 的优先级可测试 | CLI/Web/bootstrap；`stability/app/config_provider.py` | `tests/test_config_provider.py` |
 | 诊断中心 | Doctor 已覆盖 Python、ADB、设备、TCP、runtime、config、端口、monitoring、outbox/webhook | 持续化自监控已拆到 `PlatformHealthService`，Doctor 继续保留即时诊断定位 | 错误码到用户排障手册的映射可继续补 | 运行 doctor，验证每个 check 有 status、summary、details | Web：`/doctor`；CLI：`doctor`；服务：`DoctorService` | `tests/test_doctor_service.py` |
 | Runtime 生命周期 | runtime doctor/export/cleanup 已具备，支持分类和保护文件 | backup/restore、证据级 retention、导出包用户说明仍需加强 | 正式冷热分层未实现 | dry-run cleanup 不删文件；apply cleanup 不删 protected；export 生成 zip 和 manifest | CLI：runtime 命令；Web：诊断/接口入口；服务：`RuntimeLifecycleService` | `tests/test_runtime_lifecycle_service.py`、`tests/test_cli_runtime_commands.py` |
-| 平台自监控 | `PlatformHealthService` 已持续落盘 runner 心跳、设备在线/可调度率、任务/实例/ADB 失败率、证据/报告失败率和 outbox backlog/dead-letter | 当前是 runtime JSON 快照和最近历史，尚未形成完整 24h 趋势图、阈值告警和报告推送 | 独立健康中心页面、SLA 阈值配置、告警订阅未实现 | 连续访问 Web 或执行 CLI 后，`runtime/platform_health/snapshots.json` 有快照；首页/runner/API 能看到平台健康状态和失败率 | Web：`/`、`/runner`、`/api/platform-health`；CLI：`platform-health`；服务：`PlatformHealthService` | `tests/test_platform_health_service.py`、`tests/test_web_portal_read_only.py` |
+| 平台自监控 | `PlatformHealthService` 已持续落盘 runner 心跳、设备在线/可调度率、任务/实例/ADB 失败率、证据/报告失败率和 outbox backlog/dead-letter；已支持配置化 SLA 阈值、24h 趋势窗口和 CLI `platform-health --publish-alert` outbox 推送 | 独立健康中心页面、趋势图可视化和告警订阅治理仍可增强 | 健康日报/周报自动推送未完成 | 连续访问 Web 或执行 CLI 后，`runtime/platform_health/snapshots.json` 有快照；首页/runner/API 能看到平台健康状态、失败率、趋势和 alert payload | Web：`/`、`/runner`、`/api/platform-health`；CLI：`platform-health --publish-alert`；服务：`PlatformHealthService` | `tests/test_platform_health_service.py`、`tests/test_cli_runtime_commands.py`、`tests/test_web_portal_read_only.py` |
 | 证据治理 | artifact 抓取和 runtime export/cleanup 已具备 | 缺少按证据类型的 retention、压缩、大小上限、必抓/选抓策略 | `EvidenceRetentionPolicy` 未实现 | 长期运行后证据不会无限膨胀；导出清单可解释每个证据来源 | 建议服务：`EvidenceGovernanceService`；Web：Run 详情/诊断页 | 当前缺专门测试 |
 | 非功能目标 | 文档已识别需要定义 | 代码已有基础诊断和测试，但没有容量/SLA 验收指标 | 并发设备数、任务数、报告时延、查询时延、连续运行时长目标未落地 | 用 smoke/benchmark 验证设备数、任务数、响应时间、连续运行时长 | 建议补 `scripts/` smoke 和 docs 验收表 | 当前缺专门测试 |
 
@@ -77,18 +77,18 @@
 | ADB 控制、设备刷新、TCP 连接 | 本地执行代理 | 已在 `infrastructure/adb`、`device_adapter`、scenario runner 中实现 | 继续统一到 `CommandRunner` / ADB adapter，减少直接 subprocess 分支 |
 | 高频性能采样 | 本地执行代理 | `adb_collector`、SoloX、Perfetto adapter 已有 | 补真实 backend 长稳验收和采样完整性报告 |
 | 日志与证据抓取 | 本地执行代理 | artifact collector 已有 | 补证据治理策略 |
-| Issue 聚合、回归分析 | 分析中枢 | 已有 analysis/comparison/regression/snapshot | 补人工合并/拆分和跨版本延续治理 |
-| 报告、准入、质量门禁 | 分析与准入中枢 | AdmissionCase/QualityGate/Report 已有 | 规则配置化，按场景/设备组/版本类型区分阈值 |
+| Issue 聚合、回归分析 | 分析中枢 | 已有 analysis/comparison/regression/snapshot；Issue 指纹 alias/suppress 治理已接入聚合前解析 | 补 Web 化人工拆分和跨版本延续治理 |
+| 报告、准入、质量门禁 | 分析与准入中枢 | AdmissionCase/QualityGate/Report 已有；QualityGatePolicy 已支持全局和 scoped 阈值配置 | 补 Web 策略治理入口和组织级策略库 |
 | 协作、通知、集成 | Web 与集成层 | 本地 session、outbox、webhook、CI/IM 链路已有 | 如果要团队外放，再补正式用户目录、SSO、API 安全和组织边界 |
 
 ## 9. 当前最优先补齐项
 
 | 优先级 | 事项 | 原因 | 建议 owner |
 | --- | --- | --- | --- |
-| P0 | 平台自监控趋势与告警 | 第一版已能落盘快照，但还不能按 24h/SLA 自动告警和生成健康报告 | `stability/app/platform_health_service.py`、`stability/web/`、`stability/cli/handlers/runtime_lifecycle.py` |
+| P0 | 平台自监控健康中心页面 | 24h/SLA 告警和 outbox 推送已落地，下一步应把趋势图、订阅和健康报告产品化 | `stability/app/platform_health_service.py`、`stability/web/`、`stability/cli/handlers/runtime_lifecycle.py` |
 | P0 | 证据治理 | 长期运行后 artifact 会成为成本和排障风险，需要 retention/压缩/导出策略 | `stability/artifact/`、`stability/app/runtime_lifecycle_service.py` |
-| P1 | Issue 指纹治理 | Top Issue 已有，但缺人工修正和跨版本延续，容易产生噪音 | `stability/app/analysis_service.py`、`stability/domain/analysis_models.py` |
-| P1 | QualityGate 规则配置化 | 当前门禁已有，但不同场景/设备组阈值还不够清晰 | `stability/app/quality_gate_service.py`、`config/` |
+| P1 | Issue 指纹治理 Web 化 | alias/suppress 服务已落地，仍缺人工拆分、跨版本延续和页面治理入口 | `stability/app/analysis_service.py`、`stability/app/issue_fingerprint_governance_service.py`、`stability/domain/analysis_models.py` |
+| P1 | QualityGate 策略治理入口 | 阈值配置对象和 scoped override 已落地，仍缺页面化维护、导入导出和组织级策略库 | `stability/app/quality_gate_service.py`、`config/` |
 | P1 | Web feature package 收口 | 当前 Web 文件已拆小，但 mixin 聚合仍会继续膨胀 | `stability/web/` |
 | P2 | 非功能目标和 smoke | 最终平台需要容量和时延指标，否则无法判断“可用” | `docs/`、`scripts/`、`tests/` |
 

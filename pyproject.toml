@@ -1,0 +1,10 @@
+[project]
+name = "android-stability-lab"
+version = "0.1.0"
+description = "本地优先的 Android 稳定性自动化测试、问题分析、证据抓取、报告输出与版本准入平台。"
+readme = "README.md"
+requires-python = ">=3.12"
+
+# 运行期依赖维护在 requirements.txt，开发依赖维护在 requirements-dev.txt。
+# 本文件只声明对外可见的元数据与最低 Python 版本约束（项目使用 PEP 701 语法，必须 3.12+）。
+# ruff 规则仍由根目录 ruff.toml 提供，pyright 配置见 pyrightconfig.json。

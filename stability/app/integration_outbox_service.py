@@ -41,6 +41,7 @@ class IntegrationOutboxService(
         "admission_case.transitioned",
         "admission_case.updated",
         "admission.override_recorded",
+        "asl.platform_health_alert.v1",
         "outbox.retry_alert",
     )
     _feishu_bot_event_types = _im_notification_event_types

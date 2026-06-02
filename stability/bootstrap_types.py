@@ -12,6 +12,7 @@ from stability.app import (
     DeviceService,
     ExecutionService,
     IntegrationOutboxService,
+    IssueFingerprintGovernanceService,
     PerformanceTrendService,
     PlatformHealthService,
     QualityGateService,
@@ -58,6 +59,7 @@ class V1BootstrapBundle:
     performance_trend_service: PerformanceTrendService
     regression_service: RegressionService
     snapshot_service: SnapshotService
+    issue_fingerprint_governance_service: IssueFingerprintGovernanceService
     rule_governance_service: RuleGovernanceService
     rule_replay_acceptance_service: RuleReplayAcceptanceService
     rule_replay_golden_draft_service: RuleReplayGoldenDraftService

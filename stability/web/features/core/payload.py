@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import sys
 from typing import Any, Mapping, Sequence
 from stability.web import payloads as portal_payloads
 from stability.app import ConfigProvider, DoctorService
@@ -217,11 +216,7 @@ class CorePayloadMixin:
         status_filter = self._str_query(query, "status")
         page = max(self._int_query(query, "page", default=1), 1)
         page_size = min(max(self._int_query(query, "page_size", default=20), 1), 100)
-        doctor_service_class = DoctorService
-        legacy_module = sys.modules.get("stability.web.application_payload_core")
-        if legacy_module is not None:
-            doctor_service_class = getattr(legacy_module, "DoctorService", doctor_service_class)
-        report = doctor_service_class(
+        report = DoctorService(
             runtime_root=paths.root,
             config_dir=provider.config_dir,
             web_host=str(config.get("bound_host", "") or "127.0.0.1"),

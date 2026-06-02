@@ -10,12 +10,12 @@ import importlib
 from typing import List, Tuple
 
 def check_python_version() -> Tuple[bool, str]:
-    """检查Python版本"""
+    """检查Python版本（项目使用 PEP 701 语法，必须 3.12+）"""
     version = sys.version_info
-    if version.major == 3 and version.minor >= 7:
+    if version >= (3, 12):
         return True, f"✅ Python版本: {version.major}.{version.minor}.{version.micro}"
     else:
-        return False, f"❌ Python版本过低: {version.major}.{version.minor}.{version.micro} (需要3.7+)"
+        return False, f"❌ Python版本过低: {version.major}.{version.minor}.{version.micro} (需要 3.12+)"
 
 def check_required_packages() -> List[Tuple[str, bool, str]]:
     """检查必需的包"""
@@ -80,17 +80,17 @@ def main():
     if python_ok and python_env_ok and all_packages_ok:
         print("🎉 所有检查通过！环境配置正确。")
         print("\n🚀 当前推荐入口:")
-        print("   /usr/bin/python -m stability.cli --help")
-        print("   /usr/bin/python -m stability.cli serve-web --host 127.0.0.1 --port 8030")
+        print(f"   {sys.executable} -m stability.cli --help")
+        print(f"   {sys.executable} -m stability.cli serve-web --host 127.0.0.1 --port 8030")
         return 0
     else:
         print("⚠️  发现问题，请修复后重新检查。")
         
         if not python_ok:
-            print("   - 请升级Python到3.7或更高版本")
+            print("   - 请升级Python到3.12或更高版本")
         
         if not all_packages_ok:
-            print("   - 请安装缺失的依赖包: /usr/bin/python -m pip install -r requirements.txt")
+            print(f"   - 请安装缺失的依赖包: {sys.executable} -m pip install -r requirements.txt")
         
         
         return 1

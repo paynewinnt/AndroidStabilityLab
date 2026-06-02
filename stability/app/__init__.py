@@ -15,11 +15,25 @@ from .config_provider import (
 )
 from .device_service import DeviceRecordNotFound, DeviceService, DeviceSyncResult
 from .doctor_service import DoctorCheck, DoctorReport, DoctorService
+from .evidence_retention import (
+    EvidenceRetentionPolicy,
+    EvidenceRetentionRule,
+)
 from .execution_service import CreatedExecutionBatch, ExecutionService
 from .integration_outbox_service import IntegrationOutboxService
+from .issue_fingerprint_governance_service import (
+    IssueFingerprintGovernanceRule,
+    IssueFingerprintGovernanceService,
+)
 from .performance_trend_service import PerformanceTrendService
-from .platform_health_service import PlatformHealthComponent, PlatformHealthService, PlatformHealthSnapshot
-from .quality_gate_service import QualityGateService
+from .platform_health_service import (
+    PlatformHealthAlert,
+    PlatformHealthComponent,
+    PlatformHealthService,
+    PlatformHealthSnapshot,
+    PlatformHealthThresholds,
+)
+from .quality_gate_service import QualityGatePolicy, QualityGatePolicyOverride, QualityGateService
 from .release_submission_service import ReleaseSubmissionRecordNotFound, ReleaseSubmissionService
 from .regression_service import RegressionService
 from .report_service import ReportPaths, ReportService
@@ -45,7 +59,12 @@ from .rule_review_report_service import RuleReviewReportService
 from .rule_review_service import RuleReviewService
 from .run_history_service import RunHistoryService
 from .run_execution_service import ExecutedRunResult, RunExecutionService, RunRecordNotFound, StoppedRunResult
-from .runtime_lifecycle_service import RuntimeLifecycleService
+from .runtime_lifecycle_service import (
+    EvidenceRetentionCandidate,
+    EvidenceRetentionResult,
+    EvidenceTypeUsage,
+    RuntimeLifecycleService,
+)
 from .snapshot_service import SnapshotRecordNotFound, SnapshotService
 from .task_service import TaskArchiveResult, TaskRecordNotFound, TaskService
 from .unattended_service import (
@@ -81,15 +100,26 @@ __all__ = [
     "DoctorCheck",
     "DoctorReport",
     "DoctorService",
+    "EvidenceRetentionCandidate",
+    "EvidenceRetentionPolicy",
+    "EvidenceRetentionResult",
+    "EvidenceRetentionRule",
+    "EvidenceTypeUsage",
     "ExecutedRunResult",
     "ExecutionService",
     "IntegrationOutboxService",
+    "IssueFingerprintGovernanceRule",
+    "IssueFingerprintGovernanceService",
     "OutboxConfig",
     "PerformanceTrendService",
+    "PlatformHealthAlert",
     "PlatformHealthComponent",
     "PlatformHealthService",
     "PlatformHealthSnapshot",
+    "PlatformHealthThresholds",
     "QualityGateService",
+    "QualityGatePolicy",
+    "QualityGatePolicyOverride",
     "ReleaseSubmissionRecordNotFound",
     "ReleaseSubmissionService",
     "ReportPaths",

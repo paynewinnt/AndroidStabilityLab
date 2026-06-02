@@ -1,6 +1,6 @@
 # Android Stability Lab
 
-[![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
+[![Python](https://img.shields.io/badge/Python-3.12%2B-blue.svg)](https://www.python.org/)
 [![Entry](https://img.shields.io/badge/Entry-CLI%20%2B%20Web-2d7d46.svg)](#quick-start)
 [![Tests](https://img.shields.io/badge/tests-unittest-0a7f3f.svg)](#testing)
 
@@ -135,7 +135,7 @@ Recommended interpretation:
 
 ### Requirements
 
-- Python 3.10+ recommended.
+- Python 3.12+ (**required**: the codebase uses PEP 701 f-string syntax and raises `SyntaxError` on older interpreters; enforced via `requires-python` in `pyproject.toml`, run `python3 check_env.py` to self-check).
 - ADB available in `PATH`.
 - One Android device with USB debugging enabled, or a reachable TCP device.
 - macOS or Linux shell environment for the bundled smoke scripts.

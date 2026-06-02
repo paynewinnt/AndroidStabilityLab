@@ -4,9 +4,11 @@ import json
 import shutil
 import zipfile
 from dataclasses import dataclass, field
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Iterable, Mapping, Sequence
 
+from stability.app.evidence_retention import EvidenceRetentionPolicy
 from stability.time_utils import now_beijing_string, utcnow
 
 
@@ -72,6 +74,39 @@ class RuntimeCleanupResult:
     deleted_paths: tuple[str, ...] = ()
     skipped_paths: tuple[str, ...] = ()
     reclaimed_bytes: int = 0
+
+
+@dataclass(frozen=True)
+class EvidenceRetentionCandidate:
+    evidence_type: str
+    path: str
+    reason: str  # "age" 或 "size_cap"
+    size_bytes: int
+    age_days: float
+
+
+@dataclass(frozen=True)
+class EvidenceTypeUsage:
+    evidence_type: str
+    file_count: int
+    total_bytes: int
+    candidate_count: int
+    candidate_bytes: int
+
+
+@dataclass(frozen=True)
+class EvidenceRetentionResult:
+    root_dir: str
+    generated_at: str
+    dry_run: bool
+    scanned_files: int
+    scanned_bytes: int
+    usage: tuple[EvidenceTypeUsage, ...]
+    candidates: tuple[EvidenceRetentionCandidate, ...]
+    deleted_paths: tuple[str, ...] = ()
+    skipped_paths: tuple[str, ...] = ()
+    reclaimed_bytes: int = 0
+    policy: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
@@ -143,6 +178,137 @@ class RuntimeLifecycleService:
             deleted_paths=tuple(deleted),
             skipped_paths=tuple(skipped),
             reclaimed_bytes=reclaimed,
+        )
+
+    def enforce_evidence_retention(
+        self,
+        *,
+        policy: EvidenceRetentionPolicy | None = None,
+        apply: bool = False,
+        now: datetime | None = None,
+    ) -> EvidenceRetentionResult:
+        """按证据类型的保留策略，找出（或删除）过期或超出大小上限的证据文件。
+
+        只作用于 ``runtime/tasks`` 下的 run 产物，默认 dry-run。报告等受保护类型永不删除。
+        """
+        policy = policy or EvidenceRetentionPolicy.default()
+        now_ts = (now or utcnow()).timestamp()
+        tasks_root = self._root_dir / "tasks"
+
+        # (path, evidence_type, size_bytes, mtime)
+        records: list[tuple[Path, str, int, float]] = []
+        if tasks_root.exists() and tasks_root.is_dir():
+            for item in tasks_root.rglob("*"):
+                if not item.is_file() or self._is_protected_path(item):
+                    continue
+                try:
+                    stat = item.stat()
+                except OSError:
+                    continue
+                evidence_type = EvidenceRetentionPolicy.classify(item)
+                records.append((item, evidence_type, stat.st_size, stat.st_mtime))
+
+        candidates: list[EvidenceRetentionCandidate] = []
+        age_paths: set[Path] = set()
+
+        # 第一轮：按保留天数
+        for path, evidence_type, size, mtime in records:
+            rule = policy.rule_for(evidence_type)
+            if rule.protected or rule.max_age_days is None:
+                continue
+            age_days = (now_ts - mtime) / 86400
+            if age_days > rule.max_age_days:
+                candidates.append(
+                    EvidenceRetentionCandidate(
+                        evidence_type=evidence_type,
+                        path=str(path),
+                        reason="age",
+                        size_bytes=size,
+                        age_days=round(age_days, 2),
+                    )
+                )
+                age_paths.add(path)
+
+        # 第二轮：按单类型大小上限，对第一轮后仍保留的文件，从最旧开始淘汰
+        by_type: dict[str, list[tuple[Path, int, float]]] = {}
+        for path, evidence_type, size, mtime in records:
+            by_type.setdefault(evidence_type, []).append((path, size, mtime))
+        for evidence_type, items in by_type.items():
+            rule = policy.rule_for(evidence_type)
+            if rule.protected or rule.max_total_bytes is None:
+                continue
+            remaining = [(p, s, m) for (p, s, m) in items if p not in age_paths]
+            remaining_total = sum(size for _, size, _ in remaining)
+            if remaining_total <= rule.max_total_bytes:
+                continue
+            for path, size, mtime in sorted(remaining, key=lambda entry: entry[2]):
+                if remaining_total <= rule.max_total_bytes:
+                    break
+                candidates.append(
+                    EvidenceRetentionCandidate(
+                        evidence_type=evidence_type,
+                        path=str(path),
+                        reason="size_cap",
+                        size_bytes=size,
+                        age_days=round((now_ts - mtime) / 86400, 2),
+                    )
+                )
+                remaining_total -= size
+
+        usage = self._evidence_usage(records, candidates)
+
+        deleted: list[str] = []
+        skipped: list[str] = []
+        reclaimed = 0
+        if apply:
+            for candidate in candidates:
+                # 安全校验用 resolve 后的路径，但输出沿用候选原始路径，保证候选/删除/跳过格式一致。
+                resolved = self._safe_runtime_path(candidate.path)
+                if self._is_protected_path(resolved):
+                    skipped.append(candidate.path)
+                    continue
+                self._delete_path(resolved)
+                deleted.append(candidate.path)
+                reclaimed += candidate.size_bytes
+
+        return EvidenceRetentionResult(
+            root_dir=str(self._root_dir),
+            generated_at=now_beijing_string(),
+            dry_run=not apply,
+            scanned_files=len(records),
+            scanned_bytes=sum(size for _, _, size, _ in records),
+            usage=usage,
+            candidates=tuple(candidates),
+            deleted_paths=tuple(deleted),
+            skipped_paths=tuple(skipped),
+            reclaimed_bytes=reclaimed,
+            policy=policy.to_payload(),
+        )
+
+    @staticmethod
+    def _evidence_usage(
+        records: Sequence[tuple[Path, str, int, float]],
+        candidates: Sequence[EvidenceRetentionCandidate],
+    ) -> tuple[EvidenceTypeUsage, ...]:
+        files: dict[str, int] = {}
+        total: dict[str, int] = {}
+        for _path, evidence_type, size, _mtime in records:
+            files[evidence_type] = files.get(evidence_type, 0) + 1
+            total[evidence_type] = total.get(evidence_type, 0) + size
+        cand_count: dict[str, int] = {}
+        cand_bytes: dict[str, int] = {}
+        for candidate in candidates:
+            cand_count[candidate.evidence_type] = cand_count.get(candidate.evidence_type, 0) + 1
+            cand_bytes[candidate.evidence_type] = cand_bytes.get(candidate.evidence_type, 0) + candidate.size_bytes
+        return tuple(
+            EvidenceTypeUsage(
+                evidence_type=evidence_type,
+                file_count=files[evidence_type],
+                total_bytes=total[evidence_type],
+                candidate_count=cand_count.get(evidence_type, 0),
+                candidate_bytes=cand_bytes.get(evidence_type, 0),
+            )
+            for evidence_type in sorted(files)
         )
 
     def export(
@@ -306,6 +472,18 @@ class RuntimeLifecycleService:
         if path.name in PROTECTED_FILES:
             return True
         return path.name in {"latest"}
+
+    @staticmethod
+    def _is_protected_path(path: Path) -> bool:
+        """按路径分段保护：受保护文件名，或任意祖先目录是 ``latest``。
+
+        ``rglob`` 会递归到 ``runtime/tasks/latest/logs/old.log`` 这类深层文件，
+        仅判断文件名不足以保护整个 ``latest`` 子树，因此这里检查所有路径分段。
+        """
+        parts = set(path.parts)
+        if parts & PROTECTED_FILES:
+            return True
+        return "latest" in parts
 
     @staticmethod
     def _mtime_display(timestamp: float) -> str:

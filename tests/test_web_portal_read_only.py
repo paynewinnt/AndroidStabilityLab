@@ -120,7 +120,7 @@ class WebPortalReadOnlyPagesTest(unittest.TestCase):
         )
         app = WebPortalApplication(self._bundle())
 
-        with patch("stability.web.application_payload_core.DoctorService") as service_class:
+        with patch("stability.web.features.core.payload.DoctorService") as service_class:
             service_class.return_value.run.return_value = fake_report
             html_status, html_type, html_body = app.handle_request("/doctor?device_id=dev-a&package_name=com.example")
             api_status, api_type, api_body = app.handle_request("/api/doctor?device_id=dev-a&package_name=com.example")

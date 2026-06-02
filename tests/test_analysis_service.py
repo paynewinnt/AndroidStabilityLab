@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 from datetime import datetime
+from tempfile import TemporaryDirectory
 import unittest
 
 from stability.domain import AppError
 from stability.app.analysis_service import AnalysisService
+from stability.app.issue_fingerprint_governance_service import IssueFingerprintGovernanceService
 from stability.domain import (
     ArtifactCaptureStatus,
     ArtifactRecord,
@@ -69,8 +71,26 @@ class AnalysisServiceTest(unittest.TestCase):
         with self.assertRaises(AppError):
             service.get_issue_group("ifp_missing")
 
+    def test_list_top_issues_applies_fingerprint_suppression(self) -> None:
+        with self.subTest("baseline has crash"):
+            service = build_service_fixture()
+            crash_fingerprint = service.list_top_issues(issue_type="crash")[0].fingerprint.value
 
-def build_service_fixture() -> AnalysisService:
+        with TemporaryDirectory() as temp_dir:
+            governance_service = IssueFingerprintGovernanceService(root_dir=temp_dir)
+            governance_service.suppress_fingerprint(fingerprint=crash_fingerprint, reason="duplicate external defect")
+            governed_service = build_service_fixture(fingerprint_governance_service=governance_service)
+
+            items = governed_service.list_top_issues()
+
+        self.assertNotIn(crash_fingerprint, {item.fingerprint.value for item in items})
+        self.assertEqual({item.issue_type.value for item in items}, {"device_offline"})
+
+
+def build_service_fixture(
+    *,
+    fingerprint_governance_service: IssueFingerprintGovernanceService | None = None,
+) -> AnalysisService:
     task_repository = InMemoryTaskRepository()
     run_repository = InMemoryRunRepository()
     instance_repository = InMemoryInstanceRepository()
@@ -226,6 +246,7 @@ def build_service_fixture() -> AnalysisService:
         task_repository=task_repository,
         run_repository=run_repository,
         instance_repository=instance_repository,
+        fingerprint_governance_service=fingerprint_governance_service,
     )
 
 

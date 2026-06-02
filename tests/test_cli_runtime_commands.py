@@ -5,6 +5,7 @@ import io
 import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
 
@@ -77,6 +78,42 @@ class CliRuntimeCommandsTest(unittest.TestCase):
         payload = json.loads(stdout.getvalue())
         self.assertEqual(payload["output_path"], str(output))
         self.assertTrue(output_exists)
+
+    def test_platform_health_publish_alert_outputs_delivery_status(self) -> None:
+        class _FakeAlert:
+            def to_payload(self):
+                return {"contract_version": "asl.platform_health_alert.v1", "fired": True, "severity": "fail"}
+
+        class _FakePlatformHealthService:
+            def __init__(self) -> None:
+                self.snapshot_record_values = []
+                self.published = False
+
+            def snapshot(self, *, record: bool = True):
+                self.snapshot_record_values.append(record)
+                return SimpleNamespace(ok=False, severity="fail")
+
+            def snapshot_payload(self, snapshot):
+                return {"contract_version": "asl.platform_health.v1", "ok": snapshot.ok, "severity": snapshot.severity}
+
+            def publish_alert(self, snapshot):
+                self.published = True
+                return _FakeAlert()
+
+        fake_service = _FakePlatformHealthService()
+        stdout = io.StringIO()
+
+        with patch("stability.bootstrap.create_v1_persistent_bootstrap") as factory:
+            factory.return_value = SimpleNamespace(platform_health_service=fake_service)
+            with redirect_stdout(stdout):
+                exit_code = task_create.main(["platform-health", "--no-record", "--publish-alert"])
+
+        self.assertEqual(exit_code, 1)
+        self.assertEqual(fake_service.snapshot_record_values, [False])
+        self.assertTrue(fake_service.published)
+        payload = json.loads(stdout.getvalue())
+        self.assertTrue(payload["published_alert"]["published"])
+        self.assertEqual(payload["published_alert"]["alert"]["contract_version"], "asl.platform_health_alert.v1")
 
 
 if __name__ == "__main__":

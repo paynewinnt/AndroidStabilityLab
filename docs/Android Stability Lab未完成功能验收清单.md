@@ -101,7 +101,7 @@
 | `logcat / bugreport / traces / tombstone` 自动抓取 | ✅ |  |  | P2 | 主链已具备最佳努力抓取。 |
 | `dropbox / meminfo / SurfaceFlinger / perfetto` 扩展证据 |  | ✅ |  | P1 | 多项已接入，且 freeze/black_screen/watchdog/system_server crash 已能把关键 artifact 来源回灌到 issue evidence；本轮已补 SurfaceFlinger / dropbox / Perfetto 最小结构化解析，并把 parser 摘要写入 artifact 与 issue metadata。仍缺 meminfo 深度解析、Perfetto trace 正式解码、真实样本集和更完整自动判读。 |
 | 自动截屏 |  |  | ✅ | P2 | 最终能力文档要求具备，当前仓库未见正式实现。 |
-| 问题列表 / 问题指纹聚合 / Top Issue | ✅ |  |  | P2 | V2 分析主链已具备。 |
+| 问题列表 / 问题指纹聚合 / Top Issue | ✅ |  |  | P2 | V2 分析主链已具备；`IssueFingerprintGovernanceService` 已支持 alias / suppress 规则并接入聚合前解析，剩余工作主要是 Web 化治理、人工拆分和跨版本 lineage。 |
 | 按版本 / 设备 / 场景聚合 | ✅ |  |  | P2 | 当前分析查询与回归服务已支持。 |
 | 版本 A/B 对比与回归分析 | ✅ |  |  | P2 | `comparison / regression / snapshot` 已形成主链。 |
 | 自动回归结论 | ✅ |  |  | P2 | 当前已具备回归判断服务。 |
@@ -110,7 +110,7 @@
 | 任务报告 / 异常明细 / 证据路径清单 | ✅ |  |  | P2 | 执行报告与路径引用已具备。 |
 | 版本测试报告 / 准入报告 |  | ✅ |  | P1 | 已落地正式结构化准入报告口径：`AdmissionCase`、质量门禁摘要、`/api/admission`、`/api/admission/cases`、准入中心和基线详情页可查看报告 payload、状态摘要、证据链、latest audit、comparison report 与版本索引；共享仍以本地部署页面、JSON/HTML/Markdown 报告和产物导出为主。当前不是完整对外 PDF、邮件分发或多级审批流。 |
 | 日报 / 周报 / 自动汇总报告 | ✅ |  |  | P2 | runner 已支持 latest daily/weekly report。 |
-| `Quality Gate` 自动结论 | ✅ |  |  | P2 | 质量门禁主链已具备。 |
+| `Quality Gate` 自动结论 | ✅ |  |  | P2 | 质量门禁主链已具备；`QualityGatePolicy` 已支持全局阈值、覆盖阈值、性能风险阈值和 package/scenario/device_group/release_type scoped override，剩余工作主要是策略治理页面和组织级策略库。 |
 | `AdmissionCase` 统一对象与证据链 | ✅ |  |  | P2 | `AdmissionCase` 已是一等对象，具备 `case_trace`、生命周期与回写合同。 |
 | 人工覆盖 / 放行 / 驳回留痕 | ✅ |  |  | P2 | 已具备最小闭环与审计字段。 |
 | 更正式的门禁规则配置入口 |  | ✅ |  | P1 | 已从纯 CLI 规则治理推进到“本地规则治理最小闭环”：支持候选变更保存、审批/拒绝、发布版本记录、回滚和本地 actor 权限绑定；Web/API 可暴露治理台账摘要。当前仍是本地文件治理口径，规则发布会直接写目标 JSON 文件，不是 Git PR/代码评审式发布流，也尚未开放完整 Web 写操作后台。 |

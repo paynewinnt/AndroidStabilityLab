@@ -117,10 +117,12 @@ class AnalysisService:
         run_repository: RunRepository,
         instance_repository: InstanceRepository,
         rule_config: AnalysisRuleConfig | None = None,
+        fingerprint_governance_service: object | None = None,
     ) -> None:
         self._task_repository = task_repository
         self._run_repository = run_repository
         self._instance_repository = instance_repository
+        self._fingerprint_governance_service = fingerprint_governance_service
         self._rule_config = rule_config or AnalysisRuleConfig(
             fingerprint=FingerprintRuleConfig(
                 version="v1",
@@ -242,6 +244,9 @@ class AnalysisService:
                         continue
                     reference = self._build_issue_event_reference(issue=issue, instance=instance, run=run, task=task)
                     fingerprint = self.build_fingerprint(issue=issue, instance=instance, run=run, task=task)
+                    fingerprint = self._apply_fingerprint_governance(fingerprint)
+                    if fingerprint is None:
+                        continue
                     bucket = grouped.setdefault(
                         fingerprint.value,
                         _AggregateBucket(
@@ -266,6 +271,12 @@ class AnalysisService:
                     if bucket.last_seen_at is None or (detected_at and detected_at > bucket.last_seen_at):
                         bucket.last_seen_at = detected_at
         return grouped
+
+    def _apply_fingerprint_governance(self, fingerprint: IssueFingerprint) -> IssueFingerprint | None:
+        service = self._fingerprint_governance_service
+        if service is None or not hasattr(service, "resolve_fingerprint"):
+            return fingerprint
+        return service.resolve_fingerprint(fingerprint)
 
     def _to_aggregated_issue(self, bucket: _AggregateBucket, *, include_samples: bool) -> AggregatedIssue:
         title = bucket.title_counter.most_common(1)[0][0] if bucket.title_counter else bucket.issue_type.value

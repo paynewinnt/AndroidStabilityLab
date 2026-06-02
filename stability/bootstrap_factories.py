@@ -14,6 +14,7 @@ from stability.app import (
     DeviceService,
     ExecutionService,
     IntegrationOutboxService,
+    IssueFingerprintGovernanceService,
     PerformanceTrendService,
     PlatformHealthService,
     QualityGateService,
@@ -120,6 +121,7 @@ class AnalysisServices:
     performance_trend_service: PerformanceTrendService
     regression_service: RegressionService
     snapshot_service: SnapshotService
+    issue_fingerprint_governance_service: IssueFingerprintGovernanceService
     rule_governance_service: RuleGovernanceService
     rule_replay_acceptance_service: RuleReplayAcceptanceService
     rule_replay_golden_draft_service: RuleReplayGoldenDraftService
@@ -256,11 +258,15 @@ def build_analysis_services(
     monitoring_data_provider: object,
     config_provider: ConfigProvider | None = None,
 ) -> AnalysisServices:
+    issue_fingerprint_governance_service = IssueFingerprintGovernanceService(
+        root_dir=paths.root / "issue_fingerprint_governance",
+    )
     analysis_service = AnalysisService(
         task_repository=task_repository,
         run_repository=run_repository,
         instance_repository=instance_repository,
         rule_config=rule_config,
+        fingerprint_governance_service=issue_fingerprint_governance_service,
     )
     comparison_service = ComparisonService(analysis_service=analysis_service)
     attribution_service = AttributionService(
@@ -324,6 +330,7 @@ def build_analysis_services(
         performance_trend_service=performance_trend_service,
         regression_service=regression_service,
         snapshot_service=snapshot_service,
+        issue_fingerprint_governance_service=issue_fingerprint_governance_service,
         rule_governance_service=rule_governance_service,
         rule_replay_acceptance_service=rule_replay_acceptance_service,
         rule_replay_golden_draft_service=rule_replay_golden_draft_service,
@@ -342,7 +349,9 @@ def build_integration_services(
     task_services: TaskServices,
     analysis_services: AnalysisServices,
     monitoring_backend: str | None = None,
+    config_provider: ConfigProvider | None = None,
 ) -> IntegrationServices:
+    config = config_provider or ConfigProvider()
     collaboration_service = CollaborationService(
         root_dir=paths.collaboration,
         outbox_service=outbox_service,
@@ -351,6 +360,7 @@ def build_integration_services(
         rule_review_report_service=analysis_services.rule_review_report_service,
         root_dir=paths.quality_gates,
         outbox_service=outbox_service,
+        policy=config.quality_gate_policy(),
     )
     admission_case_service = AdmissionCaseService(
         rule_review_report_service=analysis_services.rule_review_report_service,
@@ -388,7 +398,9 @@ def build_runtime_services(
     instance_repository: object,
     task_services: TaskServices,
     outbox_service: IntegrationOutboxService,
+    config_provider: ConfigProvider | None = None,
 ) -> RuntimeServices:
+    config = config_provider or ConfigProvider()
     unattended_service = UnattendedService(
         task_repository=task_repository,
         device_service=device_service,
@@ -407,6 +419,7 @@ def build_runtime_services(
         instance_repository=instance_repository,
         unattended_runner_service=unattended_runner_service,
         integration_outbox_service=outbox_service,
+        thresholds=config.platform_health(),
     )
     return RuntimeServices(
         unattended_service=unattended_service,
@@ -443,6 +456,7 @@ def build_web_bundle(
         performance_trend_service=analysis_services.performance_trend_service,
         regression_service=analysis_services.regression_service,
         snapshot_service=analysis_services.snapshot_service,
+        issue_fingerprint_governance_service=analysis_services.issue_fingerprint_governance_service,
         rule_governance_service=analysis_services.rule_governance_service,
         rule_replay_acceptance_service=analysis_services.rule_replay_acceptance_service,
         rule_replay_golden_draft_service=analysis_services.rule_replay_golden_draft_service,

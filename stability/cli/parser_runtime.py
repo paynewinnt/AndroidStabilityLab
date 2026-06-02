@@ -45,6 +45,11 @@ def register_runtime_commands(subparsers: argparse._SubParsersAction, handler_mo
         action="store_true",
         help="Calculate the snapshot without appending it to runtime/platform_health/snapshots.json.",
     )
+    platform_health_parser.add_argument(
+        "--publish-alert",
+        action="store_true",
+        help="When the snapshot reaches the configured alert threshold, publish a platform-health alert event to integration outbox.",
+    )
     platform_health_parser.set_defaults(handler=handler_module._handle_platform_health)
 
     doctor_parser = subparsers.add_parser(
@@ -91,3 +96,16 @@ def register_runtime_commands(subparsers: argparse._SubParsersAction, handler_mo
         help="Actually delete candidates. Omit this flag for safe dry-run.",
     )
     cleanup_parser.set_defaults(handler=handler_module._handle_cleanup_runtime)
+
+    evidence_parser = subparsers.add_parser(
+        "cleanup-evidence",
+        help="Apply per-evidence-type retention (age + size cap) to runtime/tasks. Defaults to dry-run.",
+    )
+    evidence_parser.add_argument("--runtime-root", default=None, help="Runtime root directory. Default: ConfigProvider runtime.root or runtime")
+    evidence_parser.add_argument("--config-dir", default="config", help="Config directory. Default: config or ASL_CONFIG_DIR")
+    evidence_parser.add_argument(
+        "--apply",
+        action="store_true",
+        help="Actually delete candidates. Omit this flag for safe dry-run.",
+    )
+    evidence_parser.set_defaults(handler=handler_module._handle_cleanup_evidence)

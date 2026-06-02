@@ -5,7 +5,7 @@ from tempfile import TemporaryDirectory
 from types import SimpleNamespace
 import unittest
 
-from stability.app import QualityGateService
+from stability.app import QualityGatePolicy, QualityGateService
 
 
 class QualityGateServiceTest(unittest.TestCase):
@@ -130,6 +130,106 @@ class QualityGateServiceTest(unittest.TestCase):
             self.assertEqual(result.automatic_decision, "conditional_pass")
             self.assertEqual(result.latest_audit_summary, {})
             self.assertEqual(result.current_report_golden_suite["case_count_total"], 0)
+
+    def test_configured_policy_relaxes_warning_and_coverage_thresholds(self) -> None:
+        with TemporaryDirectory() as temp_dir:
+            service = QualityGateService(
+                rule_review_report_service=_FakeRuleReviewReportService(
+                    report_summary={
+                        "snapshot_count": 1,
+                        "decision_counts": {"conditional_pass": 1},
+                        "high_risk_family_count": 2,
+                        "golden_suite_case_count_total": 0,
+                        "golden_suite_failed_case_count_total": 0,
+                    },
+                    missing_latest_audit=True,
+                ),
+                root_dir=Path(temp_dir),
+                policy=QualityGatePolicy(
+                    review_warnings_max=1,
+                    high_risk_family_max=2,
+                    min_golden_suite_case_count=0,
+                ),
+            )
+
+            result = service.get_quality_gate("device_offline_default")
+
+        self.assertEqual(result.automatic_decision, "pass")
+        self.assertEqual(result.triggered_rules, ())
+        rules_by_key = {item.rule_key: item for item in result.rules}
+        self.assertEqual(rules_by_key["review_warnings"].threshold, 1)
+        self.assertEqual(rules_by_key["high_risk_families"].threshold, 2)
+        self.assertEqual(rules_by_key["golden_suite_coverage"].threshold, 0)
+
+    def test_scoped_policy_override_applies_to_matching_package(self) -> None:
+        policy = QualityGatePolicy.from_mapping(
+            {
+                "review_warnings_max": 0,
+                "scoped_overrides": [
+                    {
+                        "name": "example app relaxed warnings",
+                        "match": {"package_name": "com.example.app"},
+                        "values": {"review_warnings_max": 2},
+                    }
+                ],
+            }
+        )
+        with TemporaryDirectory() as temp_dir:
+            service = QualityGateService(
+                rule_review_report_service=_FakeRuleReviewReportService(
+                    report_summary={
+                        "package_name": "com.example.app",
+                        "snapshot_count": 1,
+                        "decision_counts": {"conditional_pass": 1},
+                        "high_risk_family_count": 0,
+                        "golden_suite_case_count_total": 1,
+                        "golden_suite_failed_case_count_total": 0,
+                    },
+                    missing_latest_audit=True,
+                ),
+                root_dir=Path(temp_dir),
+                policy=policy,
+            )
+
+            result = service.get_quality_gate("device_offline_default")
+
+        self.assertEqual(result.automatic_decision, "pass")
+        self.assertEqual({item.rule_key: item for item in result.rules}["review_warnings"].threshold, 2)
+
+    def test_scoped_policy_override_keeps_default_for_non_matching_package(self) -> None:
+        policy = QualityGatePolicy.from_mapping(
+            {
+                "review_warnings_max": 0,
+                "scoped_overrides": [
+                    {
+                        "name": "example app relaxed warnings",
+                        "match": {"package_name": "com.example.app"},
+                        "values": {"review_warnings_max": 2},
+                    }
+                ],
+            }
+        )
+        with TemporaryDirectory() as temp_dir:
+            service = QualityGateService(
+                rule_review_report_service=_FakeRuleReviewReportService(
+                    report_summary={
+                        "package_name": "com.other.app",
+                        "snapshot_count": 1,
+                        "decision_counts": {"conditional_pass": 1},
+                        "high_risk_family_count": 0,
+                        "golden_suite_case_count_total": 1,
+                        "golden_suite_failed_case_count_total": 0,
+                    },
+                    missing_latest_audit=True,
+                ),
+                root_dir=Path(temp_dir),
+                policy=policy,
+            )
+
+            result = service.get_quality_gate("device_offline_default")
+
+        self.assertEqual(result.automatic_decision, "conditional_pass")
+        self.assertEqual(result.triggered_rules[0].threshold, 0)
 
 
 class _FakeRuleReviewReportService:

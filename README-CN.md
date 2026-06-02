@@ -1,6 +1,6 @@
 # Android Stability Lab
 
-[![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
+[![Python](https://img.shields.io/badge/Python-3.12%2B-blue.svg)](https://www.python.org/)
 [![入口](https://img.shields.io/badge/入口-CLI%20%2B%20Web-2d7d46.svg)](#快速开始)
 [![测试](https://img.shields.io/badge/tests-unittest-0a7f3f.svg)](#测试)
 
@@ -32,7 +32,7 @@ PYTHONPATH=. ./.venv/bin/python -m stability.cli serve-web --host 127.0.0.1 --po
 
 ### 环境要求
 
-- Python 3.10+ 推荐
+- Python 3.12+（**硬性要求**：代码使用 PEP 701 f-string 语法，低于 3.12 会直接 `SyntaxError`；约束已写入 `pyproject.toml` 的 `requires-python`，可用 `python3 check_env.py` 自检）
 - `adb` 已加入 `PATH`
 - 至少一台开启 USB 调试的 Android 设备，或一台可连接的 TCP 设备
 - macOS 或 Linux shell 环境，用于运行仓库内 smoke 脚本

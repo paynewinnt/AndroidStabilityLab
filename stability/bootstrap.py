@@ -105,6 +105,7 @@ def create_v1_bootstrap(
         outbox_service=outbox_service,
         task_services=task_services,
         analysis_services=analysis_services,
+        config_provider=config,
     )
     runtime_services = build_runtime_services(
         paths=paths,
@@ -114,6 +115,7 @@ def create_v1_bootstrap(
         instance_repository=instance_repository,
         task_services=task_services,
         outbox_service=outbox_service,
+        config_provider=config,
     )
     return build_web_bundle(
         task_services=task_services,
@@ -208,6 +210,7 @@ def create_v1_persistent_bootstrap(
         task_services=task_services,
         analysis_services=analysis_services,
         monitoring_backend=resolved_monitoring_backend,
+        config_provider=config,
     )
     runtime_services = build_runtime_services(
         paths=paths,
@@ -217,6 +220,7 @@ def create_v1_persistent_bootstrap(
         instance_repository=instance_repository,
         task_services=task_services,
         outbox_service=outbox_service,
+        config_provider=config,
     )
     devices = {device.device_id: device for device in device_repository.list()}
     return build_web_bundle(

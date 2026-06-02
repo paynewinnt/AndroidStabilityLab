@@ -39,6 +39,27 @@
   },
   "monitoring": {
     "config_path": "config/monitoring.json"
+  },
+  "platform_health": {
+    "alert_min_severity": "fail",
+    "trend_window_hours": 24,
+    "device_online_rate_min": 0.5,
+    "run_failure_rate_max": 0.5,
+    "instance_failure_rate_max": 0.5,
+    "artifact_failure_rate_max": 0.2,
+    "outbox_dead_letter_max": 0
+  },
+  "quality_gate": {
+    "rule_version": "quality-gate-v1",
+    "review_failures_max": 0,
+    "golden_suite_failures_max": 0,
+    "review_warnings_max": 0,
+    "high_risk_family_max": 0,
+    "high_risk_family_high_severity_min": 3,
+    "min_review_snapshot_count": 1,
+    "min_golden_suite_case_count": 1,
+    "performance_risk_max": 0,
+    "performance_worsened_high_count": 3,
+    "scoped_overrides": []
   }
 }
-
