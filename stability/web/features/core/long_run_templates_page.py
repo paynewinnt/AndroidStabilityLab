@@ -27,10 +27,6 @@ class LongRunTemplatesPageMixin:
                     self._route_link("去 Runner 配置", "/runner"),
                 ],
             ),
-            self._notice(
-                "查看长稳默认值和可覆盖参数；“套用创建任务”会跳到任务大厅并预填创建长稳任务表单。",
-                tone="ok",
-            ),
             self._admin_summary_strip(
                 [
                     ("模板数量", payload.get("template_count", 0)),

@@ -14,7 +14,6 @@ class PerformancePageMixin:
         filters = dict(payload.get("filters", {}) or {})
         entries = list(payload.get("entries", []) or [])
         all_entries = list(payload.get("all_entries", entries) or [])
-        help_buttons, help_sections = self._page_help_sections("性能采样", summary=summary)
         body = [
             self._admin_page_header(
                 "性能采样",
@@ -57,8 +56,6 @@ class PerformancePageMixin:
             "性能采样",
             "这页不是实时仪表盘，而是把最近执行实例已经落盘的 monitoring snapshot 收口起来，方便先判断有没有采到、采到了什么、值不值得继续下钻。",
             "".join(body),
-            help_buttons=help_buttons,
-            help_modal_sections=help_sections,
         )
 
     def _performance_admin_filter_bar(self, filters: Mapping[str, Any]) -> str:

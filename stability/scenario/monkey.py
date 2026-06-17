@@ -14,6 +14,7 @@ from stability.domain import TaskTemplateType
 from stability.infrastructure.command_runner import (
     CommandResult as _CommandResult,
     CommandRunner,
+    resolve_host_command,
     SubprocessCommandRunner,
 )
 
@@ -674,7 +675,7 @@ class MonkeyScenarioRunner:
         start_time = time.monotonic()
         deadline = start_time + max(timeout_seconds, 1)
         process = subprocess.Popen(
-            command,
+            resolve_host_command(command),
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True,

@@ -62,6 +62,42 @@ PYTHONPATH=. ./.venv/bin/python -m stability.cli serve-web --host 127.0.0.1 --po
 - `http://127.0.0.1:8030/`
 - `http://127.0.0.1:8030/health`
 
+### 启动桌面壳
+
+桌面壳使用 pywebview 打开原有 Web 门户，并在进程内启动一个内置 localhost Python 后端。默认只绑定 `127.0.0.1`，端口传 `0` 时会自动选择可用端口。从已有 Android Stability Lab workspace 启动时，会直接复用该目录下的 `data/` 和 `runtime/`；否则运行数据写入系统应用数据目录。
+
+```bash
+pip install -r requirements-desktop.txt
+PYTHONPATH=. ./.venv/bin/python -m stability.desktop --port 0
+```
+
+需要指定数据位置时，使用 `--workspace-dir /path/to/workspace`，桌面端会在其中维护 `config/`、`runtime/` 和 `data/`。
+
+打包 PyInstaller onedir 版本：
+
+```bash
+scripts/build_desktop_app.sh
+```
+
+产物位于 `dist/AndroidStabilityLab/`。macOS 下如果 `.icns` 图标资产存在，也会额外生成 `dist/AndroidStabilityLab.app`。关闭桌面窗口时会同步关闭内置 Web 后端。
+
+Windows 构建请在 Windows PowerShell 中执行：
+
+```powershell
+pip install -r requirements-desktop.txt
+.\scripts\build_desktop_app.ps1
+```
+
+PyInstaller 通常不能跨平台打包：Windows 产物在 Windows 构建，macOS 产物在 macOS 构建。
+
+桌面端图标资产位于 `assets/icons/app_icon.*`。修改图标后可重新生成：
+
+```bash
+./scripts/generate_app_icons.py
+```
+
+ADB 不默认内置：Android platform-tools 体积较大、分平台发布，也需要独立保持更新。运行时会按顺序查找 `ASL_ADB_PATH` / `ADB_PATH`、打包内置 `platform-tools`、`ANDROID_HOME` / `ANDROID_SDK_ROOT`，最后查找 `PATH` 中的 `adb`。如果需要做自包含桌面包，可在运行 PyInstaller 脚本前设置 `ASL_PLATFORM_TOOLS_DIR` 指向 Android SDK 的 `platform-tools` 目录。
+
 ## 核心能力
 
 - **执行闭环**：设备发现、任务定义、Run 创建、执行实例、日志、报告和异常产物。

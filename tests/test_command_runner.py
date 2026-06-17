@@ -1,9 +1,19 @@
 from __future__ import annotations
 
+import os
+from pathlib import Path
 import sys
+import tempfile
 import unittest
+from unittest.mock import patch
 
-from stability.infrastructure.command_runner import ADBCommandRunner, CommandResult, SubprocessCommandRunner
+from stability.infrastructure.command_runner import (
+    ADBCommandRunner,
+    CommandResult,
+    resolve_adb_executable,
+    resolve_host_command,
+    SubprocessCommandRunner,
+)
 
 
 class CommandRunnerTest(unittest.TestCase):
@@ -49,7 +59,28 @@ class CommandRunnerTest(unittest.TestCase):
 
         self.assertEqual(command, ["adb", "shell", "input", "text", "hello world"])
 
+    def test_adb_runner_accepts_explicit_adb_path(self) -> None:
+        command = ADBCommandRunner(adb_path="/opt/android/platform-tools/adb").build_adb_command(["devices"])
+
+        self.assertEqual(command, ["/opt/android/platform-tools/adb", "devices"])
+
+    def test_resolve_adb_executable_uses_explicit_env_path(self) -> None:
+        with patch.dict(os.environ, {"ASL_ADB_PATH": "/tmp/asl-platform-tools/adb"}, clear=True):
+            self.assertEqual(resolve_adb_executable(), "/tmp/asl-platform-tools/adb")
+
+    def test_resolve_adb_executable_uses_platform_tools_env_dir(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            adb_path = Path(tmp_dir) / ("adb.exe" if sys.platform.startswith("win") else "adb")
+            adb_path.write_text("", encoding="utf-8")
+
+            with patch.dict(os.environ, {"ASL_PLATFORM_TOOLS_DIR": tmp_dir}, clear=True):
+                with patch("stability.infrastructure.command_runner.shutil.which", return_value=None):
+                    self.assertEqual(resolve_adb_executable(), str(adb_path))
+
+    def test_resolve_host_command_rewrites_bare_adb(self) -> None:
+        with patch("stability.infrastructure.command_runner.resolve_adb_executable", return_value="/tmp/adb"):
+            self.assertEqual(resolve_host_command(["adb", "devices"]), ["/tmp/adb", "devices"])
+
 
 if __name__ == "__main__":
     unittest.main()
-

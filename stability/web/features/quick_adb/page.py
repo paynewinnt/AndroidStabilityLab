@@ -37,13 +37,10 @@ class QuickAdbPageMixin:
             self._quick_adb_command_workspace(payload),
             self._quick_adb_result_modal(operation_result),
         ]
-        help_buttons, help_sections = self._quick_adb_help_sections()
         return self._layout(
             "快捷 ADB",
             "按 App、Framework、System Server、Native Service、HAL、Kernel/Driver、硬件链路组织常用 ADB 诊断命令。",
             "".join(body),
-            help_buttons=help_buttons,
-            help_modal_sections=help_sections,
         )
 
     def _quick_adb_target_section(self, payload: dict[str, Any]) -> str:

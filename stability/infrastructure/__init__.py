@@ -2,7 +2,14 @@
 
 from .adb import ADBCollector
 from .artifact_paths import ArtifactLayout, ArtifactPathPlanner, ArtifactScope
-from .command_runner import ADBCommandRunner, CommandResult, CommandRunner, SubprocessCommandRunner
+from .command_runner import (
+    ADBCommandRunner,
+    CommandResult,
+    CommandRunner,
+    resolve_adb_executable,
+    resolve_host_command,
+    SubprocessCommandRunner,
+)
 from .device_adapter import (
     ADBCollectorDeviceAdapter,
     DeviceDescriptor,
@@ -54,6 +61,8 @@ __all__ = [
     "MonitoringSnapshot",
     "normalize_monitoring_backend_name",
     "SoloXMonitoringAdapter",
+    "resolve_adb_executable",
+    "resolve_host_command",
     "SubprocessCommandRunner",
     "SUPPORTED_MONITORING_BACKENDS",
     "FileBackedRuleConfigProvider",

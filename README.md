@@ -165,6 +165,42 @@ Then open:
 - `http://127.0.0.1:8030/`
 - `http://127.0.0.1:8030/health`
 
+### Start the Desktop Shell
+
+The desktop shell uses pywebview for the native window and starts the same Web portal on an embedded localhost server. By default it binds only to `127.0.0.1` and uses an available random port. When launched from an existing Android Stability Lab workspace, it reuses that workspace's `data/` and `runtime/`; otherwise it stores writable runtime data under the OS application data directory.
+
+```bash
+pip install -r requirements-desktop.txt
+PYTHONPATH=. ./.venv/bin/python -m stability.desktop --port 0
+```
+
+Use `--workspace-dir /path/to/workspace` when you want the desktop app to keep `config/`, `runtime/`, and `data/` in an explicit location.
+
+Build a PyInstaller onedir bundle:
+
+```bash
+scripts/build_desktop_app.sh
+```
+
+The bundle is written to `dist/AndroidStabilityLab/`. On macOS, the build also emits `dist/AndroidStabilityLab.app` when the `.icns` icon asset is available. Closing the desktop window shuts down the embedded Python Web server.
+
+Build on Windows from a Windows PowerShell session:
+
+```powershell
+pip install -r requirements-desktop.txt
+.\scripts\build_desktop_app.ps1
+```
+
+PyInstaller builds are platform-native, so create Windows packages on Windows and macOS packages on macOS.
+
+The desktop package includes the app icon assets from `assets/icons/app_icon.*`. Regenerate them after icon edits with:
+
+```bash
+./scripts/generate_app_icons.py
+```
+
+ADB is not vendored by default because Android platform-tools are large, OS-specific, and should be kept current independently of this app. The runtime resolves adb in this order: `ASL_ADB_PATH` / `ADB_PATH`, bundled `platform-tools`, `ANDROID_HOME` / `ANDROID_SDK_ROOT`, then `PATH`. To build a self-contained desktop bundle with adb, set `ASL_PLATFORM_TOOLS_DIR` to an Android SDK `platform-tools` directory before running the PyInstaller script.
+
 ### Check Devices
 
 ```bash

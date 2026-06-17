@@ -159,6 +159,9 @@ cython_debug/
 adb_logs/
 device_logs/
 screenshots/
+packaging/vendor/platform-tools/macos/
+packaging/vendor/platform-tools/windows/
+packaging/vendor/platform-tools/linux/
 
 # Project specific
 data/

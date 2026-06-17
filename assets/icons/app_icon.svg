@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-label="Android Stability Lab app icon">
+  <defs>
+    <linearGradient id="bg" x1="124" y1="84" x2="900" y2="940" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#14324d"/>
+      <stop offset="0.52" stop-color="#0f766e"/>
+      <stop offset="1" stop-color="#f59e0b"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="224" y1="206" x2="800" y2="818" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#f8fafc"/>
+      <stop offset="1" stop-color="#c8fff4"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="28" stdDeviation="36" flood-color="#061827" flood-opacity=".35"/>
+    </filter>
+  </defs>
+  <rect width="1024" height="1024" rx="228" fill="url(#bg)"/>
+  <path d="M262 307h500c46 0 84 38 84 84v294c0 46-38 84-84 84H262c-46 0-84-38-84-84V391c0-46 38-84 84-84z" fill="#082f49" opacity=".56" filter="url(#shadow)"/>
+  <path d="M278 287h468c44 0 80 36 80 80v300c0 44-36 80-80 80H278c-44 0-80-36-80-80V367c0-44 36-80 80-80z" fill="url(#panel)"/>
+  <path d="M316 476c0-83 68-151 151-151h90c83 0 151 68 151 151v156c0 31-25 56-56 56H372c-31 0-56-25-56-56V476z" fill="#0f766e"/>
+  <path d="M385 337l-54-67m308 67 54-67" stroke="#e2e8f0" stroke-width="30" stroke-linecap="round"/>
+  <circle cx="448" cy="456" r="27" fill="#ecfeff"/>
+  <circle cx="576" cy="456" r="27" fill="#ecfeff"/>
+  <path d="M387 571h83l31-52 54 116 39-64h45" fill="none" stroke="#f59e0b" stroke-width="34" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M296 737h432" stroke="#ecfeff" stroke-width="30" stroke-linecap="round" opacity=".82"/>
+</svg>

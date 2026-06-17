@@ -2,8 +2,12 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import logging
+import os
+from pathlib import Path
 import shlex
+import shutil
 import subprocess
+import sys
 from typing import Protocol, Sequence
 
 logger = logging.getLogger(__name__)
@@ -48,9 +52,10 @@ class SubprocessCommandRunner:
         timeout: int | None = None,
     ) -> CommandResult:
         resolved_timeout = self._resolve_timeout(timeout_seconds=timeout_seconds, timeout=timeout)
+        resolved_command = resolve_host_command(command)
         try:
             completed = subprocess.run(
-                list(command),
+                resolved_command,
                 capture_output=True,
                 text=True,
                 timeout=resolved_timeout,
@@ -93,9 +98,11 @@ class ADBCommandRunner:
         self,
         *,
         device_id: str | None = None,
+        adb_path: str | None = None,
         command_runner: CommandRunner | None = None,
     ) -> None:
         self.device_id = device_id
+        self.adb_path = adb_path or "adb"
         self._command_runner = command_runner or SubprocessCommandRunner()
 
     def run_adb(
@@ -113,7 +120,7 @@ class ADBCommandRunner:
 
     def build_adb_command(self, command: str | Sequence[str]) -> list[str]:
         args = self._normalize_args(command)
-        full_command = ["adb"]
+        full_command = [self.adb_path]
         if self.device_id:
             full_command.extend(["-s", self.device_id])
         full_command.extend(args)
@@ -134,3 +141,87 @@ def command_output_or_none(result: CommandResult) -> str | None:
     output = result.stdout.strip()
     return output or None
 
+
+def resolve_host_command(command: Sequence[str]) -> list[str]:
+    """Resolve host tool shims before subprocess execution."""
+    resolved = [str(part) for part in command]
+    if resolved and resolved[0].lower() in {"adb", "adb.exe"}:
+        resolved[0] = resolve_adb_executable()
+    return resolved
+
+
+def resolve_adb_executable() -> str:
+    """Return the preferred adb executable for source and PyInstaller runs.
+
+    Resolution order:
+    1. `ASL_ADB_PATH` / `ADB_PATH` explicit executable override.
+    2. `ASL_PLATFORM_TOOLS_DIR` and bundled PyInstaller/source platform-tools.
+    3. Android SDK `platform-tools` from `ANDROID_HOME` / `ANDROID_SDK_ROOT`.
+    4. `adb` from PATH, then the bare command name as a final fallback.
+    """
+    explicit_path = _first_configured_path("ASL_ADB_PATH", "ADB_PATH")
+    if explicit_path:
+        return explicit_path
+
+    for directory in _platform_tools_candidate_dirs():
+        adb_path = directory / _adb_executable_name()
+        if adb_path.exists():
+            return str(adb_path)
+
+    found = shutil.which(_adb_executable_name()) or shutil.which("adb")
+    return found or _adb_executable_name()
+
+
+def _first_configured_path(*names: str) -> str:
+    for name in names:
+        value = os.environ.get(name, "").strip()
+        if value:
+            return str(Path(value).expanduser())
+    return ""
+
+
+def _platform_tools_candidate_dirs() -> list[Path]:
+    candidates: list[Path] = []
+    configured_dir = _first_configured_path("ASL_PLATFORM_TOOLS_DIR")
+    if configured_dir:
+        candidates.append(Path(configured_dir))
+
+    candidates.extend(_bundled_platform_tools_dirs())
+
+    for name in ("ANDROID_HOME", "ANDROID_SDK_ROOT"):
+        sdk_root = os.environ.get(name, "").strip()
+        if sdk_root:
+            candidates.append(Path(sdk_root).expanduser() / "platform-tools")
+
+    return [candidate for candidate in candidates if str(candidate)]
+
+
+def _bundled_platform_tools_dirs() -> list[Path]:
+    roots: list[Path] = []
+    meipass = getattr(sys, "_MEIPASS", "")
+    if meipass:
+        roots.append(Path(str(meipass)))
+    if getattr(sys, "frozen", False):
+        roots.append(Path(sys.executable).resolve().parent)
+    roots.append(Path(__file__).resolve().parents[2])
+
+    platform_name = _platform_tools_platform_name()
+    candidates: list[Path] = []
+    for root in roots:
+        candidates.append(root / "platform-tools")
+        candidates.append(root / "packaging" / "vendor" / "platform-tools" / platform_name)
+    return candidates
+
+
+def _platform_tools_platform_name() -> str:
+    if sys.platform == "darwin":
+        return "macos"
+    if sys.platform.startswith("win"):
+        return "windows"
+    if sys.platform.startswith("linux"):
+        return "linux"
+    return sys.platform
+
+
+def _adb_executable_name() -> str:
+    return "adb.exe" if sys.platform.startswith("win") else "adb"

@@ -15,29 +15,8 @@ class AdminComponentsMixin:
         breadcrumbs: Sequence[tuple[str, str]] = (),
         actions: Sequence[str] = (),
     ) -> str:
-        crumb_items = []
-        for label, path in breadcrumbs:
-            label_text = str(label or "").strip()
-            path_text = str(path or "").strip()
-            if not label_text:
-                continue
-            if path_text:
-                crumb_items.append(f"<a href='{escape(path_text, quote=True)}'>{escape(label_text)}</a>")
-            else:
-                crumb_items.append(f"<span>{escape(label_text)}</span>")
-        crumbs = "<nav class='admin-breadcrumb'>" + "<span>/</span>".join(crumb_items) + "</nav>" if crumb_items else ""
-        action_html = "<div class='admin-page-actions'>" + "".join(actions) + "</div>" if actions else ""
-        subtitle_html = f"<div class='admin-page-subtitle'>{escape(subtitle)}</div>" if subtitle else ""
-        return (
-            "<header class='admin-page-header'>"
-            "<div class='admin-page-heading'>"
-            + crumbs
-            + f"<h1>{escape(title)}</h1>"
-            + subtitle_html
-            + "</div>"
-            + action_html
-            + "</header>"
-        )
+        del title, subtitle, breadcrumbs, actions
+        return ""
 
     @staticmethod
     def _admin_summary_strip(items: Sequence[tuple[str, Any]], *, compact: bool = True) -> str:

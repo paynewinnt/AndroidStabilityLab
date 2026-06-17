@@ -7,7 +7,7 @@ from pathlib import Path
 import subprocess
 from typing import Any, Callable, Optional, Sequence
 
-from stability.infrastructure.command_runner import SubprocessCommandRunner
+from stability.infrastructure.command_runner import resolve_host_command, SubprocessCommandRunner
 from stability.infrastructure.monitoring_base import MonitoringAdapter
 from stability.infrastructure.monitoring_config import DEFAULT_PERFETTO_REMOTE_PATH_TEMPLATE
 from stability.infrastructure.monitoring_models import (
@@ -434,7 +434,7 @@ class PerfettoTraceCaptureAdapter(MonitoringAdapter):
     def _default_process_factory(command: Sequence[str], config_text: str) -> Any:
         try:
             process = subprocess.Popen(
-                list(command),
+                resolve_host_command(command),
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,

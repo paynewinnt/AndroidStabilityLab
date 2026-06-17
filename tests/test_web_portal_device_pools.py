@@ -132,7 +132,7 @@ class WebPortalDevicePoolsTest(unittest.TestCase):
         self.assertIn("text/html", content_type)
         self.assertIn("设备池", html)
         self.assertIn("lab-a / checkout", html)
-        self.assertIn("/api/device-pools", html)
+        self.assertNotIn("admin-page-header", html)
         self.assertIn("form-grid-three", html)
         self.assertIn("device-inline-form", html)
         self.assertIn("编辑标记", html)

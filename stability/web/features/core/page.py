@@ -213,8 +213,6 @@ class CorePageMixin(DoctorPageMixin, LongRunTemplatesPageMixin, CoreJsonApiPageM
         platform_health = dict(payload.get("platform_health", {}) or {})
         notes = list(payload.get("notes", []) or [])
         readiness_checks = dict(readiness.get("checks", {}) or {})
-        mode = str(summary.get("portal_mode", "") or "local_ops_console")
-        boundary_tone = "ok" if mode == "team_entry" else "warning"
         health_status = str(
             summary.get("platform_health_status", "unknown") or "unknown"
         )
@@ -243,10 +241,6 @@ class CorePageMixin(DoctorPageMixin, LongRunTemplatesPageMixin, CoreJsonApiPageM
                 title="平台定位",
                 description="面向 Android 稳定性验证和值班排障的统一运维控制台。",
             )
-            + self._notice(
-                "平台聚合设备状态、任务执行、性能采样、报告产物、问题流转和准入结论，帮助团队在同一运行上下文中判断风险、追踪异常和完成交接。",
-                tone="ok",
-            )
             + self._platform_detail_grid(
                 [
                     (
@@ -270,12 +264,6 @@ class CorePageMixin(DoctorPageMixin, LongRunTemplatesPageMixin, CoreJsonApiPageM
                 title="运行边界",
                 description="先确认入口是否只用于本机运维，还是已经作为团队共享入口。",
                 actions=[],
-            )
-            + self._notice(
-                "团队共享入口模式：所有查看者默认看到同一份平台数据，写操作由服务端解析身份并写审计。"
-                if mode == "team_entry"
-                else "当前 Web 入口按本地运维控制台设计；如要开放给团队，需要显式 public_base_url、反向代理和身份边界。",
-                tone=boundary_tone,
             )
             + self._platform_detail_grid(
                 [
@@ -314,12 +302,6 @@ class CorePageMixin(DoctorPageMixin, LongRunTemplatesPageMixin, CoreJsonApiPageM
                 table_id="platform-readiness-table",
                 columns=self._platform_readiness_columns(),
                 actions=[],
-            )
-            + self._notice(
-                "平台关键服务已就绪。"
-                if readiness.get("ok", False)
-                else "仍有关键服务未就绪，当前入口不应作为正式团队入口使用。",
-                tone="ok" if readiness.get("ok", False) else "danger",
             )
             + self._admin_table(
                 table_id="platform-readiness-table",

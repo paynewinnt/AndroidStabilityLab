@@ -6,7 +6,7 @@ from typing import Any
 from .application import WebPortalApplication
 
 
-def serve_web_portal(
+def create_web_portal_server(
     *,
     host: str,
     port: int,
@@ -15,35 +15,20 @@ def serve_web_portal(
     portal_mode: str = "local_ops_console",
     public_base_url: str = "",
     deployment_label: str = "",
-) -> None:
-    """Start a blocking HTTP server for the Web portal."""
-    try:
-        setattr(
-            bundle,
-            "web_portal_config",
-            {
-                "mode": WebPortalApplication._normalized_portal_mode(portal_mode),
-                "bound_host": host,
-                "bound_port": port,
-                "allow_remote_access": bool(allow_remote_access),
-                "public_base_url": str(public_base_url or "").strip(),
-                "deployment_label": str(deployment_label or "").strip(),
-            },
-        )
-    except Exception:
-        pass
-    app = WebPortalApplication(bundle)
+) -> ThreadingHTTPServer:
+    """Create a configured HTTP server without entering the blocking loop."""
+    app_holder: dict[str, WebPortalApplication] = {}
 
     class _PortalRequestHandler(BaseHTTPRequestHandler):
         def _response_headers(self, request_id: str) -> dict[str, str]:
-            return app._response_boundary_headers(request_id)
+            return app_holder["app"]._response_boundary_headers(request_id)
 
         def do_GET(self) -> None:  # noqa: N802 - stdlib hook name
             request_headers = {str(key): str(value) for key, value in self.headers.items()}
             request_id = WebPortalApplication._request_id_from_headers(request_headers)
             request_headers.setdefault("X-Request-ID", request_id)
             request_headers.setdefault("X-ASL-Request-ID", request_id)
-            status, content_type, body = app.handle_request(
+            status, content_type, body = app_holder["app"].handle_request(
                 self.path,
                 method="GET",
                 headers=request_headers,
@@ -64,7 +49,7 @@ def serve_web_portal(
             request_id = WebPortalApplication._request_id_from_headers(request_headers)
             request_headers.setdefault("X-Request-ID", request_id)
             request_headers.setdefault("X-ASL-Request-ID", request_id)
-            status, content_type, body = app.handle_request(
+            status, content_type, body = app_holder["app"].handle_request(
                 self.path,
                 method="POST",
                 body=body_bytes,
@@ -84,6 +69,46 @@ def serve_web_portal(
             return
 
     server = ThreadingHTTPServer((host, port), _PortalRequestHandler)
+    bound_host, bound_port = server.server_address[:2]
+    try:
+        setattr(
+            bundle,
+            "web_portal_config",
+            {
+                "mode": WebPortalApplication._normalized_portal_mode(portal_mode),
+                "bound_host": str(bound_host or host),
+                "bound_port": int(bound_port or port),
+                "allow_remote_access": bool(allow_remote_access),
+                "public_base_url": str(public_base_url or "").strip(),
+                "deployment_label": str(deployment_label or "").strip(),
+            },
+        )
+    except Exception:
+        pass
+    app_holder["app"] = WebPortalApplication(bundle)
+    return server
+
+
+def serve_web_portal(
+    *,
+    host: str,
+    port: int,
+    bundle: object,
+    allow_remote_access: bool = False,
+    portal_mode: str = "local_ops_console",
+    public_base_url: str = "",
+    deployment_label: str = "",
+) -> None:
+    """Start a blocking HTTP server for the Web portal."""
+    server = create_web_portal_server(
+        host=host,
+        port=port,
+        bundle=bundle,
+        allow_remote_access=allow_remote_access,
+        portal_mode=portal_mode,
+        public_base_url=public_base_url,
+        deployment_label=deployment_label,
+    )
     try:
         server.serve_forever()
     finally:  # pragma: no cover - stdlib cleanup path
